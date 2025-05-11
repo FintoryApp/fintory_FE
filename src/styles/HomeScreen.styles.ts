@@ -24,33 +24,68 @@ export const styles = StyleSheet.create({
   friendContainer:{
     height:vScale(116),
     top:vScale(32),
+    flexDirection:'row',
   },
+
+
+  avatarItem: {
+    height:vScale(84),
+    width: hScale(64),
+    alignItems: 'center',
+    justifyContent:'center',
+  },
+  addItem: {
+    height:vScale(84),
+    width: hScale(64),
+    alignItems: 'center',
+    justifyContent:'center',
+    marginLeft:hScale(8),
+  },
+  friendAddButton:{
+    width: hScale(52),
+    height: vScale(52),
+    top:vScale(10),
+    left:hScale(10),
+    position:'absolute',
+  },
+
+  plusButton:{
+    width: hScale(16),
+    height: vScale(16),
+    position:'absolute',
+    left:44,
+    top:40,
+  },
+  addText: {
+    fontSize: hScale(12),
+    marginTop:vScale(54),
+    marginLeft:hScale(10),
+  },
+
   scrollContainer:{
     height:vScale(116),
     width:hScale(276),
-    left:hScale(2),
+    //left:hScale(2),
   },
   avatarScroll: {
-    height: vScale(116),
+    height: vScale(84),
     width:hScale(276),
-    marginLeft: hScale(84),
-    flexGrow: 0,
+    //marginLeft: hScale(84),
+    //flexGrow: 0,
   },
-  avatarItem: {
-    alignItems: 'center',
-    marginLeft: hScale(12),
-  },
+  
   avatarImage: {
-    width: hScale(64),
-    height: vScale(64),
+    width: hScale(52),
+    height: vScale(52),
     borderRadius: hScale(64),
-    borderWidth: 2,
-    borderColor: '#FFD600',
+    borderWidth: 4,
+    borderColor: '#FFDF29',
   },
   avatarName: {
     fontSize: hScale(12),
-    color: '#222',
   },
+
+  
 
   horizontalLine: {
     height: 1,
@@ -83,13 +118,31 @@ export const styles = StyleSheet.create({
     fontSize: hScale(24),
     fontWeight: 'bold',
   },
-  badgeName: {
-    position: 'absolute',
+
+  badgeNameContainer:{
+    width: hScale(64),
+    height: vScale(24),
+    justifyContent: 'center',
+    alignItems: 'center',
+    position:'relative',
     left: hScale(75),
     top:vScale(4.5),
+  },
+
+  badgeIcon: {
+    position: 'absolute',
     width: hScale(64),
     height: vScale(24),
   },
+
+  badgeText:{
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    fontSize:hScale(12),
+    color:'#ffffff',
+  },
+
   icon24: {
     width: hScale(44),
     height: vScale(44),

@@ -1,12 +1,6 @@
+// BottomTabBar.tsx
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, Text, StyleSheet,Image } from 'react-native';
-import HomeScreen from '../screens/HomeScreen';
-
-// Import your screens here
-// import HomeScreen from '../screens/HomeScreen';
-// import ProfileScreen from '../screens/ProfileScreen';
-// import SettingsScreen from '../screens/SettingsScreen';
+import { View, Image, TouchableOpacity, StyleSheet, PixelRatio,Dimensions } from 'react-native';
 
 const HomeIcon = require('../../assets/icons/home.png');
 const HomeIconActive = require('../../assets/icons/home_active.png');
@@ -17,72 +11,89 @@ const StockIconActive = require('../../assets/icons/stock_active.png');
 const ReportIcon = require('../../assets/icons/report.png');
 const ReportIconActive = require('../../assets/icons/report_active.png');
 
-const Tab = createBottomTabNavigator();
 
-// Temporary placeholder screens
-// const HomeScreen = () => (
-//   <View style={styles.screen}>
-//     <Text>Home Screen</Text>
-//   </View>
-// );
 
-const StockScreen = () => (
-  <View style={styles.screen}>
-    <Text>Stock Screen</Text>
-  </View>
-);
+const { width: W, height: H } = Dimensions.get('window');
 
-const ReportScreen = () => (
-  <View style={styles.screen}>
-    <Text>Report Screen</Text>
-  </View>
-);
+const guidelineW = 360;
+const guidelineH = 740;
 
-const ProfileScreen = () => (
-  <View style={styles.screen}>
-    <Text>Profile Screen</Text>
-  </View>
-);
-
-const BottomTabBar = () => {
+const hScale = (s: number) => {
+    const newSize = (W / guidelineW) * s;
+    return Math.round(PixelRatio.roundToNearestPixel(newSize));
+  };
+  
+  const vScale = (s: number) => {
+    const newSize = (H / guidelineH) * s;
+    return Math.round(PixelRatio.roundToNearestPixel(newSize));
+  };
+  
+const BottomTabBar = ({ state, descriptors, navigation }:any) => {
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, size }) => {
-          let iconSource;
+    <View style={styles.container}>
+      {state.routes.map((route:any, index:any) => {
+        const { options } = descriptors[route.key];
+        const isFocused = state.index === index;
 
-          if (route.name === 'Home') {
-            iconSource=focused? HomeIconActive:HomeIcon;
-          } else if (route.name === 'Stock') {
-            iconSource=focused? StockIconActive:StockIcon;
-          } else if (route.name === 'Report') {
-            iconSource=focused? ReportIconActive:ReportIcon;
-          } else if (route.name === 'Profile') {
-            iconSource=focused? ProfileIconActive:ProfileIcon;
+        const onPress = () => {
+          const event = navigation.emit({
+            type: 'tabPress',
+            target: route.key,
+            canPreventDefault: true,
+          });
+
+          if (!isFocused && !event.defaultPrevented) {
+            navigation.navigate(route.name);
           }
+        };
 
-          return <Image source={iconSource} style={{ width: size, height: size, marginTop:15 }} />;
-        },
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: 'gray',
-        headerShown: false,
-        tabBarShowLabel: false,
+        let iconSource;
+        if (route.name === 'Home') {
+          iconSource = isFocused ? HomeIconActive : HomeIcon;
+        } else if (route.name === 'Stock') {
+          iconSource = isFocused ? StockIconActive : StockIcon;
+        } else if (route.name === 'Report') {
+          iconSource = isFocused ? ReportIconActive : ReportIcon;
+        } else if (route.name === 'Profile') {
+          iconSource = isFocused ? ProfileIconActive : ProfileIcon;
+        }
+
+        return (
+          <TouchableOpacity
+            key={index}
+            onPress={onPress}
+            style={styles.tabButton}
+          >
+            <Image 
+              source={iconSource}
+            />
+          </TouchableOpacity>
+        );
       })}
-    >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Stock" component={StockScreen} />
-      <Tab.Screen name="Report" component={ReportScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
-    </Tab.Navigator>
+      <View style={styles.bottomSafeArea}/>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  screen: {
+  container: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    height: 88,
+    //borderTopWidth: 1,
+    borderTopColor: '#ECECEC',
+  },
+  tabButton: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    width:44,
+    height:44,
+    top:vScale(16),
   },
+  bottomSafeArea:{
+    height:24,
+  }
 });
 
-export default BottomTabBar; 
+export default BottomTabBar;

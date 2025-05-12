@@ -137,6 +137,45 @@ export const styles = StyleSheet.create({
         height:vScale(24),
       },
 
+      searchContainer:{
+        position:'absolute',
+        width:hScale(328),
+        height:vScale(60),
+        left:hScale(16),
+        top:vScale(461),
+        backgroundColor:'#FFFFFF',
+        borderRadius:hScale(4),
+        borderWidth:hScale(1),
+        borderColor:'#C2C2C2',
+      },
+
+      searchDate:{
+        position:'absolute',
+        left:hScale(12),
+        top:vScale(19),
+        width:hScale(220),
+        height:vScale(22),
+        fontSize:hScale(16),
+        color:'#006D00',
+      },
+
+      
+      searchText:{
+        position:'absolute',
+        left:hScale(12),
+        top:vScale(19),
+        width:hScale(220),
+        height:vScale(22),
+        fontSize:hScale(16),
+        color:'#000000',
+      },
+
+      calendarImage:{
+        position:'absolute',
+        left:hScale(272),
+        top:vScale(8),
+      }
+
 
 
 

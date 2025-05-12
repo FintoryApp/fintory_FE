@@ -1,39 +1,11 @@
 
-import React,{useState} from 'react';
+import React from 'react';
 import { View, Text, StyleSheet,ScrollView, Image, TouchableOpacity, ImageBackground  } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from '../styles/ReportScreen.styles';
-import CustomCalendar from '../components/Calendar';
 
 export default function ReportScreen() {
   const navigation = useNavigation();
-
-  const [isCalendarVisible, setCalendarVisible] = useState(false);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
-
-
-  // 캘린더 표시 함수
-  const showCalendar = () => {
-    setCalendarVisible(true);
-  };
-  
-  // 캘린더 닫기 함수
-  const hideCalendar = () => {
-    setCalendarVisible(false);
-  };
-  
-  // 날짜 선택 처리 함수
-  const handleDateSelect = (year: number, month: number) => {
-    setSelectedYear(year);
-    setSelectedMonth(month);
-  };
-  
-  // 선택된 날짜 포맷팅
-  const formatDate = () => {
-    return `${selectedYear}년 ${selectedMonth}월`;
-  };
-
   return (
     <View style={styles.wholeContainer}>
       
@@ -70,20 +42,14 @@ export default function ReportScreen() {
         </View>
 
         <View style={styles.searchContainer}>
-          <Text style={styles.searchDate}>{formatDate()} <Text style={styles.searchText}>투자 분석 조회하기</Text></Text>
-          <TouchableOpacity onPress={showCalendar}>
+          <Text style={styles.searchDate}>2025년 5월 <Text style={styles.searchText}>투자 분석 조회하기</Text></Text>
+          <TouchableOpacity>
           <Image source={require('../../assets/icons/calendar.png')} style={styles.calendarImage}/>
           </TouchableOpacity>
         </View>
       </View>
 
-      <CustomCalendar
-        isVisible={isCalendarVisible}
-        onClose={hideCalendar}
-        onSelectDate={handleDateSelect}
-        initialYear={selectedYear}
-        initialMonth={selectedMonth}
-      />
+
 
     </View>
   );

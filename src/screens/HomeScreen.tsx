@@ -1,8 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Green from './Green';
-import Blue from './ReportScreen';
 import { styles } from '../styles/HomeScreen.styles';
 
 

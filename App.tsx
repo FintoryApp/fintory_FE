@@ -13,8 +13,26 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 import BottomTabBar from './src/components/BottomTabBar';
 import HomeScreen from './src/screens/HomeScreen';
 import ReportScreen from './src/screens/ReportScreen';
+import StockScreen from './src/screens/StockScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Stack = createNativeStackNavigator();
+const Tab=createBottomTabNavigator();
+
+function MainTabNavigator(){
+  return(
+    <Tab.Navigator
+      tabBar={(props: any)=> <BottomTabBar {...props}/>}
+      screenOptions={{headerShown:false}}
+    >
+      <Tab.Screen name="Home" component={HomeScreen}/>
+      <Tab.Screen name="Stock" component={StockScreen}/>
+      <Tab.Screen name="Report" component={ReportScreen}/>
+      <Tab.Screen name="Profile" component={ProfileScreen}/>
+    </Tab.Navigator>
+  );
+}
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -31,8 +49,11 @@ function App(): React.JSX.Element {
         backgroundColor={backgroundStyle.backgroundColor}
       />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Main" component={MainTabNavigator} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Report" component={ReportScreen} />
+        <Stack.Screen name="Stock" component={StockScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

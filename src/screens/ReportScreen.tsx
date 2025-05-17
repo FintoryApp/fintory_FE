@@ -62,7 +62,7 @@ export default function ReportScreen() {
 
 
             <View style={styles.bottomContainer}>
-              <TouchableOpacity style={styles.entireAnaylzeButton}>
+              <TouchableOpacity style={styles.entireAnaylzeButton} onPress={() => navigation.navigate('DetailReport' as never)}>
                 <Text style={styles.entireAnaylzeText}>투자분석 전체보기</Text>
                 <Image source={require('../../assets/icons/right.png')} style={styles.rightArrowImage}/>
               </TouchableOpacity>

@@ -135,9 +135,8 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    top:vScale(240),
+    left:hScale(188),
   },
   safeArea: {
   },

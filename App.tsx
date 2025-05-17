@@ -16,9 +16,21 @@ import ReportScreen from './src/screens/ReportScreen';
 import StockScreen from './src/screens/StockScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import DetailReportScreen from './src/screens/DetailReportScreen';
 
 const Stack = createNativeStackNavigator();
-const Tab=createBottomTabNavigator();
+const Tab = createBottomTabNavigator();
+
+function ReportStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {/* 탭에서 처음 보이는 화면 */}
+      <Stack.Screen name="ReportMain" component={ReportScreen} />
+      {/* ReportScreen → navigation.navigate('DetailReport') 로 이동 */}
+      <Stack.Screen name="DetailReport" component={DetailReportScreen} />
+    </Stack.Navigator>
+  );
+}
 
 function MainTabNavigator(){
   return(
@@ -28,7 +40,7 @@ function MainTabNavigator(){
     >
       <Tab.Screen name="Home" component={HomeScreen}/>
       <Tab.Screen name="Stock" component={StockScreen}/>
-      <Tab.Screen name="Report" component={ReportScreen}/>
+      <Tab.Screen name="Report" component={ReportStack}/>
       <Tab.Screen name="Profile" component={ProfileScreen}/>
     </Tab.Navigator>
   );
@@ -55,6 +67,7 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Stock" component={StockScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
+
     </NavigationContainer>
   );
 }

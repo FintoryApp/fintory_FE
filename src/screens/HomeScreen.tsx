@@ -92,9 +92,8 @@ export default function HomeScreen() {
           <Image source={require('../../assets/icons/stock_white.png')} style={styles.boxIcon} />
         </View>
         </TouchableOpacity>
-
         <TouchableOpacity
-           onPress={() => navigation.navigate('Report')}>
+           onPress={() => navigation.navigate('Report' as never)}>
         <View style={styles.blueBox}>
           <Text style={styles.boxText}>현황{"\n"}리포트</Text>
           <Image source={require('../../assets/icons/report_white.png')} style={styles.boxIcon} />

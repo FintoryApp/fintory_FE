@@ -15,6 +15,8 @@ import HomeScreen from './src/screens/HomeScreen';
 import ReportScreen from './src/screens/ReportScreen';
 import StockScreen from './src/screens/StockScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
+import FirstScreen from './src/screens/FirstScreen';
+import LoginScreen from './src/screens/LoginScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DetailReportScreen from './src/screens/DetailReportScreen';
 
@@ -61,13 +63,14 @@ function App(): React.JSX.Element {
         backgroundColor={backgroundStyle.backgroundColor}
       />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="First" component={FirstScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Main" component={MainTabNavigator} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Report" component={ReportScreen} />
         <Stack.Screen name="Stock" component={StockScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
-
     </NavigationContainer>
   );
 }

@@ -19,6 +19,7 @@ import FirstScreen from './src/screens/FirstScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DetailReportScreen from './src/screens/DetailReportScreen';
+import FindPasswordScreen from './src/screens/FindPasswordScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -70,6 +71,7 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Report" component={ReportScreen} />
         <Stack.Screen name="Stock" component={StockScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="FindPassword" component={FindPasswordScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

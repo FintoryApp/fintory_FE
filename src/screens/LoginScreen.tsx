@@ -58,7 +58,7 @@ export default function LoginScreen() {
                     </View>
                 </TouchableOpacity>
                 <View style={{ width: hScale(64) }} />
-                <TouchableOpacity style={styles.findButton}>
+                <TouchableOpacity style={styles.findButton} onPress={() => navigation.navigate('FindPassword' as never)}>
                     <View>
                         <Text style={styles.findButtonText}>비밀번호 찾기</Text>
                         <View style={styles.underline} />

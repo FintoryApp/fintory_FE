@@ -21,6 +21,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DetailReportScreen from './src/screens/DetailReportScreen';
 import FindPasswordScreen from './src/screens/FindPasswordScreen';
 import ChangePasswordScreen from './src/screens/ChangePasswordScreen';
+import FindIdScreen from './src/screens/FindIdScreen';
+import FindIdModal from './src/components/FindIdModal';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -74,6 +76,7 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="FindPassword" component={FindPasswordScreen} />
         <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+        <Stack.Screen name="FindId" component={FindIdScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

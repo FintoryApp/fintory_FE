@@ -51,7 +51,7 @@ export default function LoginScreen() {
             </View>
 
             <View style={styles.findContainer}>
-                <TouchableOpacity style={styles.findButton}>
+                <TouchableOpacity style={styles.findButton} onPress={()=> navigation.navigate('FindId' as never)}>
                     <View>
                         <Text style={styles.findButtonText}>아이디 찾기</Text>
                         <View style={styles.underline} />

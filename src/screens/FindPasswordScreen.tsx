@@ -108,7 +108,11 @@ export default function FindPasswordScreen() {
         </View>
 
         <View style={styles.bottomContainer}>
-            <TouchableOpacity style={styles.logInButton}>
+            <TouchableOpacity style={styles.logInButton} onPress={() => {
+                if(isCodeVerified) {
+                    navigation.navigate('ChangePassword' as never);
+                }
+            }}>
                 <Text style={styles.logInButtonText}>인증 완료하기</Text>
             </TouchableOpacity>
         </View>

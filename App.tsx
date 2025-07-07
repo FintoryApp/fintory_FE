@@ -23,6 +23,7 @@ import FindPasswordScreen from './src/screens/FindPasswordScreen';
 import ChangePasswordScreen from './src/screens/ChangePasswordScreen';
 import FindIdScreen from './src/screens/FindIdScreen';
 import FindIdModal from './src/components/FindIdModal';
+import StockMainScreen from './src/screens/StockMainScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -38,6 +39,16 @@ function ReportStack() {
   );
 }
 
+function StockStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {/* 탭에서 처음 보이는 화면 */}
+      <Stack.Screen name="StockMain" component={StockMainScreen} />
+      {/* ReportScreen → navigation.navigate('DetailReport') 로 이동 */}
+    </Stack.Navigator>
+  );
+}
+
 function MainTabNavigator(){
   return(
     <Tab.Navigator
@@ -45,7 +56,7 @@ function MainTabNavigator(){
       screenOptions={{headerShown:false}}
     >
       <Tab.Screen name="Home" component={HomeScreen}/>
-      <Tab.Screen name="Stock" component={StockScreen}/>
+      <Tab.Screen name="Stock" component={StockStack}/>
       <Tab.Screen name="Report" component={ReportStack}/>
       <Tab.Screen name="Profile" component={ProfileScreen}/>
     </Tab.Navigator>
@@ -67,12 +78,12 @@ function App(): React.JSX.Element {
         backgroundColor={backgroundStyle.backgroundColor}
       />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Stock" component={StockMainScreen}/>
         <Stack.Screen name="First" component={FirstScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Main" component={MainTabNavigator} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Report" component={ReportScreen} />
-        <Stack.Screen name="Stock" component={StockScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="FindPassword" component={FindPasswordScreen} />
         <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />

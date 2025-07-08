@@ -25,18 +25,18 @@ export const styles = StyleSheet.create({
 
     topContainer:{
         width: hScale(360),
-        height: vScale(345),
+        height: vScale(352.72),
         backgroundColor: Colors.surface,
         top: vScale(92),
         position: 'absolute',
     },
     userInfoContainer:{
         width: hScale(328),
-        height: vScale(112),
+        //height: vScale(112),
         backgroundColor: Colors.white,
-        top: vScale(8),
         left: hScale(16),
         borderRadius: hScale(16),
+        marginBottom: vScale(16),
     },
 
     topContainerText:{
@@ -60,9 +60,9 @@ export const styles = StyleSheet.create({
     seeMoreButton:{
         width: hScale(45),
         height: vScale(16),
-        top: vScale(88),
-        left: hScale(144),
-        position: 'absolute',
+        //top: vScale(88),
+        alignSelf: 'center',
+        //position: 'absolute',
     },
 
     seeMoreButtonImage:{
@@ -79,28 +79,26 @@ export const styles = StyleSheet.create({
 
     stockInfoContainer:{
         width: hScale(328),
-        height: vScale(201),
         backgroundColor: Colors.white,
-        top: vScale(136),
-        left: hScale(16),
         borderRadius: hScale(16),
-        position: 'absolute',
+        alignSelf: 'center',
+    
     },
 
     stockInfoText:{
         fontSize: hScale(16),
         fontWeight: 'bold',
         color: Colors.black,
-        top: vScale(20),
+        top: vScale(16),
         left: hScale(16),
         position: 'absolute',
     },
 
     stockInfoBlockContainer:{
         width: hScale(296),
-        height: vScale(114.72),
-        top: vScale(58),
-        left: hScale(16),
+        alignSelf: 'center',
+        height: vScale(100),
         position: 'absolute',
+        top: vScale(54),
     },
 });

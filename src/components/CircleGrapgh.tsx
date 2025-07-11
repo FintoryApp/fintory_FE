@@ -8,6 +8,7 @@ import {
   PixelRatio,
 } from 'react-native';
 import PieChart from 'react-native-pie-chart';
+import { hScale, vScale } from '../styles/Scale.styles';
 
 type CircleGraphProps = {
   data: number[];
@@ -17,14 +18,7 @@ type CircleGraphProps = {
   innerSize?: number;
 };
 
-const { width: W, height: H } = Dimensions.get('window');
-const guidelineW = 360;
-const guidelineH = 740;
 
-const hScale = (s: number) =>
-  Math.round(PixelRatio.roundToNearestPixel((W / guidelineW) * s));
-const vScale = (s: number) =>
-  Math.round(PixelRatio.roundToNearestPixel((H / guidelineH) * s));
 
 const CircleGraph = ({
   data,
@@ -73,13 +67,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   legendContainer: {
-    marginLeft: hScale(16),  // 그래프와의 간격
+    right:hScale(0),  // 그래프와의 간격
+    position:'absolute',
     justifyContent: 'center',
   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: vScale(6),
+    marginBottom: vScale(16),
   },
   colorBox: {
     width: hScale(8),

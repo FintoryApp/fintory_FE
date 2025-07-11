@@ -24,8 +24,11 @@ import ChangePasswordScreen from './src/screens/ChangePasswordScreen';
 import FindIdScreen from './src/screens/FindIdScreen';
 import FindIdModal from './src/components/FindIdModal';
 import StockMainScreen from './src/screens/StockMainScreen';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { RouteProp,useRoute } from '@react-navigation/native';
+import type { RootStackParamList } from './src/navigation/RootStackParamList';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
 
 function ReportStack() {
@@ -63,34 +66,44 @@ function MainTabNavigator(){
   );
 }
 
-function App(): React.JSX.Element {
+
+
+function RootNavigation(  ) {
   const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-    flex: 1,
-  };
-
   return (
-    <NavigationContainer>
+    <>
+      {/* ① StatusBar : 투명 + translucent */}
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
+        backgroundColor="transparent"
+        translucent
       />
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Stock" component={StockMainScreen}/>
-        <Stack.Screen name="First" component={FirstScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Main" component={MainTabNavigator} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Report" component={ReportScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="FindPassword" component={FindPasswordScreen} />
-        <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
-        <Stack.Screen name="FindId" component={FindIdScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+
+      {/* ② 실제 네비게이션 트리 */}
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Report" component={ReportScreen} />
+       <Stack.Screen name="DetailReport" component={DetailReportScreen} />
+         <Stack.Screen name="Stock" component={StockMainScreen}/>
+         <Stack.Screen name="First" component={FirstScreen} />
+         <Stack.Screen name="Login" component={LoginScreen} />
+         <Stack.Screen name="Main" component={MainTabNavigator} />
+         <Stack.Screen name="Home" component={HomeScreen} />
+         <Stack.Screen name="Profile" component={ProfileScreen} />
+         <Stack.Screen name="FindPassword" component={FindPasswordScreen} />
+         <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+         <Stack.Screen name="FindId" component={FindIdScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </>
   );
 }
 
-export default App;
+export default function App(): React.JSX.Element {
+  return (
+    <SafeAreaProvider>
+      <RootNavigation />
+    </SafeAreaProvider>
+  );
+}

@@ -1,268 +1,129 @@
 import { StyleSheet, Dimensions, PixelRatio } from 'react-native';
-
-const { width: W, height: H } = Dimensions.get('window');
-
-const guidelineW = 360;
-const guidelineH = 740;
-
-const hScale = (s: number) => {
-    const newSize = (W / guidelineW) * s;
-    return Math.round(PixelRatio.roundToNearestPixel(newSize));
-};
-  
-const vScale = (s: number) => {
-    const newSize = (H / guidelineH) * s;
-    return Math.round(PixelRatio.roundToNearestPixel(newSize));
-};
+import { hScale, vScale } from './Scale.styles';
+import { Colors } from './Color.styles';
 
 export const styles = StyleSheet.create({
     wholeContainer: {
         flex: 1,
-        backgroundColor: '#F2F7F0',
-        height: vScale(1274),
+        backgroundColor: Colors.surface,
+        height: '100%',
+        width: '100%',
+        
+    },
+    secondContainer:{
+        height:vScale(833.79),
+        width:hScale(360),
+        marginTop:vScale(16),
+        backgroundColor:'#FFFFFF',
+        
     },
 
-    topContainer: {
-        height:vScale(92),
-      },
-
-      leftButton:{
-        left:hScale(16),
-        top:vScale(40),
-      },
-
-      topTitle:{
-        position:'absolute',
-        left:hScale(141),
-        top:vScale(51),
-        fontSize:hScale(16),
-        fontWeight:'bold',
-      },
-
-      settingButton:{
-        position:'absolute',
-        left:hScale(300),
-        top:vScale(40),
-      },
-
-      middleContainer:{
-        height:vScale(1182),
-      },
-
-      investStyleContainer:{
-        backgroundColor:'#00C900',
-        width:hScale(328),
-        height:vScale(297),
-        padding:hScale(16),
-        borderRadius:hScale(12),
-        marginLeft:hScale(16),
-      },
-
-      titleText:{
-        width:hScale(296),
-        height:vScale(33),
-        position:'absolute',
-        fontSize:hScale(24),
-        fontWeight:'bold',
-        color:'#FFFFFF',
-        top:vScale(16),
-        left:hScale(16),
-      },
-
-      characterImage:{
-        position:'absolute',
-        left:hScale(98),
-        top:vScale(57),
-        width:hScale(132),
-        height:vScale(132),
-      },
-
-      mainText:{
-        position:'absolute',
-        left:hScale(16),
-        top:vScale(197),
-        fontSize:hScale(16),
-        color:'#FFFFFF',
-        textAlign:'center',
-        width:hScale(296),
-        height:vScale(44),
-      },
-
-      boldText: {
-        fontWeight: 'bold',
-      },
-
-      explainText:{
-        position:'absolute',
-        left:hScale(16),
-        top:vScale(249),
-        fontSize:hScale(12),
-        color:'#FFFFFF',
-        textAlign:'center',
-        width:hScale(296),
-        height:vScale(80),
-      },
-
-      secondContainer:{
-        height:vScale(873),
-        width:hScale(360),
-        top:vScale(313),
-        position:'absolute',
-        backgroundColor:'#FFFFFF',
-      },
-
       investAreaContainer:{
-        height:vScale(396),
-
+        height:vScale(384),
+        width:hScale(360),
+        paddingHorizontal:hScale(16),
+        paddingVertical:vScale(8),
       },
 
       investAreaTitle:{
         fontSize:hScale(24),
         fontWeight:'bold',
-        color:'#006D00',
-        top:vScale(24),
-        left:hScale(16),
-        position:'absolute',
+        color:Colors.primaryDark
       },
 
       investAreaGraphContainer:{
-        position:'absolute',
-        left:hScale(16),
-        top:vScale(81),
         width:hScale(328),
-        height:vScale(190),
+        height:vScale(222),
+        borderRadius:hScale(8),
+        borderColor:Colors.outlineVariant,
+        borderWidth:hScale(1),
+        paddingVertical:vScale(8),
+        paddingHorizontal:hScale(16),
       },
 
       graphTitle:{
         fontSize:hScale(16),
-        position:'absolute',
+        fontWeight:'bold',
       },
 
       graphContainer:{
-        position:'absolute',
-        top:vScale(34),
-        width:hScale(328),
-        height:vScale(156),
+        marginTop:vScale(8),
+        paddingVertical:vScale(8),
+        width:hScale(296),
+        height:vScale(176),
       },
 
       summaryContainer:{
         height:vScale(77),
-        width:hScale(328),
-        top:vScale(295),
-        position:'absolute',
         flexDirection:'row',
-        
+        marginTop:vScale(16),
+        marginBottom:vScale(16),
       },
 
       investNum:{
-        height:vScale(77),  
+        height:vScale(81),  
         width:hScale(156),
-        backgroundColor:'#DBE2D8',
-        borderRadius:hScale(12),
-        marginLeft:hScale(16),
+        borderRadius:hScale(8),
+        borderColor:Colors.outlineVariant,
+        borderWidth:hScale(1),
+        paddingHorizontal:hScale(16),
+        paddingVertical:vScale(8),
       },
 
       summaryTitleText:{
         fontSize:hScale(12),
-        top:vScale(8),
-        left:hScale(12),
-        position:'absolute',
       },
 
       summaryText:{
         fontSize:hScale(24),
         fontWeight:'bold',
-        top:vScale(36),
-        left:hScale(12),
-        position:'absolute',
+        marginTop:vScale(16),
       },
 
       returnRateContainer:{
-        height:vScale(204),
+        height:vScale(204.79),
         width:hScale(360),
-        top:vScale(408),
-        position:'absolute',
-      },
-
-      returnTitleText:{
-        fontSize:hScale(24),
-        fontWeight:'bold',
-        top:vScale(24),
-        left:hScale(16),
-        position:'absolute',
+        marginTop:vScale(16),
+        paddingHorizontal:hScale(16),
+        paddingVertical:vScale(8),
       },
 
       plusMinusContainer:{
-        height:vScale(99),
-        width:hScale(328),
-        top:vScale(81),
-        left:hScale(16),
-        position:'absolute',
-        flexDirection:'row',
+        flexDirection:'column',
         justifyContent: 'space-between',
+        
       },
 
       plusMinusBox:{
-        height:vScale(99),
-        width:hScale(156),
-        borderRadius:hScale(12),
-      },
+        height:vScale(61.9),
+        width:hScale(328),
+        borderRadius:hScale(8),
+        paddingHorizontal:hScale(16),
+        paddingVertical:vScale(12),
+        borderColor:Colors.outlineVariant,
+        borderWidth:hScale(1),
+        flexDirection:'row',
+        justifyContent:'space-between'},
 
-      plusColor:{
-        backgroundColor:'#EFCDCC',
-      },
-
-      minusColor:{
-        backgroundColor:'#D7DEE6',
-      },
-
-      plusMinusTitleText:{
-        fontSize:hScale(12),
-        top:vScale(8),
-        left:hScale(12),
-        position:'absolute',
-      },
-    
       ratioConatiner:{
-        height:vScale(55),
-        width:hScale(132),
-        top:vScale(36),
-        left:hScale(12),
-        position:'absolute',
-      },
-
-      ratioText:{
-        fontSize:hScale(16),
-        fontWeight:'bold',
-        position:'absolute',
-      },
-
-      ratioNameText:{
-        fontSize:hScale(24),
-        fontWeight:'bold',
-        top:vScale(22),
-        position:'absolute',
-      },
-      
-      plusTextColor:{
-        color:'#F94843',
-      },
-
-      minusTextColor:{
-        color:'#2894FF',
+        height:vScale(33),
+        width:hScale(234.92),
+        flexDirection:'row',
+        justifyContent:'space-between',
       },
 
       recommendContainer:{
-        height:vScale(149),
-        top:vScale(624),
-        position:'absolute',
+        height:vScale(109),
+        width:hScale(360),
+        paddingHorizontal:hScale(16),
+        paddingVertical:vScale(8),
+        marginBottom:vScale(16),
+        marginTop:vScale(16),
       },
       
       recommendText:{
         fontSize:hScale(16),
-        top:vScale(81),
-        left:hScale(16),
-        position:'absolute',
+        fontWeight:'bold',
       },
 
       

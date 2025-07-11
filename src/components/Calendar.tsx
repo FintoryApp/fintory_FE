@@ -10,22 +10,10 @@ import {
   PixelRatio,
   Dimensions,
   Image,
+  TouchableWithoutFeedback,
 } from 'react-native';
-
-const { width: W, height: H } = Dimensions.get('window');
-
-const guidelineW = 360;
-const guidelineH = 740;
-
-const hScale = (s: number) => {
-    const newSize = (W / guidelineW) * s;
-    return Math.round(PixelRatio.roundToNearestPixel(newSize));
-  };
-  
-  const vScale = (s: number) => {
-    const newSize = (H / guidelineH) * s;
-    return Math.round(PixelRatio.roundToNearestPixel(newSize));
-  };
+import { hScale, vScale } from '../styles/Scale.styles';
+import { Colors } from '../styles/Color.styles';
 
 interface CustomCalendarProps {
   isVisible: boolean;
@@ -79,8 +67,10 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
       animationType="fade"
       onRequestClose={onClose}
     >
+      <TouchableWithoutFeedback onPress={onClose}>
       <View style={styles.modalOverlay}>
         <SafeAreaView style={styles.safeArea}>
+          <TouchableWithoutFeedback onPress={()=>{}}>
           <View style={styles.calendarContainer}>
             {/* 년도 네비게이션 */}
             <View style={styles.yearNavigation}>
@@ -126,8 +116,10 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
               <Text style={styles.confirmButtonText}>확인</Text>
             </TouchableOpacity>
           </View>
+          </TouchableWithoutFeedback>
         </SafeAreaView>
       </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };
@@ -135,52 +127,55 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    top:vScale(240),
+    top:vScale(230),
     left:hScale(188),
   },
   safeArea: {
   },
 
   calendarContainer: {
-    backgroundColor: 'white',
-    borderRadius: hScale(4),
+    backgroundColor: '#FFFFFF',
+    borderRadius: hScale(8),
     //padding: hScale(12),
     width: hScale(156),
-    height:vScale(266),
+    height:vScale(264),
     alignItems: 'center',
   },
   yearNavigation: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%',
-    marginBottom: vScale(1),
+    width: hScale(131),
+    height:vScale(24),
+    marginBottom: vScale(10),
+    marginTop:vScale(16),
   },
   yearNavigationButton: {
     padding: hScale(8),
     width: 40,
     alignItems: 'center',
+    color: Colors.outlineVariant,
   },
   yearText: {
     fontSize: hScale(16),
-    color: '#000',
+    color: Colors.black,
   },
   monthGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    width: hScale(132),
+    width: hScale(124),
     height:vScale(140),
     //marginBottom: 20,
   },
   monthCell: {
-    width: hScale(41.33),
+    width: hScale(38.67),
     height:hScale(32),
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: vScale(4),
     borderWidth: 1,
-    borderColor: '#AEAEAE',
+    borderColor: Colors.outline,
     borderRadius: hScale(2),
   },
   selectedMonthCell: {
@@ -190,20 +185,21 @@ const styles = StyleSheet.create({
   },
   monthText: {
     fontSize: hScale(12),
-    color: '#AEAEAE',
+    color: Colors.outline,
   },
   selectedMonthText: {
     color: '#00C853',
     fontWeight: 'bold',
   },
   confirmButton: {
-    backgroundColor: '#00C900',
+    backgroundColor: Colors.primary,
     borderRadius: hScale(8),
     paddingVertical: vScale(8),
     paddingHorizontal: hScale(20),
     width: hScale(132),
-    height:vScale(38),
-    marginTop:vScale(12),
+    height:vScale(48),
+    marginTop:vScale(10),
+    marginBottom:vScale(16),
     alignItems: 'center',
   },
   confirmButtonText: {

@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { styles } from '../styles/StockMainScreen.styles';
 import CustomCalendar from '../components/Calendar';
 import TopBar from '../components/TopBar';
-import { hScale, vScale } from '../styles/Scale.style';
+import { hScale, vScale } from '../styles/Scale.styles';
 import Colors from '../styles/Color.styles';
 
 const stockInfo = [

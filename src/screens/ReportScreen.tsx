@@ -1,17 +1,45 @@
-
-import React,{useState} from 'react';
+import React,{useEffect, useState,useMemo} from 'react';
 import { View, Text, StyleSheet,ScrollView, Image, TouchableOpacity, ImageBackground  } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { styles } from '../styles/ReportScreen.styles';
 import CustomCalendar from '../components/Calendar';
+import TopBar from '../components/TopBar';
+import { hScale,vScale } from '../styles/Scale.styles';
+import {Colors} from '../styles/Color.styles';
+import CharacterContainer from '../components/CharacterContainer';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getReport } from '../api/report';
+import { RootStackParamList } from '../navigation/RootStackParamList';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+type ReportNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Report'>;
+type ReportRouteProp = RouteProp<RootStackParamList, 'Report'>;
 export default function ReportScreen() {
-  const navigation = useNavigation();
-
+  
+  const navigation = useNavigation<ReportNavigationProp>();
+  const route = useRoute<ReportRouteProp>();
   const [isCalendarVisible, setCalendarVisible] = useState(false);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [report,setReport] = useState<any>(null);
+  const [loading,setLoading] = useState(true);
 
+
+  useEffect(()=>{
+    (async()=>{
+        try{
+          const month = String(selectedMonth).padStart(2, '0');  // "02"
+            const res = await getReport(`${selectedYear}-${month}`);
+            setReport(res);
+        }catch(error){
+            console.error('Error fetching report:',error);
+        }finally{
+            setLoading(false);
+        }
+    })();
+   },[selectedYear,selectedMonth]);
+
+   const investmentStyle=report?.data?.investmentStyle?.investmentStyle ??'';
 
   // 캘린더 표시 함수
   const showCalendar = () => {
@@ -30,51 +58,116 @@ export default function ReportScreen() {
   };
   
   // 선택된 날짜 포맷팅
-  const formatDate = () => {
-    return `${selectedYear}년 ${selectedMonth}월`;
-  };
+
+  const userName='김나무'
+  const investStyle=[
+    {title:'거침 없는 공격형',
+      characteristic :'공격형',
+      description:'빠른 판단과 도전을 즐기지만 \n가끔은 신중함이 필요할 수 있어요.\n좋은 도전을 이어가면서,\n다음엔 다양한 산업군에도 투자해보세요!',
+      image:require('../../assets/characters/fire_character.png'),
+      leftColor:'#FFEFEF',
+      rightColor:'#FFD6D6',
+    },
+    {title:'안정적인 중립형',
+      characteristic :'중립형',
+      description:'균형 잡힌 선택이 돋보여요.\n상황에 맞춰 판단하는 유연함이 강점이에요.\n지금처럼 나만의 리듬을 지키며,\n한 걸음 더 나아가보세요!',
+      image:require('../../assets/characters/stone_character.png'),
+      leftColor:'#F1F1F1',
+      rightColor:'#DCDCDC',
+    },
+    {title:'굳건한 방어형',
+      characteristic :'방어형',
+      description:'안정적인 선택과 꾸준함이\n당신의 투자에 힘을 더해요.\n때로는 작은 도전도 새로운 기회를 열 수 있어요.\n조금씩 범위를 넓혀보는 건 어떨까요?',
+      image:require('../../assets/characters/water_character.png'),
+      leftColor:'#E4F2FF',
+      rightColor:'#C6E3FF',
+    }
+  ]
+
+  const found = useMemo(
+    () => investStyle.find((i) => i.characteristic === investmentStyle) || null,
+    [investmentStyle],
+  );
+
+  const {top} = useSafeAreaInsets();
 
   return (
-    <View style={styles.wholeContainer}>
+    <View>
       
-      <View style={styles.topContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-      <Image source={require('../../assets/icons/left.png')} style={styles.leftButton}/>
-      </TouchableOpacity>
+      <TopBar title="현황 리포트"/>
+      <View style={{...styles.wholeContainer,marginTop:top}}>
+      <CharacterContainer 
+      userName={userName} 
+      userStyle={found ?? {
+        title:'',
+        characteristic:'',
+        description:'',
+        leftColor:'',
+        rightColor:'',
+        image:null,
+      }} />
 
-      <Text style={styles.topTitle}>현황 리포트</Text>
-      <Image source={require('../../assets/icons/setting.png')} style={styles.settingButton}/>
+      <View style={styles.styleExplainContainer}> 
+        <Text style={{
+          fontSize:hScale(16),
+          textAlign:'center',
+          top:vScale(16),
+          fontWeight:'bold',
+        }}>
+          {found?.characteristic} 투자 성향
+        </Text>
+        <Text style={{
+          fontSize:hScale(12),
+          color:'#000000',
+          textAlign:'center',
+          top:vScale(46),
+          position:'absolute',
+          }}>
+            {found?.description}
+        </Text>
+        <TouchableOpacity style={styles.styleExplainButton} 
+        onPress={() =>
+          navigation.navigate('DetailReport', {
+            selectedYear:selectedYear,
+            selectedMonth:selectedMonth,
+            report:report
+          })
+        }>
+          <Text style={{
+            fontSize:hScale(12),
+            color:Colors.outline,
+            textAlign:'center',
+            top:vScale(10),
+          }}>
+            투자분석 전체보기 
+          </Text>
+        </TouchableOpacity>
       </View>
 
-      <View style={styles.middleContainer}>
-        <View style={styles.investStyleContainer}>
-          <Text style={styles.titleText}>나의 투자 성향</Text>
-          
-          <Image source={require('../../assets/characters/fire_character.png')} style={styles.characterImage}/>
-
-          <Text style={styles.mainText}>김나무님의 투자는 {"\n"}<Text style={styles.boldText}>공격형</Text>입니다!</Text>
-
-          <Text style={styles.explainText}>
-            빠른 판단과 도전을 즐기지만, {"\n"}
-            가끔은 신중함이 필요할 수 있어요.{"\n"}{"\n"}
-            좋은 도전을 이어가면서,{"\n"}
-            다음엔 다양한 산업군에도 투자해보세요!</Text>
-
-
-            <View style={styles.bottomContainer}>
-              <TouchableOpacity style={styles.entireAnaylzeButton} onPress={() => navigation.navigate('DetailReport' as never)}>
-                <Text style={styles.entireAnaylzeText}>투자분석 전체보기</Text>
-                <Image source={require('../../assets/icons/right.png')} style={styles.rightArrowImage}/>
-              </TouchableOpacity>
-            </View>
+      <View style={styles.monthSearchContainer}>
+        <View style={styles.monthSearchTextContainer}>
+          <Text style={{
+            fontSize:hScale(16),
+            color:Colors.primaryDark,
+          }}>
+            {selectedYear}년 {selectedMonth}월
+          </Text>
+          <View style={{width:hScale(4)}}></View>
+          <Text style={{
+            fontSize:hScale(16),
+            color:'#000000',
+          }}>
+            투자 분석 조회하기
+          </Text>
         </View>
 
-        <View style={styles.searchContainer}>
-          <Text style={styles.searchDate}>{formatDate()} <Text style={styles.searchText}>투자 분석 조회하기</Text></Text>
-          <TouchableOpacity onPress={showCalendar}>
-          <Image source={require('../../assets/icons/calendar.png')} style={styles.calendarImage}/>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={{
+          left:hScale(272),
+          top:vScale(8),
+          position:'absolute',
+        }} onPress={showCalendar}>
+          <Image source={require('../../assets/icons/calendar.png')}/>
+        </TouchableOpacity>
       </View>
 
       <CustomCalendar
@@ -84,7 +177,7 @@ export default function ReportScreen() {
         initialYear={selectedYear}
         initialMonth={selectedMonth}
       />
-
+</View>
     </View>
   );
 }

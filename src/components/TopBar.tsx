@@ -36,6 +36,7 @@ const TopBar = ({ title }: { title: string }) => {
         leftImage: {
             width:hScale(44),
             height:vScale(44),
+            tintColor: Colors.outline,
             //alignSelf: 'center',
         },
     
@@ -57,6 +58,7 @@ const TopBar = ({ title }: { title: string }) => {
         rightImage: {
             width:hScale(44),
             height:vScale(44),
+            tintColor: Colors.outline,
         },
     });
     

@@ -14,7 +14,8 @@ export const Colors = {
     primaryDim: '#94D585',
     secondaryContainer: '#FFF9E0',
     secondaryDim: '#EFD165',
-    secondaryDark: '#BE6800'
+    secondaryDark: '#BE6800',
+    middleGray: '#9F9F9F'
 } as const;
 
 export default Colors;

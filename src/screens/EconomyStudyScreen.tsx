@@ -4,6 +4,7 @@ import { styles } from '../styles/EconomyStudyScreen.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import NewsSummary from '../components/NewsSummary';
 import { Colors } from '../styles/Color.styles';
+import { useNavigation } from '@react-navigation/native';
 
 const newsData = [
     {
@@ -12,6 +13,7 @@ const newsData = [
     },
 ]
 export default function EconomyStudyScreen() {
+    const navigation = useNavigation();
     const {top} = useSafeAreaInsets();
     return (
         <View style={{width:'100%',height:'100%',backgroundColor:Colors.surface}}>
@@ -38,7 +40,9 @@ export default function EconomyStudyScreen() {
                 <View style={styles.wordTitleContainer}>
                     <Image source={require('../../assets/icons/pencil.png')} style={styles.wordTitleIcon} />
                     <Text style={styles.wordTitleText}>오늘의 경제 용어</Text>
-                <TouchableOpacity style={styles.seeAllButtonContainer}>
+                <TouchableOpacity style={styles.seeAllButtonContainer} onPress={()=>{
+                    navigation.navigate('EconomyWordScreen' as never);
+                }}>
                     <Text style={styles.seeAllButtonText}>전체보기</Text>
                     <Image source={require('../../assets/icons/chevron_forward.png')} style={styles.narrowImage} />
                 </TouchableOpacity>

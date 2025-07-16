@@ -32,7 +32,8 @@ export default function ReportScreen() {
             const res = await getReport(`${selectedYear}-${month}`);
             setReport(res);
         }catch(error){
-            console.error('Error fetching report:',error);
+            // console.error('Error fetching report:',error);
+            navigation.navigate('NoReport');
         }finally{
             setLoading(false);
         }
@@ -67,6 +68,8 @@ export default function ReportScreen() {
       image:require('../../assets/characters/fire_character.png'),
       leftColor:'#FFEFEF',
       rightColor:'#FFD6D6',
+      background:require('../../assets/icons/fire_background.png'),
+      textColor:Colors.red,
     },
     {title:'안정적인 중립형',
       characteristic :'중립형',
@@ -74,6 +77,8 @@ export default function ReportScreen() {
       image:require('../../assets/characters/stone_character.png'),
       leftColor:'#F1F1F1',
       rightColor:'#DCDCDC',
+      background:require('../../assets/icons/rock_background.png'),
+      textColor:Colors.outline,
     },
     {title:'굳건한 방어형',
       characteristic :'방어형',
@@ -81,9 +86,11 @@ export default function ReportScreen() {
       image:require('../../assets/characters/water_character.png'),
       leftColor:'#E4F2FF',
       rightColor:'#C6E3FF',
+      background:require('../../assets/icons/water_background.png'),
+      textColor:Colors.blue,
     }
   ]
-
+  const month = String(selectedMonth).padStart(2, '0');  // "02"
   const found = useMemo(
     () => investStyle.find((i) => i.characteristic === investmentStyle) || null,
     [investmentStyle],
@@ -105,6 +112,8 @@ export default function ReportScreen() {
         leftColor:'',
         rightColor:'',
         image:null,
+        background:null,
+        textColor:'',
       }} />
 
       <View style={styles.styleExplainContainer}> 
@@ -150,7 +159,7 @@ export default function ReportScreen() {
             fontSize:hScale(16),
             color:Colors.primaryDark,
           }}>
-            {selectedYear}년 {selectedMonth}월
+            {selectedYear}년 {month}월
           </Text>
           <View style={{width:hScale(4)}}></View>
           <Text style={{
@@ -166,7 +175,7 @@ export default function ReportScreen() {
           top:vScale(8),
           position:'absolute',
         }} onPress={showCalendar}>
-          <Image source={require('../../assets/icons/calendar.png')}/>
+          <Image source={require('../../assets/icons/calendar.png')} style={{width:hScale(44),height:vScale(44)}}/>
         </TouchableOpacity>
       </View>
 

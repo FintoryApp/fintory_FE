@@ -13,6 +13,8 @@ interface CharacterContainerProps {
     leftColor: string;
     rightColor: string;
     image: any;
+    background:any;
+    textColor:string;
   }|null;
 }
 
@@ -22,14 +24,17 @@ const CharacterContainer: React.FC<CharacterContainerProps> = ({ userName, userS
       <Text style={{ fontSize: hScale(16), color: '#000000' }}>
         {userName}님의 투자 성향은
       </Text>
-      <Text style={{ fontSize: hScale(24), color: Colors.red, fontWeight: 'bold' }}>
+      <Text style={{ fontSize: hScale(24), color: userStyle?.textColor, fontWeight: 'bold' }}>
         {userStyle?.title}
         <Text style={{ fontSize: hScale(16), color: '#000000', fontWeight: 'medium' }}>
           입니다.
         </Text>
       </Text>
     </View>
+    <Image source={userStyle?.background} 
+    style={{position:'absolute',top:vScale(8),width:hScale(328),height:vScale(262)}} />
     <Image source={userStyle?.image} style={styles.characterImage} />
+    
   </View>
 );
 
@@ -56,6 +61,8 @@ export const styles = StyleSheet.create({
     position:'absolute',
     alignSelf:'center',
     top:vScale(82),
+    width:hScale(168),
+    height:vScale(168),
   },})
 
 export default CharacterContainer;

@@ -68,20 +68,20 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
       onRequestClose={onClose}
     >
       <TouchableWithoutFeedback onPress={onClose}>
-      <View style={styles.modalOverlay}>
-        <SafeAreaView style={styles.safeArea}>
+      
+        <SafeAreaView >
           <TouchableWithoutFeedback onPress={()=>{}}>
           <View style={styles.calendarContainer}>
             {/* 년도 네비게이션 */}
             <View style={styles.yearNavigation}>
               <TouchableOpacity onPress={goToPreviousYear} style={styles.yearNavigationButton}>
-                <Image source={require('../../assets/icons/left.png')} />
+                <Image source={require('../../assets/icons/chevron_backward.png')} style={{width:hScale(6.74),height:vScale(11.5)}} />
               </TouchableOpacity>
               
               <Text style={styles.yearText}>{selectedYear}</Text>
               
               <TouchableOpacity onPress={goToNextYear} style={styles.yearNavigationButton}>
-              <Image source={require('../../assets/icons/right.png')} />
+              <Image source={require('../../assets/icons/chevron_forward.png')} style={{width:hScale(6.74),height:vScale(11.5)}} />
               </TouchableOpacity>
             </View>
             
@@ -118,7 +118,6 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
           </View>
           </TouchableWithoutFeedback>
         </SafeAreaView>
-      </View>
       </TouchableWithoutFeedback>
     </Modal>
   );
@@ -127,19 +126,28 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    top:vScale(230),
+    width: hScale(156),
+    height:vScale(264),
+    top:vScale(248),
     left:hScale(188),
-  },
-  safeArea: {
+    borderWidth:hScale(1),
+    borderColor:Colors.outline,
+    borderRadius:hScale(8),
+    paddingVertical:vScale(16),
+    paddingHorizontal:hScale(16),
   },
 
   calendarContainer: {
     backgroundColor: '#FFFFFF',
+    
     borderRadius: hScale(8),
-    //padding: hScale(12),
     width: hScale(156),
     height:vScale(264),
+    top:vScale(253),
+    left:hScale(188),
     alignItems: 'center',
+    borderWidth:hScale(1),
+    borderColor:Colors.outline,
   },
   yearNavigation: {
     flexDirection: 'row',
@@ -159,6 +167,7 @@ const styles = StyleSheet.create({
   yearText: {
     fontSize: hScale(16),
     color: Colors.black,
+    
   },
   monthGrid: {
     flexDirection: 'row',
@@ -201,6 +210,7 @@ const styles = StyleSheet.create({
     marginTop:vScale(10),
     marginBottom:vScale(16),
     alignItems: 'center',
+    justifyContent:'center',
   },
   confirmButtonText: {
     color: 'white',

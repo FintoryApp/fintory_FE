@@ -25,7 +25,7 @@ export default function DetailReportScreen() {
         () => report?.data?.investmentArea?.map((a:any) => a.percentage) ?? [],
         [report]
     );
-    const pieColors = ['#00C900', '#AEAEAE', '#FFD100'];
+    const pieColors = [Colors.primary,  Colors.secondary,Colors.outlineVariant,];
     const pieLabels = useMemo(
         () => report?.data?.investmentArea?.map((a:any) => a.category) ?? [],
         [report]
@@ -49,6 +49,8 @@ export default function DetailReportScreen() {
       image:require('../../assets/characters/fire_character.png'),
       leftColor:'#FFEFEF',
       rightColor:'#FFD6D6',
+      background:require('../../assets/icons/fire_background.png'),
+      textColor:Colors.red,
     },
     {title:'안정적인 중립형',
       characteristic :'중립형',
@@ -56,6 +58,8 @@ export default function DetailReportScreen() {
       image:require('../../assets/characters/stone_character.png'),
       leftColor:'#F1F1F1',
       rightColor:'#DCDCDC',
+      background:require('../../assets/icons/rock_background.png'),
+      textColor:Colors.outline,
     },
     {title:'굳건한 방어형',
       characteristic :'방어형',
@@ -63,6 +67,8 @@ export default function DetailReportScreen() {
       image:require('../../assets/characters/water_character.png'),
       leftColor:'#E4F2FF',
       rightColor:'#C6E3FF',
+      background:require('../../assets/icons/water_background.png'),
+      textColor:Colors.blue,
     }
   ]
 
@@ -93,6 +99,8 @@ export default function DetailReportScreen() {
         leftColor:'',
         rightColor:'',
         image:null,
+        background:null,
+        textColor:'',
       }} />
 
 

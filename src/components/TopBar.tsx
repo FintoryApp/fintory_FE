@@ -34,6 +34,8 @@ const TopBar = ({ title }: { title: string }) => {
             justifyContent:'center',
         },
         leftImage: {
+            width:hScale(44),
+            height:vScale(44),
             //alignSelf: 'center',
         },
     
@@ -53,7 +55,8 @@ const TopBar = ({ title }: { title: string }) => {
             
         },
         rightImage: {
-           
+            width:hScale(44),
+            height:vScale(44),
         },
     });
     

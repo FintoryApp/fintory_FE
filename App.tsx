@@ -27,6 +27,8 @@ import StockMainScreen from './src/screens/StockMainScreen';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RouteProp,useRoute } from '@react-navigation/native';
 import type { RootStackParamList } from './src/navigation/RootStackParamList';
+import NoReportScreen from './src/screens/NoReportScreen';
+import EconomyStudyScreen from './src/screens/EconomyStudyScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -38,6 +40,7 @@ function ReportStack() {
       <Stack.Screen name="ReportMain" component={ReportScreen} />
       {/* ReportScreen → navigation.navigate('DetailReport') 로 이동 */}
       <Stack.Screen name="DetailReport" component={DetailReportScreen} />
+      <Stack.Screen name="NoReport" component={NoReportScreen} />
     </Stack.Navigator>
   );
 }
@@ -83,8 +86,10 @@ function RootNavigation(  ) {
       {/* ② 실제 네비게이션 트리 */}
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="EconomyStudy" component={EconomyStudyScreen} />
           <Stack.Screen name="Report" component={ReportScreen} />
-       <Stack.Screen name="DetailReport" component={DetailReportScreen} />
+          <Stack.Screen name="NoReport" component={NoReportScreen} />
+          <Stack.Screen name="DetailReport" component={DetailReportScreen} />
          <Stack.Screen name="Stock" component={StockMainScreen}/>
          <Stack.Screen name="First" component={FirstScreen} />
          <Stack.Screen name="Login" component={LoginScreen} />

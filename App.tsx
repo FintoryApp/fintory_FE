@@ -30,6 +30,7 @@ import type { RootStackParamList } from './src/navigation/RootStackParamList';
 import NoReportScreen from './src/screens/NoReportScreen';
 import EconomyStudyScreen from './src/screens/EconomyStudyScreen';
 import EconomyWordScreen from './src/screens/EconomyWordScreen';
+import WordDetailScreen from './src/screens/WordDetailScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -89,7 +90,7 @@ function RootNavigation(  ) {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="EconomyWordScreen" component={EconomyWordScreen} />
           <Stack.Screen name="EconomyStudy" component={EconomyStudyScreen} />
-          
+          <Stack.Screen name="EconomyWordDetailScreen" component={WordDetailScreen} />
           <Stack.Screen name="Report" component={ReportScreen} />
           <Stack.Screen name="NoReport" component={NoReportScreen} />
           <Stack.Screen name="DetailReport" component={DetailReportScreen} />

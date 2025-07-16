@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Image, StyleSheet, Text, StyleProp, ViewStyle } from 'react-native';
+import { View, TextInput, TouchableOpacity, Image, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { hScale, vScale } from '../styles/Scale.styles';
 import { Colors } from '../styles/Color.styles';
 

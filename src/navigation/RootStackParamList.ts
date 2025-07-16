@@ -3,6 +3,7 @@ export type RootStackParamList = {
     ReportMain: undefined;
     EconomyStudy: undefined;
     EconomyWordScreen: undefined;
+    EconomyWordDetailScreen: { word: string };
     Report: undefined;
     DetailReport: { selectedYear: number; selectedMonth: number;report:any };
     StockMain: undefined;

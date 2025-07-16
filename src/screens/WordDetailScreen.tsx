@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
         
     },
     pencilIcon: {
+        marginRight: hScale(4),
         width: hScale(32),
         height: vScale(32),
     },  

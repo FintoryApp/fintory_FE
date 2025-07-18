@@ -24,7 +24,9 @@ export default function EconomyStudyScreen() {
                     <Text style={styles.newsTitleText}>오늘의 경제 뉴스</Text>
                     <Text style={styles.dateTitleText}>2025.07.16</Text>
                 </View>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={()=>{
+                    navigation.navigate('EconomyNewsDetailScreen' as never);
+                }}>
                     <NewsSummary title={newsData[0].title} image={newsData[0].image} />
                     </TouchableOpacity>
                     <TouchableOpacity>

@@ -1,56 +1,15 @@
 import { StyleSheet, Dimensions, PixelRatio } from 'react-native';
-
-const { width: W, height: H } = Dimensions.get('window');
-
-const guidelineW = 360;
-const guidelineH = 740;
-
-export const hScale = (s: number) => {
-    const newSize = (W / guidelineW) * s;
-    return Math.round(PixelRatio.roundToNearestPixel(newSize));
-};
-  
-const vScale = (s: number) => {
-    const newSize = (H / guidelineH) * s;
-    return Math.round(PixelRatio.roundToNearestPixel(newSize));
-};
+import { hScale, vScale } from './Scale.styles';
+import { Colors } from './Color.styles';
 
 export const styles = StyleSheet.create({
-    wholeContainer: {
-        flex: 1,
-        backgroundColor: '#F4FFF4',
-    },
-
-    topContainer: {
-        width: hScale(360),
-        height: vScale(60),
-        position:'absolute',
-        top:vScale(32),
-    },
-
-    topTitle: {
-        fontSize: hScale(16),
-        fontWeight: 'bold',
-        left:hScale(157.5),
-        top:vScale(19),
-        position:'absolute',
-    },
-
-    leftButtonConainer: {
-        width: hScale(44),
-        height: vScale(44),
-        left:hScale(16),
-        top:vScale(8),
-        position:'absolute',
-    },
-
-    leftButton: {
-        alignSelf:'center',
-        justifyContent:'center',
-        position:'absolute',
-    },
-
     
+    middleContainer: {
+        width: hScale(360),
+        height: vScale(274),
+        alignSelf:'center',
+        flexDirection:'column',
+    },
 
     idConatiner: {
         width: hScale(328),

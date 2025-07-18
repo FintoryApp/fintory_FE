@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { styles, hScale } from '../styles/FindPassword.styles.ts';
+import { styles } from '../styles/FindPassword.styles.ts';
+import { hScale,vScale } from '../styles/Scale.styles.ts';
+import { Colors } from '../styles/Color.styles.ts';
+import TopBar from '../components/TopBar.tsx';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 export default function FindPasswordScreen() {
+    const {top} = useSafeAreaInsets();
   const navigation = useNavigation();
   const [id, setId] = useState('');
   const [phoneNum1, setPhoneNum1] = useState('');
@@ -26,29 +31,23 @@ export default function FindPasswordScreen() {
   };
 
   return (
-    <View style={styles.wholeContainer}>
-        <View style={styles.topContainer}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.leftButtonConainer}>
-                <Image source={require('../../assets/icons/left.png')} style={styles.leftButton}/>
-            </TouchableOpacity>
-                
-            <Text style={styles.topTitle}>비밀번호 변경하기</Text>
-        </View>
+    <View style={{width:'100%',height:'100%',backgroundColor:Colors.surface}}>
+        <TopBar title='비밀번호 변경하기' />
 
-        <View style={styles.middleContainer}>
+        <View style={{...styles.middleContainer,marginTop:top}}>
             <View style={styles.idConatiner}>
                 <Text style={styles.idTitle}>아이디</Text>
                 <TextInput 
                     style={styles.idInput}
                     placeholder="아이디를 입력하세요"
-                    placeholderTextColor="#AEAEAE"
+                    placeholderTextColor={Colors.outline}
                     value={id}
                     onChangeText={setId}
                 />
             </View>
             <View style={styles.phoneNumContainer}>
                 <View style={styles.phoneNumTitleContainer}>    
-                    <Text style={styles.phoneNumTitle}>전화번호 인증</Text>
+                    <Text style={styles.idTitle}>전화번호 인증</Text>
                     <TouchableOpacity style={styles.getCodeButton}>
                         <Text style={styles.getCodeButtonText}>인증번호 받기</Text>
                     </TouchableOpacity>
@@ -56,22 +55,22 @@ export default function FindPasswordScreen() {
 
                 <View style={styles.phoneNumInputContainer}>
                 <TextInput 
-                    style={styles.phoneNumInput1}
+                    style={{...styles.idInput,width:hScale(70)}}
                     placeholder="010"
-                    placeholderTextColor="#AEAEAE"
+                    placeholderTextColor={Colors.outline}
                     value={phoneNum1}
                     onChangeText={setPhoneNum1}
                     />
                     <TextInput 
-                    style={styles.phoneNumInput2}
-                    placeholderTextColor="#AEAEAE"
+                    style={{...styles.idInput,width:hScale(113)}}
+                    placeholderTextColor={Colors.outline}
                     value={phoneNum2}
                     onChangeText={setPhoneNum2}
                     
                     />
                     <TextInput 
-                    style={styles.phoneNumInput3}
-                    placeholderTextColor="#AEAEAE"
+                    style={{...styles.idInput,width:hScale(113)}}
+                    placeholderTextColor={Colors.outline}
                     value={phoneNum3}
                     onChangeText={setPhoneNum3}
                     />
@@ -81,13 +80,13 @@ export default function FindPasswordScreen() {
             <View style={styles.codeContainer}>
                 <View style={styles.codeInputContainer}>
                     <View style={styles.codeInputTitleContainer}>
-                        <Text style={styles.codeInputTitle}>인증번호</Text>
-                        <TouchableOpacity style={styles.codeCheckContainer} onPress={handleCodeVerification}>
-                            <Text style={styles.codeCheckText}>인증번호 확인</Text>
+                        <Text style={styles.idTitle}>인증번호</Text>
+                        <TouchableOpacity style={styles.getCodeButton} onPress={handleCodeVerification}>
+                            <Text style={styles.getCodeButtonText}>인증번호 확인</Text>
                         </TouchableOpacity>
                     </View>
                     <TextInput 
-                        style={styles.codeInput}
+                        style={styles.idInput}
                         placeholder="인증번호를 입력하세요"
                         placeholderTextColor="#AEAEAE"
                         value={code}
@@ -107,15 +106,14 @@ export default function FindPasswordScreen() {
             </View>
         </View>
 
-        <View style={styles.bottomContainer}>
-            <TouchableOpacity style={styles.logInButton} onPress={() => {
+            <TouchableOpacity style={{...styles.bottomContainer,top:vScale(440)+top}} onPress={() => {
                 if(isCodeVerified) {
                     navigation.navigate('ChangePassword' as never);
                 }
             }}>
                 <Text style={styles.logInButtonText}>인증 완료하기</Text>
             </TouchableOpacity>
-        </View>
+        
 
       
     </View> //wholeContainer끝

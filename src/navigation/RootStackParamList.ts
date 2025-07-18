@@ -10,7 +10,6 @@ export type RootStackParamList = {
     DetailReport: { selectedYear: number; selectedMonth: number;report:any };
     StockMain: undefined;
     Stock: undefined;
-    
     Login: undefined;
     Main: undefined;
     Home: undefined;
@@ -18,5 +17,4 @@ export type RootStackParamList = {
     FindPassword: undefined;
     ChangePassword: undefined;
     FindId: undefined;
-    
   };

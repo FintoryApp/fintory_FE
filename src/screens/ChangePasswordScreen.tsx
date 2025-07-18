@@ -2,24 +2,23 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from '../styles/ChangePasswordScreen.styles.ts';
-import { hScale } from '../styles/ChangePasswordScreen.styles.ts';
+import { hScale,vScale } from '../styles/Scale.styles.ts';
+import { Colors } from '../styles/Color.styles.ts';
+import TopBar from '../components/TopBar.tsx';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ChangePasswordScreen() {
+    const {top} = useSafeAreaInsets();
   const navigation = useNavigation();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   return (
-    <View style={styles.wholeContainer}>
-        <View style={styles.topContainer}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.leftButtonConainer}>
-                <Image source={require('../../assets/icons/left.png')} style={styles.leftButton}/>
-            </TouchableOpacity>
-                
-            <Text style={styles.topTitle}>로그인</Text>
-        </View>
+    <View style={{width:'100%',height:'100%',backgroundColor:Colors.surface}}>
+        <TopBar title='비밀번호 변경하기' />
 
         
+        <View style={{...styles.middleContainer,marginTop:vScale(64)+top}}></View>
             <View style={styles.idConatiner}>
                 <Text style={styles.idTitle}>새로운 비밀번호</Text>
                 <TextInput 

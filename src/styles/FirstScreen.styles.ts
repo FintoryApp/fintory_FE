@@ -1,24 +1,14 @@
 import { StyleSheet, Dimensions, PixelRatio } from 'react-native';
+import { hScale, vScale } from './Scale.styles';
+import { Colors } from './Color.styles';
 
-const { width: W, height: H } = Dimensions.get('window');
 
-const guidelineW = 360;
-const guidelineH = 740;
-
-const hScale = (s: number) => {
-    const newSize = (W / guidelineW) * s;
-    return Math.round(PixelRatio.roundToNearestPixel(newSize));
-};
-  
-const vScale = (s: number) => {
-    const newSize = (H / guidelineH) * s;
-    return Math.round(PixelRatio.roundToNearestPixel(newSize));
-};
 
 export const styles = StyleSheet.create({
     wholeContainer:{
-        backgroundColor:'#00C900',
-        flex:1,
+        width: '100%',
+        height: '100%',
+        backgroundColor: Colors.primary,
     },
     logoContainer:{
         top:vScale(195),
@@ -26,7 +16,7 @@ export const styles = StyleSheet.create({
     },
     logo:{
         width:hScale(161.41),
-        height:hScale(133),
+        height:vScale(133),
     },
     nameContainer:{
         position:'absolute',
@@ -49,47 +39,50 @@ export const styles = StyleSheet.create({
     },
 
     loginContainer:{
-        position:'absolute',
-        top:vScale(472),
-        left:hScale(16),
+        alignSelf:'center',
         width:hScale(328),
-        height:hScale(211),
+        height:vScale(211),
+        flexDirection:'column',
+        justifyContent:'space-between',
+        alignItems:'center',
+        position:'absolute',
+        
     },
     startButton:{
         width:hScale(328),
         height:hScale(72),
-        backgroundColor:'#F8F8F8',
-        borderRadius:hScale(12),
-        padding:hScale(20),
+        backgroundColor:Colors.white,
+        borderRadius:hScale(8),
+        paddingHorizontal:hScale(20),
+        justifyContent:'center',
     },
 
     startButtonText:{
         fontSize:hScale(24),
-        color:'#00C900',
-        textAlign:'center',
+        color:Colors.primary,
         fontWeight:'bold',
+        textAlign:'center',
     },
 
     loginButton:{
+        marginTop:vScale(16),
         width:hScale(328),
         height:hScale(72),
-        position:'absolute',
-        top:vScale(88),
-        backgroundColor:'#006D00',
-        borderRadius:hScale(12),
-        padding:hScale(20),
+        backgroundColor:Colors.primaryDark,
+        borderRadius:hScale(8),
+        paddingHorizontal:hScale(20),
+        justifyContent:'center',
     },
 
     loginButtonText:{
         fontSize:hScale(24),
-        color:'#FFFFFF',
+        color:Colors.white,
         textAlign:'center',
         fontWeight:'bold',
     },
 
     snsLoginContainer:{
-        position:'absolute',
-        top:vScale(176),
+        marginTop:vScale(16),
         width:hScale(328),
         height:hScale(35),
         flexDirection:'row',
@@ -99,69 +92,54 @@ export const styles = StyleSheet.create({
         height:vScale(35),
         backgroundColor:'#FEE500',
         borderRadius:hScale(6),
+        justifyContent:'center',
+        alignItems:'center',
     },
 
     kakaoLoginButtonContainer:{
         width:hScale(94),
         height:vScale(16),
-        left:hScale(31),
-        top:vScale(10),
-        position:'absolute',
+        flexDirection:'row',
+        alignItems:'center',
     },
 
     kakaoImageContainer:{
         width:hScale(16),
         height:vScale(16),
-        position:'absolute',
+        marginRight:hScale(8),
     },
 
-    kakaoLoginButtonImage:{
-        width:hScale(15.3),
-        height:vScale(14),
-        position:'absolute',
-        top:vScale(1),
-        left:hScale(0.8),
-    },
 
     kakaoLoginButtonText:{
         fontSize:hScale(12),
-        color:'#000000',
-        left:hScale(24),
-        width:hScale(70),
-        height:vScale(16),
-        position:'absolute',
+        color:Colors.black,
         textAlign:'center',
+        
     },
     googleLoginButton:{
         width:hScale(156),
         height:vScale(35),
-        left:hScale(172),
-        position:'absolute',
-        backgroundColor:'#FFFFFF',
+        marginLeft:'auto',
+        backgroundColor:Colors.white,
         borderRadius:hScale(6),
+        borderWidth:1,
+        borderColor:Colors.black,
+        justifyContent:'center',
+        alignItems:'center',
+        flexDirection:'row',
     },
 
 
     googleImageContainer:{
         width:hScale(17.83),
         height:vScale(17.5),
-        left:hScale(10.7),
-        top:vScale(8.75),
-        position:'absolute',
+        marginRight:hScale(10),
     },
 
-    googleLoginButtonImage:{
-        width:hScale(17.47),
-        height:vScale(17.5),
-        position:'absolute',
-    },
 
     googleLoginButtonText:{
-        left:hScale(37.9),
-        top:vScale(12.69),
         width:hScale(106.53),
         height:vScale(11.74),
-        position:'absolute',
     },
 
     

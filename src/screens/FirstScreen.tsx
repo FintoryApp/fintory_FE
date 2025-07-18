@@ -3,8 +3,12 @@ import { View, Text, ScrollView, TouchableOpacity, ImageBackground, Image } from
 import FastImage from 'react-native-fast-image';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from '../styles/FirstScreen.styles';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { vScale } from '../styles/Scale.styles';
+
 
 export default function FirstScreen() {
+    const {top} = useSafeAreaInsets();
   const navigation = useNavigation();
   return (
     <View style={styles.wholeContainer}>
@@ -23,7 +27,7 @@ export default function FirstScreen() {
             <Text style={styles.text}>Create your own Finance Story!</Text>
         </View>  
 
-        <View style={styles.loginContainer}>
+        <View style={[styles.loginContainer, {top:top+vScale(440)}]}> 
             <TouchableOpacity style={styles.startButton}>
                <Text style={styles.startButtonText}>시작하기</Text>
             </TouchableOpacity>
@@ -38,7 +42,7 @@ export default function FirstScreen() {
                 <TouchableOpacity style={styles.kakaoLoginButton}>
                     <View style={styles.kakaoLoginButtonContainer}>
                         <View style={styles.kakaoImageContainer}>
-                        <Image source={require('../../assets/icons/kakaoLogo.png')} style={styles.kakaoLoginButtonImage} />
+                        <Image source={require('../../assets/icons/kakaoLogo.png')} />
                         </View>
                         <Text style={styles.kakaoLoginButtonText}>카카오 로그인</Text>
                     </View>
@@ -49,7 +53,7 @@ export default function FirstScreen() {
 
                 <TouchableOpacity style={styles.googleLoginButton}>
                         <View style={styles.googleImageContainer}>
-                            <Image source={require('../../assets/icons/googleLogo.png')} style={styles.googleLoginButtonImage} />
+                            <Image source={require('../../assets/icons/googleLogo.png')} />
                         </View>
                         <Image source={require('../../assets/icons/SignInWithGoogle.png')} style={styles.googleLoginButtonText} />
                 </TouchableOpacity>

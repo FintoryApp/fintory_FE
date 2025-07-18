@@ -1,4 +1,5 @@
 export type RootStackParamList = {
+  First: undefined;
     NoReport: undefined;
     ReportMain: undefined;
     EconomyStudy: undefined;
@@ -9,7 +10,7 @@ export type RootStackParamList = {
     DetailReport: { selectedYear: number; selectedMonth: number;report:any };
     StockMain: undefined;
     Stock: undefined;
-    First: undefined;
+    
     Login: undefined;
     Main: undefined;
     Home: undefined;

@@ -1,8 +1,7 @@
 import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
 import styles from "../styles/EconomyNewsDetailScreen.styles";
-import Colors from "../styles/Color.styles";
+import {Colors} from "../styles/Color.styles";
 import TopBar from "../components/TopBar";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hScale, vScale } from "../styles/Scale.styles";
 import { useState } from "react";
 
@@ -28,13 +27,12 @@ const aiSummary = `미국의 1분기 경제 성장률이 마이너스 0.3%로 �
 그러나 여론 조사에 따르면 그의 경제 지지율은 36%로 최저치를 기록하고 있으며, 백악관은 비판적인 언론을 탓하고 있습니다.`;
 
 export default function EconomyNewsDetailScreen() {
-    const {top} = useSafeAreaInsets();
     const [isAiSummaryOpen, setIsAiSummaryOpen] = useState(false);
     
     return (
         <View style={{width:'100%',height:'100%',backgroundColor:Colors.surface}}>
             <TopBar title='경제 뉴스' />
-            <View style={{...styles.newsContainer,marginTop:top}}>
+            <View style={{...styles.newsContainer,marginTop:vScale(60)}}>
                 <View style={styles.newsTitleContainer}>
                     <Text style={styles.newsTitleText}>부메랑 된 트럼프 관세 전생...미국 성장률 -0.3%</Text>
                     <View style={styles.newsInfoContainer}>

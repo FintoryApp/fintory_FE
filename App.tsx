@@ -89,6 +89,7 @@ function RootNavigation(  ) {
       {/* ② 실제 네비게이션 트리 */}
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="First" component={FirstScreen} />
         <Stack.Screen name="EconomyStudy" component={EconomyStudyScreen} />
         <Stack.Screen name="EconomyWordScreen" component={EconomyWordScreen} />
           <Stack.Screen name="EconomyWordDetailScreen" component={WordDetailScreen} />
@@ -97,7 +98,7 @@ function RootNavigation(  ) {
           <Stack.Screen name="NoReport" component={NoReportScreen} />
           <Stack.Screen name="DetailReport" component={DetailReportScreen} />
          <Stack.Screen name="Stock" component={StockMainScreen}/>
-         <Stack.Screen name="First" component={FirstScreen} />
+         
          <Stack.Screen name="Login" component={LoginScreen} />
          <Stack.Screen name="Main" component={MainTabNavigator} />
          <Stack.Screen name="Home" component={HomeScreen} />

@@ -2,24 +2,22 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from '../styles/LoginScreen.styles.ts';
-import { hScale } from '../styles/LoginScreen.styles.ts';
+import { hScale,vScale } from '../styles/Scale.styles';
+import { Colors } from '../styles/Color.styles.ts';
+import TopBar from '../components/TopBar.tsx';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
+    const {top} = useSafeAreaInsets();
   const navigation = useNavigation();
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
 
   return (
-    <View style={styles.wholeContainer}>
-        <View style={styles.topContainer}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.leftButtonConainer}>
-                <Image source={require('../../assets/icons/left.png')} style={styles.leftButton}/>
-            </TouchableOpacity>
-                
-            <Text style={styles.topTitle}>로그인</Text>
-        </View>
+    <View style={{width:'100%',height:'100%',backgroundColor:Colors.surface}}>
+        <TopBar title='로그인' />
 
-        <View style={styles.middleContainer}>
+        <View style={{...styles.middleContainer,marginTop:vScale(64)+top}}>
             <View style={styles.idConatiner}>
                 <Text style={styles.idTitle}>아이디</Text>
                 <TextInput 
@@ -33,7 +31,7 @@ export default function LoginScreen() {
             <View style={styles.passwordContainer}>
                 <Text style={styles.passwordTitle}>비밀번호</Text>
                 <TextInput 
-                    style={styles.passwordInput}
+                    style={styles.idInput}
                     placeholder="비밀번호를 입력하세요"
                     placeholderTextColor="#AEAEAE"
                     value={password}
@@ -43,12 +41,11 @@ export default function LoginScreen() {
             </View>
         </View>
 
-        <View style={styles.bottomContainer}>
-            <View style={styles.logInContainer}>
-                <TouchableOpacity style={styles.logInButton}>
+        <View style={{...styles.bottomContainer,top:vScale(440)+top}}>
+            
+                <TouchableOpacity style={styles.logInContainer}>
                     <Text style={styles.logInButtonText}>로그인</Text>
                 </TouchableOpacity>
-            </View>
 
             <View style={styles.findContainer}>
                 <TouchableOpacity style={styles.findButton} onPress={()=> navigation.navigate('FindId' as never)}>

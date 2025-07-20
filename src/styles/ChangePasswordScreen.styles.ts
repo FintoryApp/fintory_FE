@@ -11,69 +11,43 @@ export const styles = StyleSheet.create({
         flexDirection:'column',
     },
 
-    idConatiner: {
+    idContainer: {
         width: hScale(328),
         height: vScale(63),
-        position:'absolute',
-        top:vScale(112),
-        left:hScale(16),
+        alignSelf:'center',
     },
 
     idTitle: {
         fontSize: hScale(16),
         fontWeight: 'bold',
-        width: hScale(328),
-        height: vScale(22),
-        position:'absolute',
 
     },
 
     idInput: {
+        marginTop: vScale(8),
         width: hScale(328),
         height: vScale(40),
-        position:'absolute',
-        top:vScale(30),
         borderWidth: 1,
-        borderColor: '#AEAEAE',
+        borderColor: Colors.middleGray,
         borderRadius: hScale(6),
         paddingHorizontal: hScale(8),
-        paddingVertical: 0,
+        paddingVertical: vScale(12),
         fontSize: hScale(12),
         textAlignVertical: 'center',
         includeFontPadding: false,
-        lineHeight: vScale(40),
     },
 
-    passwordContainer: {
+    errorContainer: {
         width: hScale(328),
-        height: vScale(90),
-        position:'absolute',
-        top:vScale(195),
-        left:hScale(16),
+        height: vScale(16),
+        marginTop: vScale(8),
+        
     },
 
-    passwordTitle: {
-        fontSize: hScale(16),
-        fontWeight: 'bold',
-        width: hScale(328),
-        height: vScale(22),
-        position:'absolute',
-    },
-
-    passwordInput: {
-        width: hScale(328),
-        height: vScale(40),
-        position:'absolute',
-        top:vScale(30),
-        borderWidth: 1,
-        borderColor: '#AEAEAE',
-        borderRadius: hScale(6),
-        paddingHorizontal: hScale(8),
-        paddingVertical: 0,
+    errorText: {
         fontSize: hScale(12),
-        textAlignVertical: 'center',
-        includeFontPadding: false,
-        lineHeight: vScale(40),
+        color:Colors.red,
+        
     },
 
     bottomContainer: {
@@ -82,26 +56,21 @@ export const styles = StyleSheet.create({
         position:'absolute',
         top:vScale(467),
         left:hScale(16),
-    },
-
-
-
-    logInButton: {
-        width: hScale(328),
-        height: vScale(72),
-        position:'absolute',
-        backgroundColor:'#00C900',
+        backgroundColor:Colors.primary,
         borderRadius: hScale(12),
         justifyContent: 'center',
         alignItems: 'center',
     },
 
+
+
+    
+
     logInButtonText: {
         fontSize: hScale(24),
         fontWeight: 'bold',
-        color:'#FFFFFF',
+        color:Colors.white,
         textAlign:'center',
-        lineHeight: vScale(72),
     },
 
     findContainer: {

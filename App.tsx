@@ -91,6 +91,8 @@ function RootNavigation(  ) {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="First" component={FirstScreen} />
         <Stack.Screen name="EconomyStudy" component={EconomyStudyScreen} />
+        
+        
         <Stack.Screen name="EconomyWordScreen" component={EconomyWordScreen} />
           <Stack.Screen name="EconomyWordDetailScreen" component={WordDetailScreen} />
           <Stack.Screen name="EconomyNewsDetailScreen" component={EconomyNewsDetailScreen} />

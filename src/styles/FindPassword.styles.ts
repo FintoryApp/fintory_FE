@@ -52,7 +52,7 @@ export const styles = StyleSheet.create({
     },
     getCodeButton: {
         marginLeft:hScale(8),
-        width: hScale(86),
+        width: hScale(90),
         height: vScale(24),
         paddingHorizontal: hScale(8),
         paddingVertical: vScale(4),

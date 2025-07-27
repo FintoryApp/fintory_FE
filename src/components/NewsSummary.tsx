@@ -3,22 +3,28 @@ import { hScale, vScale } from '../styles/Scale.styles';
 import { Colors } from '../styles/Color.styles';
 
 interface NewsSummaryProps{
-    title:string;
-    image:any;
+    title: any;
+    image: any; 
+    hour: number | string;
 }
 
-const NewsSummary:React.FC<NewsSummaryProps> = ({title,image}) => {
+const NewsSummary: React.FC<NewsSummaryProps> = ({title, image, hour}) => {
     return (
         <View style={styles.newsSummaryContainer}>
             <View style={styles.newsSummaryTitleContainer}>
-            <Text style={styles.newsSummaryTitle}>{title}</Text>
-            <Text style={styles.newsInfoTitle}>이데일리 • 3시간 전</Text>
+                <Text style={styles.newsSummaryTitle}>{title}</Text>
+                <Text style={styles.newsInfoTitle}>조선일보 • {hour}</Text>
             </View>
-            <Image source={image} style={styles.newsSummaryImage} />
+            <Image 
+                source={typeof image === 'string' ? { uri: image } : image} 
+                style={styles.newsSummaryImage} 
+            />
         </View>
     )
 }
+
 export default NewsSummary;
+
 const styles = StyleSheet.create({
     newsSummaryContainer: {
         width: hScale(328),

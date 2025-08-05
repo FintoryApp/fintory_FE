@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     container: {
         width: hScale(328),
         height: vScale(90),
-        marginBottom: vScale(4),
+        marginBottom: vScale(8),
         alignContent: 'center',
     },
     inputContainer: {
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     
    
     checkText: {
-        marginTop: vScale(8),
+        marginTop: vScale(4),
         fontSize: hScale(12),
         color: Colors.red,
     },

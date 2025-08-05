@@ -32,6 +32,7 @@ import EconomyStudyScreen from './src/screens/EconomyStudyScreen';
 import EconomyWordScreen from './src/screens/EconomyWordScreen';
 import WordDetailScreen from './src/screens/WordDetailScreen';
 import EconomyNewsDetailScreen from './src/screens/EconomyNewsDetailScreen';
+import SignInScreen from './src/screens/SignInScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -97,11 +98,8 @@ function RootNavigation(  ) {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="First" component={FirstScreen} />
+        <Stack.Screen name="SignIn" component={SignInScreen} />
         <Stack.Screen name="EconomyStudy" component={EconomyStudyScreen} />
-        
-        
-        
-        
         <Stack.Screen name="EconomyWordScreen" component={EconomyWordScreen} />
           <Stack.Screen name="EconomyWordDetailScreen" component={WordDetailScreen} />
           <Stack.Screen name="EconomyNewsDetailScreen" component={EconomyNewsDetailScreen} />

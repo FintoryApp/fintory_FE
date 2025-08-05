@@ -30,7 +30,7 @@ export default function FirstScreen() {
         </View>  
 
         <View style={[styles.loginContainer, {top:top+vScale(440)}]}> 
-            <HugeButton title="시작하기" onPress={() => navigation.navigate('Login' as never)}   
+            <HugeButton title="시작하기" onPress={() => navigation.navigate('SignIn' as never)}   
                     backgroundColor={Colors.white}
                     textColor={Colors.primary}/>
 

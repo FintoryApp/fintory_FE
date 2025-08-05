@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { hScale, vScale } from '../styles/Scale.styles';
 import MiddleButton from './MiddleButton';
-
+import { Colors } from '../styles/Color.styles';
 
 interface SimpleModalProps {
   isVisible: boolean;
@@ -58,8 +58,8 @@ const FindIdModal: React.FC<SimpleModalProps> = ({
             <MiddleButton 
               title={confirmText} 
               onPress={handleConfirm}
-              buttonColor="#00C900"
-              textColor="white"
+              buttonColor={Colors.primary}
+              textColor={Colors.white}
             />
           </View>
         </View>

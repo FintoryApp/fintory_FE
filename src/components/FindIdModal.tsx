@@ -8,20 +8,9 @@ import {
   Dimensions,
   PixelRatio,
 } from 'react-native';
+import { hScale, vScale } from '../styles/Scale.styles';
+import MiddleButton from './MiddleButton';
 
-const { width: W, height: H } = Dimensions.get('window');
-const guidelineW = 360;
-const guidelineH = 740;
-
-const hScale = (s: number) => {
-  const newSize = (W / guidelineW) * s;
-  return Math.round(PixelRatio.roundToNearestPixel(newSize));
-};
-
-const vScale = (s: number) => {
-  const newSize = (H / guidelineH) * s;
-  return Math.round(PixelRatio.roundToNearestPixel(newSize));
-};
 
 interface SimpleModalProps {
   isVisible: boolean;
@@ -31,6 +20,7 @@ interface SimpleModalProps {
   message2: string;
   confirmText?: string;
   onConfirm?: () => void;
+  onNavigateToFirst?: () => void;
 }
 
 const FindIdModal: React.FC<SimpleModalProps> = ({
@@ -41,12 +31,13 @@ const FindIdModal: React.FC<SimpleModalProps> = ({
   confirmText = '확인',
   id,
   onConfirm,
+  onNavigateToFirst,
 }) => {
   const handleConfirm = () => {
-    if (onConfirm) {
-      onConfirm();
-    }
     onClose();
+    if (onNavigateToFirst) {
+      onNavigateToFirst();
+    }
   };
 
   return (
@@ -63,9 +54,14 @@ const FindIdModal: React.FC<SimpleModalProps> = ({
             <Text style={styles.id}>{id}</Text>
             <Text style={styles.message2}>{message2}</Text>
           </View>
-          <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-                <Text style={styles.confirmButtonText}>{confirmText}</Text>
-              </TouchableOpacity>
+          <View style={styles.buttonContainer}>
+            <MiddleButton 
+              title={confirmText} 
+              onPress={handleConfirm}
+              buttonColor="#00C900"
+              textColor="white"
+            />
+          </View>
         </View>
       </View>
     </Modal>
@@ -136,6 +132,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     lineHeight: vScale(48),
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    top: vScale(147),
+    alignSelf:'center',
+    position: 'absolute',
   },
 });
 

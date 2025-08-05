@@ -142,7 +142,9 @@ export const styles = StyleSheet.create({
         height:vScale(11.74),
     },
 
-    
+    buttonGap:{
+        height:vScale(16),
+    },
 
 
     

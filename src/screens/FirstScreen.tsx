@@ -5,6 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import { styles } from '../styles/FirstScreen.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { vScale } from '../styles/Scale.styles';
+import HugeButton from '../components/HugeButton';
+import { Colors } from '../styles/Color.styles';
 
 
 export default function FirstScreen() {
@@ -28,15 +30,15 @@ export default function FirstScreen() {
         </View>  
 
         <View style={[styles.loginContainer, {top:top+vScale(440)}]}> 
-            <TouchableOpacity style={styles.startButton}>
-               <Text style={styles.startButtonText}>시작하기</Text>
-            </TouchableOpacity>
+            <HugeButton title="시작하기" onPress={() => navigation.navigate('Login' as never)}   
+                    backgroundColor={Colors.white}
+                    textColor={Colors.primary}/>
 
-            <TouchableOpacity 
-                style={styles.loginButton}
-                onPress={() => navigation.navigate('Login' as never)}>
-                <Text style={styles.loginButtonText}>로그인 하기</Text>
-            </TouchableOpacity>
+            <View style={styles.buttonGap}/>
+
+            <HugeButton title="로그인 하기" onPress={() => navigation.navigate('Login' as never)}   
+                    backgroundColor={Colors.primaryDark}
+                    textColor={Colors.white}/>
 
             <View style={styles.snsLoginContainer}>
                 <TouchableOpacity style={styles.kakaoLoginButton}>

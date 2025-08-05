@@ -96,8 +96,9 @@ function RootNavigation(  ) {
       {/* ② 실제 네비게이션 트리 */}
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="EconomyStudy" component={EconomyStudyScreen} />
         <Stack.Screen name="First" component={FirstScreen} />
+        <Stack.Screen name="EconomyStudy" component={EconomyStudyScreen} />
+        
         
         
         

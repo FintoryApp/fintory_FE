@@ -5,8 +5,7 @@ import { Colors } from './Color.styles';
 export const styles = StyleSheet.create({
     
     middleContainer: {
-        width: hScale(360),
-        height: vScale(274),
+        
         alignSelf:'center',
         flexDirection:'column',
     },
@@ -51,15 +50,7 @@ export const styles = StyleSheet.create({
     },
 
     bottomContainer: {
-        width: hScale(328),
-        height: vScale(72),
         position:'absolute',
-        top:vScale(467),
-        left:hScale(16),
-        backgroundColor:Colors.primary,
-        borderRadius: hScale(12),
-        justifyContent: 'center',
-        alignItems: 'center',
     },
 
 

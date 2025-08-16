@@ -17,8 +17,8 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   return (
     
-    <View style={styles.wholeContainer}> /*전체 컨테이너 */
-      <View style={styles.friendContainer}> /*상단 1 컨테이너 */
+    <View style={styles.wholeContainer}> {/*전체 컨테이너 */}
+      <View style={styles.friendContainer}> {/*상단 1 컨테이너 */}
 
         
           
@@ -31,7 +31,7 @@ export default function HomeScreen() {
         </View>
 
       {/* Avatar Scroll */}
-        <View style={styles.scrollContainer}> /* 친구 아바타 스크롤 컨테이너 */
+        <View style={styles.scrollContainer}> {/* 친구 아바타 스크롤 컨테이너 */}
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false} 
@@ -51,10 +51,10 @@ export default function HomeScreen() {
 
       
       {/*프로필 컨테이너*/}
-      <View style={styles.middleContainer}> /* 중간 컨테이너 */
-      <View style={styles.topMiddleContainer}> /* 상단 중간 컨테이너 */
-      <View style={styles.profileContainer}> /* 프로필 컨테이너 */
-        <View style={styles.nameBadgeContainer}> /* 이름 배지 컨테이너 */
+      <View style={styles.middleContainer}> {/* 중간 컨테이너 */}
+      <View style={styles.topMiddleContainer}> {/* 상단 중간 컨테이너 */}
+      <View style={styles.profileContainer}> {/* 프로필 컨테이너 */}
+        <View style={styles.nameBadgeContainer}> {/* 이름 배지 컨테이너 */}
         <Text style={styles.userName}>김나무</Text>
 
         <View style={styles.badgeNameContainer}>
@@ -88,14 +88,14 @@ export default function HomeScreen() {
 
         <TouchableOpacity>
         <View style={[styles.greenBox, styles.leftBox]}>
-          <Text style={styles.boxText}>모의 주식투자{"\n"}시작하기</Text>
+          <Text style={styles.boxText}>모의 주식투자{'\n'}시작하기</Text>
           <Image source={require('../../assets/icons/stock_white.png')} style={styles.boxIcon} />
         </View>
         </TouchableOpacity>
         <TouchableOpacity
            onPress={() => navigation.navigate('Report' as never)}>
         <View style={styles.blueBox}>
-          <Text style={styles.boxText}>현황{"\n"}리포트</Text>
+          <Text style={styles.boxText}>현황{'\n'}리포트</Text>
           <Image source={require('../../assets/icons/report_white.png')} style={styles.boxIcon} />
         </View>
         </TouchableOpacity>

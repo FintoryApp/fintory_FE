@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">fintory_FE</string>
+    <string name="app_name">Fintory</string>
+    <string name="kakao_app_key">c6051efd77a51fa3e6c31fcc5aa8b73a</string>
+    <string name="kakao_redirect_uri">kakaoc6051efd77a51fa3e6c31fcc5aa8b73a://oauth</string>
 </resources>

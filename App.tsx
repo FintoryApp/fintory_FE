@@ -33,6 +33,7 @@ import EconomyWordScreen from './src/screens/EconomyWordScreen';
 import WordDetailScreen from './src/screens/WordDetailScreen';
 import EconomyNewsDetailScreen from './src/screens/EconomyNewsDetailScreen';
 import SignInScreen from './src/screens/SignInScreen';
+import MyPageScreen from './src/screens/MyPageScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -97,6 +98,7 @@ function RootNavigation(  ) {
       {/* ② 실제 네비게이션 트리 */}
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="MyPage" component={MyPageScreen} />
         <Stack.Screen name="First" component={FirstScreen} />
         <Stack.Screen name="SignIn" component={SignInScreen} />
         <Stack.Screen name="EconomyStudy" component={EconomyStudyScreen} />

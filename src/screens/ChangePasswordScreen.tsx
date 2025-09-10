@@ -11,7 +11,7 @@ import LoginInput from '../components/LoginInput.tsx';
 import BigButton from '../components/BigButton.tsx';
 
 export default function ChangePasswordScreen() {
-    const {top} = useSafeAreaInsets();
+  const {top} = useSafeAreaInsets();
   const navigation = useNavigation();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -97,4 +97,4 @@ export default function ChangePasswordScreen() {
       
     </View> //wholeContainer끝
   );
-} 
+}

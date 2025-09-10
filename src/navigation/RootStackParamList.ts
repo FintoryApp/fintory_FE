@@ -17,4 +17,8 @@ export type RootStackParamList = {
     FindPassword: undefined;
     ChangePassword: undefined;
     FindId: undefined;
+    SignIn: undefined;
+    MyPage: undefined;
+    VirtualAccount: undefined;
+    Point: undefined;
   };

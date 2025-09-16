@@ -7,6 +7,7 @@
 
 import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { navigationRef } from './src/navigation/NavigationService';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar, useColorScheme, PermissionsAndroid, Platform } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
@@ -100,7 +101,7 @@ function RootNavigation(  ) {
       />
 
       {/* ② 실제 네비게이션 트리 */}
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="MyPage" component={MyPageScreen} />
           <Stack.Screen name="VirtualAccount" component={VirtualAccountScreen} />

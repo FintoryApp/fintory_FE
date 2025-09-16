@@ -12,12 +12,14 @@ export const API_CONFIG = {
   // API 엔드포인트
   ENDPOINTS: {
     // 인증 관련
-    SIGNUP: '/api/auth/signup',
-    REISSUE_TOKEN: '/api/auth/reissue',
-    LOGOUT: '/api/auth/logout',
-    LOGIN: '/api/auth/login',
-    GET_ME: '/api/auth/me',
-    CHECK_EMAIL: '/api/auth/check-email',
+    SIGNUP: '/api/child/auth/signup',
+    REISSUE_TOKEN: '/api/child/auth/reissue',
+    LOGOUT: '/api/child/auth/logout',
+    LOGIN: '/api/child/auth/login',
+    GET_ME: '/api/child/auth/me',
+    CHECK_EMAIL: '/api/child/auth/check-email',
+    SOCIAL_LOGIN_GOOGLE: '/api/child/auth/social-login/google',
+    SOCIAL_LOGIN_KAKAO: '/api/child/auth/social-login/kakao',
     // FCM 토큰 등록/삭제 (가정된 엔드포인트 - 필요 시 수정)
     FCM_TOKEN: '/api/notifications/token',
   },

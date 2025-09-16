@@ -71,8 +71,11 @@ export default function FirstScreen() {
                     if (tokenData.accessToken && tokenData.refreshToken) {
                         await saveTokens(tokenData.accessToken, tokenData.refreshToken);
                         
-                        // 로그인 성공 시 메인 화면으로 이동
-                        navigation.navigate('Main' as never);
+                        // 로그인 성공 시 Main(탭 루트) 화면으로 이동 (스택 초기화)
+                        (navigation as any).reset({
+                            index: 0,
+                            routes: [{ name: 'Main' }],
+                        });
                     } else {
                         console.error('Token data not found in response');
                         Alert.alert('로그인 오류', '서버에서 토큰을 받지 못했습니다.');
@@ -123,8 +126,11 @@ export default function FirstScreen() {
                     if (tokenData.accessToken && tokenData.refreshToken) {
                         await saveTokens(tokenData.accessToken, tokenData.refreshToken);
                         
-                        // 로그인 성공 시 메인 화면으로 이동
-                        navigation.navigate('Main' as never);
+                        // 로그인 성공 시 Main(탭 루트) 화면으로 이동 (스택 초기화)
+                        (navigation as any).reset({
+                            index: 0,
+                            routes: [{ name: 'Main' }],
+                        });
                     } else {
                         console.error('Token data not found in response');
                         Alert.alert('로그인 오류', '서버에서 토큰을 받지 못했습니다.');

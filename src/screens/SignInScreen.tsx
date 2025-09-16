@@ -109,7 +109,11 @@ export default function SignInScreen() {
         Alert.alert('성공', result.message || '회원가입이 완료되었습니다. 자동으로 로그인됩니다.', [
           {
             text: '확인',
-            onPress: () => navigation.navigate('Home' as never), // 자동 로그인으로 Home으로 이동
+            onPress: () =>
+              (navigation as any).reset({
+                index: 0,
+                routes: [{ name: 'Main' }],
+              }),
           },
         ]);
       } else {

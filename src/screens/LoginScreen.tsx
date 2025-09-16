@@ -31,7 +31,11 @@ export default function LoginScreen() {
         Alert.alert('성공', '로그인이 완료되었습니다.', [
           {
             text: '확인',
-            onPress: () => navigation.navigate('Home' as never),
+            onPress: () =>
+              (navigation as any).reset({
+                index: 0,
+                routes: [{ name: 'Main' }],
+              }),
           },
         ]);
       } else {

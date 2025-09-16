@@ -7,6 +7,8 @@ import {
   LoginRequest, 
   SignupRequest
 } from './config';
+import messaging from '@react-native-firebase/messaging';
+import { deleteFcmToken } from './user';
 
 // AsyncStorage를 안전하게 가져오는 함수
 let asyncStorageInstance: typeof AsyncStorage | null = null;
@@ -268,6 +270,15 @@ export const logout = async (): Promise<ApiResponse<string>> => {
     });
 
     if (response.ok) {
+      // 서버 로그아웃 성공 시 FCM 토큰 삭제 시도 (실패해도 진행)
+      try {
+        const token = await messaging().getToken();
+        if (token) {
+          await deleteFcmToken(token);
+        }
+      } catch (e) {
+        console.warn('FCM 토큰 삭제 중 오류(무시):', e);
+      }
       // 로그아웃 성공 시 로컬 토큰 삭제
       await removeTokens();
       return { resultCode: 'SUCCESS', data: '로그아웃 성공' };

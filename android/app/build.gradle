@@ -137,3 +137,5 @@ dependencies {
     // 카카오 SDK
     implementation "com.kakao.sdk:v2-user:2.19.0"
 }
+
+apply plugin: 'com.google.gms.google-services'

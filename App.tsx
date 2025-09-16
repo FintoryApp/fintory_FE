@@ -5,10 +5,12 @@
  * @format
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { StatusBar, useColorScheme } from 'react-native';
+import { StatusBar, useColorScheme, PermissionsAndroid, Platform } from 'react-native';
+import messaging from '@react-native-firebase/messaging';
+import { registerFcmToken } from './src/api/user';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import BottomTabBar from './src/components/BottomTabBar';
 import HomeScreen from './src/screens/HomeScreen';
@@ -128,6 +130,56 @@ function RootNavigation(  ) {
 }
 
 export default function App(): React.JSX.Element {
+  useEffect(() => {
+    async function initNotifications() {
+      if (Platform.OS === 'android' && Number(Platform.Version) >= 33) {
+        await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+      }
+      await messaging().requestPermission();
+      const token = await messaging().getToken();
+      console.log('FCM TOKEN:', token);
+      try {
+        await registerFcmToken(token);
+      } catch {}
+
+      const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
+        console.log('FCM Foreground Message:', remoteMessage?.messageId);
+      });
+
+      // 백그라운드에서 알림을 탭해 앱이 열렸을 때
+      const unsubscribeOpened = messaging().onNotificationOpenedApp(remoteMessage => {
+        console.log('Notification opened from background:', remoteMessage?.messageId);
+        // 알림 탭 시 FirstScreen으로 이동
+        // 네비게이터 접근을 위해 간단히 이벤트를 사용하거나, 글로벌 내비게이터를 구성하는 것이 일반적이나
+        // 여기서는 FirstScreen을 초기 라우트로 두었으므로 열림 시 초기 화면 유지
+      });
+
+      // 앱이 종료된 상태에서 알림으로 시작했는지 확인
+      messaging()
+        .getInitialNotification()
+        .then(remoteMessage => {
+          if (remoteMessage) {
+            console.log('Notification opened from quit state:', remoteMessage?.messageId);
+            // 종료 상태에서 알림으로 시작한 경우에도 FirstScreen 유지
+          }
+        });
+
+      // 토큰 갱신 시 서버에 업데이트
+      messaging().onTokenRefresh(async refreshedToken => {
+        console.log('FCM TOKEN refreshed:', refreshedToken);
+        try {
+          await registerFcmToken(refreshedToken);
+        } catch {}
+      });
+    }
+    initNotifications().then(() => {
+      // no-op
+    });
+    return () => {
+      // listeners are cleaned up by RN Firebase when app unmounts
+    };
+  }, []);
+
   return (
     <SafeAreaProvider>
       <RootNavigation />

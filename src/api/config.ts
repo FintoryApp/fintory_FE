@@ -18,6 +18,8 @@ export const API_CONFIG = {
     LOGIN: '/api/auth/login',
     GET_ME: '/api/auth/me',
     CHECK_EMAIL: '/api/auth/check-email',
+    // FCM 토큰 등록/삭제 (가정된 엔드포인트 - 필요 시 수정)
+    FCM_TOKEN: '/api/notifications/token',
   },
   
   // 요청 타임아웃 (밀리초)

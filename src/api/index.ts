@@ -6,7 +6,7 @@ import { API_BASE_URL } from '@env';
 import { resetToFirst } from '../navigation/NavigationService';
 
 const api = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: API_CONFIG.BASE_URL,
     headers:{
         'Content-Type':'application/json',
     },

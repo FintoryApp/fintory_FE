@@ -58,14 +58,27 @@ export default function FirstScreen() {
         try {
             const { data: responseData } = await api.post(`${API_CONFIG.ENDPOINTS.SOCIAL_LOGIN_KAKAO}`, { accessToken });
             if (responseData.resultCode === 'SUCCESS' && responseData.data?.accessToken && responseData.data?.refreshToken) {
+                console.log('Kakao login - Received AT:', responseData.data.accessToken);
+                console.log('Kakao login - Received RT:', responseData.data.refreshToken);
                 await saveTokens(responseData.data.accessToken, responseData.data.refreshToken);
+                
+                // 저장 확인
+                const savedAT = await AsyncStorage.getItem('accessToken');
+                const savedRT = await AsyncStorage.getItem('refreshToken');
+                console.log('Kakao login - Saved AT:', savedAT);
+                console.log('Kakao login - Saved RT:', savedRT);
+                
                 (navigation as any).reset({ index: 0, routes: [{ name: 'Main' }] });
             } else {
                 console.error('Invalid response structure');
                 Alert.alert('로그인 오류', '서버 응답이 올바르지 않습니다.');
             }
         } catch (error: any) {
-            console.error('Kakao login failed:', error?.response?.status, error?.response?.data);
+            console.error('Kakao login failed - Full error:', error);
+            console.error('Kakao login failed - Status:', error?.response?.status);
+            console.error('Kakao login failed - Data:', error?.response?.data);
+            console.error('Kakao login failed - Message:', error?.message);
+            console.error('Kakao login failed - Code:', error?.code);
             Alert.alert('로그인 실패', '로그인에 실패했습니다. 다시 시도해주세요.');
         }
     };
@@ -94,7 +107,11 @@ export default function FirstScreen() {
                     Alert.alert('로그인 오류', '서버 응답이 올바르지 않습니다.');
                 }
             } catch (error: any) {
-                console.error('Google login failed:', error?.response?.status, error?.response?.data);
+                console.error('Google login failed - Full error:', error);
+                console.error('Google login failed - Status:', error?.response?.status);
+                console.error('Google login failed - Data:', error?.response?.data);
+                console.error('Google login failed - Message:', error?.message);
+                console.error('Google login failed - Code:', error?.code);
                 Alert.alert('로그인 실패', '로그인에 실패했습니다. 다시 시도해주세요.');
             }
         } catch (error) {  

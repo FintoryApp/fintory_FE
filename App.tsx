@@ -103,10 +103,10 @@ function RootNavigation(  ) {
       {/* ② 실제 네비게이션 트리 */}
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="First" component={FirstScreen} />
           <Stack.Screen name="MyPage" component={MyPageScreen} />
           <Stack.Screen name="VirtualAccount" component={VirtualAccountScreen} />
           <Stack.Screen name="Point" component={PointScreen} />
-        <Stack.Screen name="First" component={FirstScreen} />
         <Stack.Screen name="SignIn" component={SignInScreen} />
         <Stack.Screen name="EconomyStudy" component={EconomyStudyScreen} />
         <Stack.Screen name="EconomyWordScreen" component={EconomyWordScreen} />

@@ -1,43 +1,59 @@
-import React,{useState} from 'react';
-import { View, Text, StyleSheet,ScrollView, Image, TouchableOpacity, ImageBackground, Animated  } from 'react-native';
+import React,{useState, useEffect,useRef} from 'react';
+import { LayoutAnimation, View, Text, StyleSheet,ScrollView, TouchableOpacity, Animated, Image  } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from '../styles/StockMainScreen.styles';
-import CustomCalendar from '../components/Calendar';
 import TopBar from '../components/TopBar';
 import { hScale, vScale } from '../styles/Scale.styles';
 import Colors from '../styles/Color.styles';
-
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import SearchContainer from '../components/SearchContainer';
+import { KoreanStock_marketCap } from '../api/marketcap_korean_stock';
+import MarketCapStockList from '../components/MarketCapStockList';
+import { OverseasStock_marketCap } from '../api/marketcap_overseas';
+import {OverseasStockCodeResponse, getOverseasStockCodes} from '../api/stockCodes';
+import { useStockWebSocket } from '../hook/useWebsocket';
 const stockInfo = [
   {
     name: 'LG',
     price: 294698,
     percentage: 10.5,
+    volume: 1234567,
+    marketCap: 5000000000000,
   },
   {
     name: '삼성전자',
     price: 294698,
     percentage: -10.5,
+    volume: 2345678,
+    marketCap: 4000000000000,
   },
   {
     name: 'SK하이닉스',
     price: 156789,
     percentage: 5.2,
+    volume: 3456789,
+    marketCap: 1000000000000,
   },
   {
     name: '현대차',
     price: 234567,
     percentage: -3.1,
+    volume: 4567890,
+    marketCap: 2000000000000,
   },
   {
     name: '기아',
     price: 98765,
     percentage: 8.7,
+    volume: 5678901,
+    marketCap: 800000000000,
   },
 ];
 
 const StockInfoBlock = ({name, price, percentage, style}:{name:string, price:number, percentage:number, style?: any}) => {
   return(
     <View style={[simpleStyles.stockInfoBlock, style]}>
+      <Image source={require('../../assets/icons/red_circle.png')} style={styles.stockImage} />
       <View style={simpleStyles.stockContainer}>
         <Text style={simpleStyles.stockNameText}>{name}</Text>
         <Text style={simpleStyles.stockPriceText}>{price.toLocaleString()+"원"}</Text>
@@ -108,8 +124,29 @@ const simpleStyles = StyleSheet.create({
 });
 
 export default function StockMainScreen() {
+
+  const[koreanCodes, setKoreanCodes] = useState<string[]>([]);
+  const[overseasCodes, setOverseasCodes] = useState<string[]>([]);
+  const {
+    prices: koreanPrices,
+    isConnected: koreanConnected,
+    connectionError: koreanError,
+  } = useStockWebSocket(koreanCodes, "korean");
+
+  const {
+    prices: overseasPrices,
+    isConnected: overseasConnected,
+    connectionError: overseasError,
+  } = useStockWebSocket(overseasCodes, "overseas");
+
+
+
+  const [isDomestic, setIsDomestic] = useState(true);
   const [isUserInfoExpanded, setIsUserInfoExpanded] = useState(false);
   const [isStockInfoExpanded, setIsStockInfoExpanded] = useState(false);
+  
+  // 버튼 상태 관리
+  const [selectedButton, setSelectedButton] = useState<'거래량' | '등락률' | '시가총액'>('거래량');
   
   // 동적으로 높이 계산
   const baseUserInfoHeight = vScale(112); // 기본 높이 (제목 + 퍼센트 + 버튼)
@@ -134,28 +171,13 @@ export default function StockMainScreen() {
   const [rotateAnim] = useState(new Animated.Value(0));
 
   const toggleUserInfo = () => {
-    const toValue = isUserInfoExpanded ? baseUserInfoHeight : expandedUserInfoHeight;
-    Animated.timing(userInfoHeight, {
-      toValue,
-      useNativeDriver: false,
-    }).start();
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setIsUserInfoExpanded(!isUserInfoExpanded);
   };
 
-  // 2. toggleStockInfo에서 동시에 애니메이션
+
   const toggleStockInfo = () => {
-    const toValue = isStockInfoExpanded ? stockContainerBaseHeight : currentStockInfoHeight;
-    const rotateToValue = isStockInfoExpanded ? 0 : 1;
-    Animated.parallel([
-      Animated.timing(stockInfoHeight, {
-        toValue,
-        useNativeDriver: false,
-      }),
-      Animated.timing(rotateAnim, {
-        toValue: rotateToValue,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setIsStockInfoExpanded(!isStockInfoExpanded);
   };
 
@@ -165,24 +187,225 @@ export default function StockMainScreen() {
     outputRange: ['0deg', '180deg'],
   });
 
+  const {top} = useSafeAreaInsets();
+
+
+  const handleSearch = (text: string) => {
+  };
+
+  const stockInfoList = [
+    {
+      name: 'LG',
+      price: 294698,
+      percentage: 10.5,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: '삼성전자',
+      price: 294698,
+      percentage: -10.5,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: 'SK하이닉스',
+      price: 156789,
+      percentage: 5.2,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: '현대차',
+      price: 234567,
+      percentage: -3.1,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: '기아',
+      price: 98765,
+      percentage: 8.7,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: '네이버',
+      price: 187654,
+      percentage: 2.3,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: '카카오',
+      price: 456789,
+      percentage: -5.8,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: 'LG화학',
+      price: 345678,
+      percentage: 7.2,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: 'POSCO',
+      price: 234567,
+      percentage: -2.1,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: 'KB금융',
+      price: 123456,
+      percentage: 4.5,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: '신한지주',
+      price: 98765,
+      percentage: -1.8,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: 'LG생활건강',
+      price: 567890,
+      percentage: 6.7,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: '아모레퍼시픽',
+      price: 345678,
+      percentage: -3.4,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: '셀트리온',
+      price: 789012,
+      percentage: 9.1,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: '삼성바이오로직스',
+      price: 456789,
+      percentage: -4.2,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: 'SK텔레콤',
+      price: 234567,
+      percentage: 1.5,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: 'KT&G',
+      price: 123456,
+      percentage: -2.7,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: '한국전력',
+      price: 98765,
+      percentage: 3.8,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: 'CJ제일제당',
+      price: 345678,
+      percentage: -1.2,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+    {
+      name: 'LG디스플레이',
+      price: 234567,
+      percentage: 5.6,
+      image: require('../../assets/icons/red_circle.png'),
+    },
+  ];
+
+  
+  const [overseasStock_marketCap, setOverseasStock_marketCap] = useState<any[]>([]);
+  const [koreanStock_marketCap, setKoreanStock_marketCap] = useState<any[]>([]);
+  useEffect(()=>{
+    (async()=>{
+      try {
+        const resOverseas = await OverseasStock_marketCap();
+        const resKorean = await KoreanStock_marketCap();
+  
+        // 👉 데이터 상태에 세팅 (빠졌던 부분)
+        console.log(resOverseas);
+        setKoreanStock_marketCap(resKorean.data);
+        setOverseasStock_marketCap(resOverseas.data);
+  
+        // 👉 웹소켓 코드도 세팅
+        setKoreanCodes(resKorean.data.map((stock: any) => stock.stockCode));
+        setOverseasCodes(resOverseas.data.map((stock: any) => stock.stockCode));
+
+        console.log("Korean API data:", resKorean.data);
+        console.log("Overseas API data:", resOverseas.data);
+        console.log(overseasCodes);
+
+        
+      } catch (error) {
+        console.error('Error fetching stock data:', error);
+      }
+    })();
+  }, [overseasCodes, koreanCodes]);
+  
+
+  //console.log('한국 주식 실시간 가격 데이터:', koreanPrices);
+  console.log('해외 주식 실시간 가격 데이터:', overseasPrices);
+  //console.log('한국 주식 데이터:', koreanStock_marketCap);
+  //console.log('한국 주식 웹소켓 연결 상태:', koreanConnected);
+  console.log('해외 주식 웹소켓 연결 상태:', overseasConnected);
+  //console.log('한국 주식 웹소켓 오류:', koreanError);
+  
+  
+
+  
   return(
-    <View style={styles.wholeContainer}>
+    <View >
       <TopBar title="모의 주식"/>
-      <View style={styles.topContainer}>  
-        <Animated.View style={[styles.userInfoContainer, { height: userInfoHeight }]}>
+  
+      <ScrollView 
+        contentContainerStyle={{
+          //alignItems:'center',
+          paddingBottom: vScale(30),
+          backgroundColor: Colors.surface,
+          minHeight: '100%',
+        }} // paddingBottom 추가
+        showsVerticalScrollIndicator={true}
+        style={[styles.wholeContainer, {marginTop:top}]}
+        
+      >
+      
+        <View style={styles.userInfoContainer}>
           <Text style={styles.topContainerText}>내 투자 현황</Text>
           <Text style={styles.percentageText}>+22.3%</Text>
-          
-          {/* {isUserInfoExpanded && (
+
+          {isUserInfoExpanded && (
+              <View>            
+              <View style={styles.totalPriceContainer}>
+                <View style={styles.totalPriceTextContainer}>
+                <Text style={styles.totalPriceText}>총 평가금액</Text>
+                <Text style={styles.totalPriceValue}>1,000,200원</Text>
+                </View>
+                </View>
+
+                <View style={styles.textContainer}>
+                  <View style={styles.smallBox}>
+                    <Text style={styles.smallBoxText}>총 매수</Text>
+                    <Text style={styles.smallBoxText}>1,000,200원</Text>
+
+                  </View>
+                  <View style={styles.smallBox}>
+                  <Text style={styles.smallBoxText}>내 보유 머니</Text>
+                  <Text style={styles.smallBoxText}>1,000,200원</Text>
+                  </View>
+
+                </View>
+                </View>
             
-          )} */}
-          
-          <TouchableOpacity style={[
+          )}
+            
+          <TouchableOpacity 
+           style={[
             styles.seeMoreButton,
-            {
-              position:'absolute',
-              top:isUserInfoExpanded ? vScale(214) : vScale(88),
-            }]} onPress={toggleUserInfo}>
+            ]} 
+            onPress={toggleUserInfo}>
             <Animated.Image 
               source={require('../../assets/icons/arrow_drop_down.png')} 
               style={[
@@ -194,9 +417,9 @@ export default function StockMainScreen() {
               {isUserInfoExpanded ? '닫기' : '더보기'}
             </Text>
           </TouchableOpacity>
-        </Animated.View>
+        </View>
 
-        <Animated.View style={[styles.stockInfoContainer, { height: stockInfoHeight }]}>
+        <View style={styles.stockInfoContainer}>
           <Text style={styles.stockInfoText}>나의 보유 주식</Text>
           <View style={[styles.stockInfoBlockContainer]}>
             {stockInfo.slice(0, visibleStockCount).map((stock, index) => (
@@ -205,32 +428,120 @@ export default function StockMainScreen() {
                 name={stock.name} 
                 price={stock.price} 
                 percentage={stock.percentage} 
-                style={{position:'absolute',top:index*(stockBlockHeight-vScale(16))}}
+                style={{marginBottom: vScale(8)}}
               />
             ))}
             
           </View>
+          
           <TouchableOpacity 
-            style={[styles.seeMoreButton, 
-              {
-                bottom:vScale(16),
-                position:'absolute',
-                }]} 
+            style={styles.seeMoreButton} 
             onPress={toggleStockInfo}
           >
-            <Animated.Image 
+             <Animated.Image 
               source={require('../../assets/icons/arrow_drop_down.png')} 
               style={[
                 styles.seeMoreButtonImage,
-                { transform: [{ rotate }] }
+                { transform: [{ rotate: isStockInfoExpanded ? '180deg' : '0deg' }] }
               ]}
             />
             <Text style={styles.seeMoreButtonText}>
               {isStockInfoExpanded ? '닫기' : '더보기'}
             </Text>
           </TouchableOpacity>
-        </Animated.View>
+        </View>
+
+        <View style={styles.bottomContainer}>
+
+              <View style={styles.detailContainer}>
+                <View style={styles.whereContainer}>
+                  <TouchableOpacity style={[styles.domesticButton, {backgroundColor: isDomestic ? Colors.primaryDim : Colors.white}]} onPress={() => setIsDomestic(true)}>
+                    <Text style={[styles.domesticButtonText, {color: isDomestic ? Colors.primaryDark : Colors.outlineVariant}]}>국내</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.domesticButton, {backgroundColor: isDomestic ? Colors.white : Colors.primaryDim}]} onPress={() => setIsDomestic(false)}>
+                    <Text style={[styles.domesticButtonText, {color: isDomestic ? Colors.outlineVariant : Colors.primaryDark}]}>해외</Text>
+                  </TouchableOpacity>
+                </View> //whereContainer
+
+                <View style={styles.categoryContainer}>
+                  <TouchableOpacity 
+                    style={[
+                      styles.amountButton,
+                      selectedButton === '거래량' && styles.selectedButton
+                    ]}
+                    onPress={() => setSelectedButton('거래량')}
+                  >
+                    <Text style={[
+                      styles.buttonText,
+                      selectedButton === '거래량' && styles.selectedButtonText
+                    ]}>거래량</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={[
+                      styles.amountButton,
+                      selectedButton === '등락률' && styles.selectedButton
+                    ]}
+                    onPress={() => setSelectedButton('등락률')}
+                  >
+                    <Text style={[
+                      styles.buttonText,
+                      selectedButton === '등락률' && styles.selectedButtonText
+                    ]}>등락률</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={[
+                      styles.amountButton, 
+                      {width: hScale(61)},
+                      selectedButton === '시가총액' && styles.selectedButton
+                    ]}
+                    onPress={() => setSelectedButton('시가총액')}
+                  >
+                    <Text style={[
+                      styles.buttonText,
+                      selectedButton === '시가총액' && styles.selectedButtonText
+                    ]}>시가총액</Text>
+                  </TouchableOpacity>
+                </View> //categoryContainer
+
+              </View> //detailContainer
+
+              <SearchContainer 
+                onSearch={handleSearch}
+                placeholder="주식 검색하기" 
+                style={styles.searchContainer}>
+                </SearchContainer>
+
+              <View style={styles.stockListContainer}>
+                {isDomestic && koreanStock_marketCap.map((stock, index) => (
+                  selectedButton === '시가총액' && (
+                    <MarketCapStockList     
+                      key={stock.stockCode}
+                      name={stock.stockName} 
+                      price={koreanPrices[stock.stockCode]?.currentPrice || 0}
+                      marketCap={stock.marketCap} 
+                      image={stock.image || require("../../assets/icons/red_circle.png")}
+
+                      number={index+1}
+                    />
+                  )
+                ))}
+                
+                {!isDomestic && overseasStock_marketCap.map((stock, index) => (
+                  selectedButton === '시가총액' && (
+                    <MarketCapStockList     
+                      key={stock.stockCode}
+                      name={stock.stockName} 
+                      price={overseasPrices[stock.stockCode]?.currentPrice || 0}
+                      marketCap={stock.marketCap} 
+                      image={stock.image || require("../../assets/icons/red_circle.png")}
+
+                      number={index+1}
+                    />
+                  )
+                ))}
+              </View>
+        </View>
+      </ScrollView>
       </View>
-    </View>
-  );
+    );
 }

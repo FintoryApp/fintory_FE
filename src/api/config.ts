@@ -1,7 +1,7 @@
 // API 기본 설정
 export const API_CONFIG = {
   // 개발 환경 (Android 에뮬레이터용)
-  BASE_URL: 'http://fintory.xyz', // Android 에뮬레이터에서 호스트 컴퓨터 접근
+  BASE_URL: 'https://fintory.xyz', // Android 에뮬레이터에서 호스트 컴퓨터 접근
   
   // iOS 시뮬레이터용 (필요시 주석 해제)
   // BASE_URL: 'http://localhost:8080',
@@ -18,6 +18,8 @@ export const API_CONFIG = {
     LOGIN: '/api/auth/login',
     GET_ME: '/api/auth/me',
     CHECK_EMAIL: '/api/auth/check-email',
+    KOREAN_STOCK_MARKET_CAP: '/api/child/stock/korean/rankings/market-cap',
+    OVERSEAS_STOCK_MARKET_CAP: '/api/child/stock/overseas/rankings/market-cap',
   },
   
   // 요청 타임아웃 (밀리초)

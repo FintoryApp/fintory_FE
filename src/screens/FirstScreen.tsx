@@ -10,6 +10,8 @@ import HugeButton from '../components/HugeButton';
 import { Colors } from '../styles/Color.styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { login } from '@react-native-seoul/kakao-login';
+import api from '../api/index';
+import { API_CONFIG } from '../api/config';
 
 export default function FirstScreen() {
     const {top} = useSafeAreaInsets();
@@ -22,7 +24,7 @@ export default function FirstScreen() {
         });
     }, []);
 
-    // JWT 토큰 저장 함수
+    // JWT 토큰 저장 함수 (공통 저장)
     const saveTokens = async (accessToken: string, refreshToken: string) => {
         try {
             await AsyncStorage.setItem('accessToken', accessToken);
@@ -54,41 +56,30 @@ export default function FirstScreen() {
     // 카카오 토큰을 서버로 전송하는 함수
     const sendKakaoTokenToServer = async (accessToken: string) => {
         try {
-            const response = await fetch(`${process.env.API_BASE_URL}/api/auth/social-login/kakao`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ accessToken }),
-            });
-
-            if (response.ok) {
-                const responseData = await response.json();
+            const { data: responseData } = await api.post(`${API_CONFIG.ENDPOINTS.SOCIAL_LOGIN_KAKAO}`, { accessToken });
+            if (responseData.resultCode === 'SUCCESS' && responseData.data?.accessToken && responseData.data?.refreshToken) {
+                console.log('Kakao login - Received AT:', responseData.data.accessToken);
+                console.log('Kakao login - Received RT:', responseData.data.refreshToken);
+                await saveTokens(responseData.data.accessToken, responseData.data.refreshToken);
                 
-                // ApiResponse 구조에 맞게 처리
-                if (responseData.resultCode === 'SUCCESS' && responseData.data) {
-                    const tokenData = responseData.data;
-                    
-                    // accessToken과 refreshToken이 있는지 확인
-                    if (tokenData.accessToken && tokenData.refreshToken) {
-                        await saveTokens(tokenData.accessToken, tokenData.refreshToken);
-                        
-                        // 로그인 성공 시 메인 화면으로 이동
-                        navigation.navigate('Main' as never);
-                    } else {
-                        console.error('Token data not found in response');
-                        Alert.alert('로그인 오류', '서버에서 토큰을 받지 못했습니다.');
-                    }
-                } else {
-                    console.error('Invalid response structure');
-                    Alert.alert('로그인 오류', '서버 응답이 올바르지 않습니다.');
-                }
+                // 저장 확인
+                const savedAT = await AsyncStorage.getItem('accessToken');
+                const savedRT = await AsyncStorage.getItem('refreshToken');
+                console.log('Kakao login - Saved AT:', savedAT);
+                console.log('Kakao login - Saved RT:', savedRT);
+                
+                (navigation as any).reset({ index: 0, routes: [{ name: 'Main' }] });
             } else {
-                const errorData = await response.json().catch(() => ({}));
-                console.error('Kakao login failed:', response.status, errorData);
-                Alert.alert('로그인 실패', '로그인에 실패했습니다. 다시 시도해주세요.');
+                console.error('Invalid response structure');
+                Alert.alert('로그인 오류', '서버 응답이 올바르지 않습니다.');
             }
-        } catch (error) {
-            console.error('Error sending token to server:', error);
-            Alert.alert('로그인 오류', '서버 통신 중 오류가 발생했습니다.');
+        } catch (error: any) {
+            console.error('Kakao login failed - Full error:', error);
+            console.error('Kakao login failed - Status:', error?.response?.status);
+            console.error('Kakao login failed - Data:', error?.response?.data);
+            console.error('Kakao login failed - Message:', error?.message);
+            console.error('Kakao login failed - Code:', error?.code);
+            Alert.alert('로그인 실패', '로그인에 실패했습니다. 다시 시도해주세요.');
         }
     };
 
@@ -106,36 +97,21 @@ export default function FirstScreen() {
             
             console.log('Google Sign-In Success!');
 
-            const response = await fetch(`${process.env.API_BASE_URL}/api/auth/social-login/google`, {  
-                method: 'POST',  
-                headers: { 'Content-Type': 'application/json' },  
-                body: JSON.stringify({ idToken }),  
-            });  
-
-            if (response.ok) {
-                const responseData = await response.json();
-                
-                // ApiResponse 구조에 맞게 처리
-                if (responseData.resultCode === 'SUCCESS' && responseData.data) {
-                    const tokenData = responseData.data;
-                    
-                    // accessToken과 refreshToken이 있는지 확인
-                    if (tokenData.accessToken && tokenData.refreshToken) {
-                        await saveTokens(tokenData.accessToken, tokenData.refreshToken);
-                        
-                        // 로그인 성공 시 메인 화면으로 이동
-                        navigation.navigate('Main' as never);
-                    } else {
-                        console.error('Token data not found in response');
-                        Alert.alert('로그인 오류', '서버에서 토큰을 받지 못했습니다.');
-                    }
+            try {
+                const { data: responseData } = await api.post(`${API_CONFIG.ENDPOINTS.SOCIAL_LOGIN_GOOGLE}`, { idToken });
+                if (responseData.resultCode === 'SUCCESS' && responseData.data?.accessToken && responseData.data?.refreshToken) {
+                    await saveTokens(responseData.data.accessToken, responseData.data.refreshToken);
+                    (navigation as any).reset({ index: 0, routes: [{ name: 'Main' }] });
                 } else {
                     console.error('Invalid response structure');
                     Alert.alert('로그인 오류', '서버 응답이 올바르지 않습니다.');
                 }
-            } else {
-                const errorData = await response.json().catch(() => ({}));
-                console.error('Google login failed:', response.status, errorData);
+            } catch (error: any) {
+                console.error('Google login failed - Full error:', error);
+                console.error('Google login failed - Status:', error?.response?.status);
+                console.error('Google login failed - Data:', error?.response?.data);
+                console.error('Google login failed - Message:', error?.message);
+                console.error('Google login failed - Code:', error?.code);
                 Alert.alert('로그인 실패', '로그인에 실패했습니다. 다시 시도해주세요.');
             }
         } catch (error) {  

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "435273711334",
+    "project_id": "fintory-949d6",
+    "storage_bucket": "fintory-949d6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:435273711334:android:a3fb7dbce0224c77de8527",
+        "android_client_info": {
+          "package_name": "com.fintory_fe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASyUZiAS1q8tAGmJ5fz4H67MRbMabH15g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

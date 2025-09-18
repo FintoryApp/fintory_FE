@@ -36,7 +36,10 @@ import SignInScreen from './src/screens/SignInScreen';
 import MyPageScreen from './src/screens/MyPageScreen';
 import VirtualAccountScreen from './src/screens/VirtualAccountSreen';
 import PointScreen from './src/screens/PointScreen';
-import StockChart from './src/screens/StockChart';
+import StockChartScreen from './src/screens/StockChart';
+import BuyStockScreen from './src/screens/BuyStockScreen';
+import SellStockScreen from './src/screens/SellStockScreen';
+import WantPriceScreen from './src/screens/WantPriceScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -77,7 +80,7 @@ function MainTabNavigator(){
       screenOptions={{headerShown:false}}
     >
       <Tab.Screen name="Home" component={HomeScreen}/>
-      <Tab.Screen name="Stock" component={StockStack}/>
+      {/* <Tab.Screen name="Stock" component={StockStack}/> */}
       <Tab.Screen name="Report" component={ReportStack}/>
       <Tab.Screen name="Profile" component={ProfileScreen}/>
     </Tab.Navigator>
@@ -101,8 +104,20 @@ function RootNavigation(  ) {
       {/* ② 실제 네비게이션 트리 */}
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="StockChart" component={StockChart}/>
         <Stack.Screen name="Stock" component={StockMainScreen}/>
+        <Stack.Screen name="BuyStock" component={BuyStockScreen}/>
+        
+        
+        <Stack.Screen name="SellStock" component={SellStockScreen}/>
+        
+        <Stack.Screen name="WantPrice" component={WantPriceScreen}/>
+        
+        
+
+        <Stack.Screen name="StockChart" component={StockChartScreen}/>
+        
+        
+        
         <Stack.Screen name="Main" component={MainTabNavigator} />
         
           <Stack.Screen name="MyPage" component={MyPageScreen} />

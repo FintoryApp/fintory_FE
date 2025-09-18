@@ -7,7 +7,7 @@ import { hScale, vScale } from '../styles/Scale.styles';
 import Colors from '../styles/Color.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SearchContainer from '../components/SearchContainer';
-import { KoreanStock } from '../api/marketcap_korean_stock';
+import { KoreanStock_marketCap } from '../api/marketcap_korean_stock';
 import MarketCapStockList from '../components/MarketCapStockList';
 import { OverseasStock_marketCap } from '../api/marketcap_overseas';
 import {OverseasStockCodeResponse, getOverseasStockCodes} from '../api/stockCodes';
@@ -125,15 +125,20 @@ const simpleStyles = StyleSheet.create({
 
 export default function StockMainScreen() {
 
-  const[codes, setCodes] = useState<string[]>([]);
-  const { prices, isConnected, connectionError } = useStockWebSocket(codes);
+  const[koreanCodes, setKoreanCodes] = useState<string[]>([]);
+  const[overseasCodes, setOverseasCodes] = useState<string[]>([]);
+  const {
+    prices: koreanPrices,
+    isConnected: koreanConnected,
+    connectionError: koreanError,
+  } = useStockWebSocket(koreanCodes, "korean");
 
-  useEffect(()=>{
-    (async()=>{
-      const overseas = await getOverseasStockCodes();
-      setCodes(overseas.map((code: any) => code.stockCode));
-    })();
-  }, []);
+  const {
+    prices: overseasPrices,
+    isConnected: overseasConnected,
+    connectionError: overseasError,
+  } = useStockWebSocket(overseasCodes, "overseas");
+
 
 
   const [isDomestic, setIsDomestic] = useState(true);
@@ -313,19 +318,42 @@ export default function StockMainScreen() {
 
   
   const [overseasStock_marketCap, setOverseasStock_marketCap] = useState<any[]>([]);
+  const [koreanStock_marketCap, setKoreanStock_marketCap] = useState<any[]>([]);
   useEffect(()=>{
     (async()=>{
       try {
-        const res = await OverseasStock_marketCap();
-        const codes = res.data.map((stock: any) => stock.stockCode);
-        setCodes(codes);        
-        console.log(res);
-        setOverseasStock_marketCap(res.data);
+        const resOverseas = await OverseasStock_marketCap();
+        const resKorean = await KoreanStock_marketCap();
+  
+        // 👉 데이터 상태에 세팅 (빠졌던 부분)
+        console.log(resOverseas);
+        setKoreanStock_marketCap(resKorean.data);
+        setOverseasStock_marketCap(resOverseas.data);
+  
+        // 👉 웹소켓 코드도 세팅
+        setKoreanCodes(resKorean.data.map((stock: any) => stock.stockCode));
+        setOverseasCodes(resOverseas.data.map((stock: any) => stock.stockCode));
+
+        console.log("Korean API data:", resKorean.data);
+        console.log("Overseas API data:", resOverseas.data);
+        console.log(overseasCodes);
+
+        
       } catch (error) {
-        console.error('Error fetching!!!', error);
+        console.error('Error fetching stock data:', error);
       }
     })();
-  }, []);
+  }, [overseasCodes, koreanCodes]);
+  
+
+  //console.log('한국 주식 실시간 가격 데이터:', koreanPrices);
+  console.log('해외 주식 실시간 가격 데이터:', overseasPrices);
+  //console.log('한국 주식 데이터:', koreanStock_marketCap);
+  //console.log('한국 주식 웹소켓 연결 상태:', koreanConnected);
+  console.log('해외 주식 웹소켓 연결 상태:', overseasConnected);
+  //console.log('한국 주식 웹소켓 오류:', koreanError);
+  
+  
 
   
   return(
@@ -484,15 +512,29 @@ export default function StockMainScreen() {
                 </SearchContainer>
 
               <View style={styles.stockListContainer}>
+                {isDomestic && koreanStock_marketCap.map((stock, index) => (
+                  selectedButton === '시가총액' && (
+                    <MarketCapStockList     
+                      key={stock.stockCode}
+                      name={stock.stockName} 
+                      price={koreanPrices[stock.stockCode]?.currentPrice || 0}
+                      marketCap={stock.marketCap} 
+                      image={stock.image || require("../../assets/icons/red_circle.png")}
+
+                      number={index+1}
+                    />
+                  )
+                ))}
                 
                 {!isDomestic && overseasStock_marketCap.map((stock, index) => (
                   selectedButton === '시가총액' && (
                     <MarketCapStockList     
                       key={stock.stockCode}
                       name={stock.stockName} 
-                      price={prices[stock.stockCode]?.currentPrice || stock.price}
+                      price={overseasPrices[stock.stockCode]?.currentPrice || 0}
                       marketCap={stock.marketCap} 
-                      image={stock.image}
+                      image={stock.image || require("../../assets/icons/red_circle.png")}
+
                       number={index+1}
                     />
                   )

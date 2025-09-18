@@ -1,6 +1,6 @@
 import api from './index';
 
-export const KoreanStock = async () => {
+export const KoreanStock_marketCap = async () => {
     try {
         const response = await api.get(`/api/child/stock/korean/rankings/market-cap`);
         return response.data;

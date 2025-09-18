@@ -12,6 +12,7 @@ export const API_CONFIG = {
   // API 엔드포인트
   ENDPOINTS: {
     // 인증 관련
+
     SIGNUP: '/api/child/auth/signup',
     REISSUE_TOKEN: '/api/child/auth/reissue',
     LOGOUT: '/api/child/auth/logout',
@@ -22,6 +23,8 @@ export const API_CONFIG = {
     SOCIAL_LOGIN_KAKAO: '/api/child/auth/social-login/kakao',
     // FCM 토큰 등록/삭제 (가정된 엔드포인트 - 필요 시 수정)
     FCM_TOKEN: '/api/notifications/token',
+    KOREAN_STOCK_MARKET_CAP: '/api/child/stock/korean/rankings/market-cap',
+    OVERSEAS_STOCK_MARKET_CAP: '/api/child/stock/overseas/rankings/market-cap',
   },
   
   // 요청 타임아웃 (밀리초)

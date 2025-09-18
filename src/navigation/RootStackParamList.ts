@@ -21,4 +21,8 @@ export type RootStackParamList = {
     MyPage: undefined;
     VirtualAccount: undefined;
     Point: undefined;
+    StockChart: {code: string; period: string;};
+    BuyStock: undefined;
+    SellStock: undefined;
+    WantPrice: undefined;
   };

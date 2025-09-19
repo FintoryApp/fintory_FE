@@ -95,6 +95,6 @@ export default function ChangePasswordScreen() {
             message={message}
         />
       
-    </View> //wholeContainer끝
+    </View>
   );
 }

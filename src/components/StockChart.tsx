@@ -145,7 +145,7 @@ const ExtremesMarker = ({ x, y, width, height }: any) => {
               fill={Colors.red}
               textAnchor="end"
             >
-              최고{maxPoint.y.toLocaleString()}원
+              최고 {maxPoint.y.toLocaleString()}원
             </SvgText>
           </>
         )}

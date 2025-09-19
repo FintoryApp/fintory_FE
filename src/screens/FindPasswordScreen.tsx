@@ -86,6 +86,6 @@ export default function FindPasswordScreen() {
         </View>
 
       
-    </View> //wholeContainer끝
+    </View>
   );
 } 

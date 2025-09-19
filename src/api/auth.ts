@@ -8,8 +8,6 @@ import {
   SignupRequest
 } from './config';
 import api from './index';
-import messaging from '@react-native-firebase/messaging';
-import { deleteFcmToken } from './user';
 
 // AsyncStorage를 안전하게 가져오는 함수
 let asyncStorageInstance: typeof AsyncStorage | null = null;

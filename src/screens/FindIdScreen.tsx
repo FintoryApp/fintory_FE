@@ -81,6 +81,6 @@ export default function FindIdScreen() {
         </View>
 
       
-    </View> //wholeContainer끝
+    </View>
   );
 } 

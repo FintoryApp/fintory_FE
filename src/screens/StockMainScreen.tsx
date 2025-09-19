@@ -461,7 +461,7 @@ export default function StockMainScreen() {
                   <TouchableOpacity style={[styles.domesticButton, {backgroundColor: isDomestic ? Colors.white : Colors.primaryDim}]} onPress={() => setIsDomestic(false)}>
                     <Text style={[styles.domesticButtonText, {color: isDomestic ? Colors.outlineVariant : Colors.primaryDark}]}>해외</Text>
                   </TouchableOpacity>
-                </View> //whereContainer
+                </View>
 
                 <View style={styles.categoryContainer}>
                   <TouchableOpacity 
@@ -501,9 +501,9 @@ export default function StockMainScreen() {
                       selectedButton === '시가총액' && styles.selectedButtonText
                     ]}>시가총액</Text>
                   </TouchableOpacity>
-                </View> //categoryContainer
+                </View>
 
-              </View> //detailContainer
+              </View>
 
               <SearchContainer 
                 onSearch={handleSearch}

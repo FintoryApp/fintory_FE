@@ -25,7 +25,7 @@ export default function BuyStockScreen() {
                 <Text style={styles.headerText}>내가 지정한 감시가</Text>
                 <Image source={ SeeMore ? require('../../assets/icons/arrow_drop_up.png') : require('../../assets/icons/arrow_drop_down.png')} style={styles.headerButtonImage} />
                 </TouchableOpacity>
-            </View> //headerContainer
+            </View>
 
             
             <View style={styles.stockInfoContainer}>

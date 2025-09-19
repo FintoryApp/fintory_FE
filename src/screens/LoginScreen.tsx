@@ -99,6 +99,6 @@ export default function LoginScreen() {
 
         </View>
       
-    </View> //wholeContainer끝
+    </View>
   );
 } 

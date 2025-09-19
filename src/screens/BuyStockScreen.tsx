@@ -94,7 +94,7 @@ export default function BuyStockScreen() {
                 <TouchableOpacity style={styles.headerButton}>
                     <Image source={require('../../assets/icons/left.png')} style={styles.headerButtonImage} />
                 </TouchableOpacity>
-            </View> //headerContainer
+            </View>
 
             
             <View style={styles.stockInfoContainer}>

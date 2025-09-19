@@ -21,8 +21,6 @@ export const API_CONFIG = {
     CHECK_EMAIL: '/api/child/auth/check-email',
     SOCIAL_LOGIN_GOOGLE: '/api/child/auth/social-login/google',
     SOCIAL_LOGIN_KAKAO: '/api/child/auth/social-login/kakao',
-    // FCM 토큰 등록/삭제 (가정된 엔드포인트 - 필요 시 수정)
-    FCM_TOKEN: '/api/notifications/token',
     KOREAN_STOCK_MARKET_CAP: '/api/child/stock/korean/rankings/market-cap',
     OVERSEAS_STOCK_MARKET_CAP: '/api/child/stock/overseas/rankings/market-cap',
   },

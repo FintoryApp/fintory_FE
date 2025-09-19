@@ -1,4 +1,6 @@
 import { Client } from "@stomp/stompjs";
+// @ts-ignore
+import WebSocket from 'react-native-websocket';
 
 export interface StockPriceData {
   code: string;
@@ -16,8 +18,8 @@ class WebSocketService {
   private pendingSubscribes: (() => void)[] = [];
 
 
-//웹소켓 연결
-connect(): Promise<void> {
+  //웹소켓 연결
+  connect(): Promise<void> {
   return new Promise((resolve, reject) => {
 
     if (this.isConnected && this.stompClient) {

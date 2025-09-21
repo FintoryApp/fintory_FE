@@ -162,6 +162,7 @@ export default function StockMainScreen() {
   
   const [overseasStock_marketCap, setOverseasStock_marketCap] = useState<any[]>([]);
   const [koreanStock_marketCap, setKoreanStock_marketCap] = useState<any[]>([]);
+  
   useEffect(()=>{
     (async()=>{
       try {
@@ -181,14 +182,31 @@ export default function StockMainScreen() {
       }
     })();
   }, []); // ✅ 의존성 배열을 빈 배열로 변경
+
+  // 정렬 함수 (등락률만 정렬, 시가총액은 API에서 이미 정렬됨)
+  const getSortedStocks = (stocks: any[], sortType: '등락률' | '시가총액') => {
+    if (sortType === '시가총액') {
+      // API에서 이미 시가총액순으로 정렬된 데이터 그대로 사용
+      return stocks;
+    } else {
+      // 등락률 정렬 (실시간 가격 기준)
+      return [...stocks].sort((a, b) => {
+        const priceA = koreanPrices[a.stockCode]?.priceChangeRate || 0;
+        const priceB = koreanPrices[b.stockCode]?.priceChangeRate || 0;
+        return priceB - priceA;
+      });
+    }
+  };
   
 
-  //console.log('한국 주식 실시간 가격 데이터:', koreanPrices);
-  //console.log('해외 주식 실시간 가격 데이터:', overseasPrices);
-  //console.log('한국 주식 데이터:', koreanStock_marketCap);
-  //console.log('한국 주식 웹소켓 연결 상태:', koreanConnected);
-  //console.log('해외 주식 웹소켓 연결 상태:', overseasConnected);
-  //console.log('한국 주식 웹소켓 오류:', koreanError);
+  // WebSocket 연결 상태 디버깅
+  console.log('🔍 WebSocket 연결 상태:');
+  console.log('한국 주식 연결:', koreanConnected);
+  console.log('해외 주식 연결:', overseasConnected);
+  console.log('한국 주식 오류:', koreanError);
+  console.log('해외 주식 오류:', overseasError);
+  console.log('한국 주식 코드 개수:', koreanCodes.length);
+  console.log('해외 주식 코드 개수:', overseasCodes.length);
   
   
   return(
@@ -326,30 +344,26 @@ export default function StockMainScreen() {
                 </SearchContainer>
 
               <View style={styles.stockListContainer}>
-                {isDomestic && koreanStock_marketCap.map((stock, index) => (
-                  (selectedButton === '등락률' || selectedButton === '시가총액') && (
-                    <MarketCapStockList     
-                      key={stock.stockCode}
-                      name={stock.stockName} 
-                      price={koreanPrices[stock.stockCode]?.currentPrice || 0}
-                      marketCap={stock.marketCap} 
-                      image={stock.image || require("../../assets/icons/red_circle.png")}
-                      number={index+1}
-                    />
-                  )
+                {isDomestic && getSortedStocks(koreanStock_marketCap, selectedButton).map((stock, index) => (
+                  <MarketCapStockList     
+                    key={stock.stockCode}
+                    name={stock.stockName} 
+                    price={koreanPrices[stock.stockCode]?.currentPrice || stock.currentPrice || 0}
+                    marketCap={stock.marketCap} 
+                    image={stock.profileImageUrl || require("../../assets/icons/red_circle.png")}
+                    number={index+1}
+                  />
                 ))}
                 
-                {!isDomestic && overseasStock_marketCap.map((stock, index) => (
-                  (selectedButton === '등락률' || selectedButton === '시가총액') && (
-                    <MarketCapStockList     
-                      key={stock.stockCode}
-                      name={stock.stockName} 
-                      price={overseasPrices[stock.stockCode]?.currentPrice || 0}
-                      marketCap={stock.marketCap} 
-                      image={stock.image || require("../../assets/icons/red_circle.png")}
-                      number={index+1}
-                    />
-                  )
+                {!isDomestic && getSortedStocks(overseasStock_marketCap, selectedButton).map((stock, index) => (
+                  <MarketCapStockList     
+                    key={stock.stockCode}
+                    name={stock.stockName} 
+                    price={overseasPrices[stock.stockCode]?.currentPrice || stock.currentPrice || 0}
+                    marketCap={stock.marketCap} 
+                    image={stock.profileImageUrl || require("../../assets/icons/red_circle.png")}
+                    number={index+1}
+                  />
                 ))}
               </View>
         </View>

@@ -18,6 +18,8 @@ export function useStockWebSocket(
       const connectWebSocket = async () => {
         try {
           console.log(`🚀 [${marketType}] WebSocket 연결 시도 시작...`);
+          console.log(`📋 [${marketType}] 구독할 코드 개수:`, codes.length);
+          console.log(`📋 [${marketType}] 구독할 코드들:`, codes);
           
           // WebSocket 연결 시도 (최초 연결이거나 재연결)
           await webSocketService.connect();
@@ -31,15 +33,20 @@ export function useStockWebSocket(
 
           // ✅ 연결 후 구독
           if (marketType === "korean") {
+            console.log(`📤 [${marketType}] 한국 주식 구독 시작...`);
             webSocketService.subscribeAllKoreanStocks(codes, (data) => {
+              console.log(`📈 [${marketType}] 실시간 데이터 수신:`, data);
               setPrices((prev) => ({ ...prev, [data.code]: data }));
             });
           } else {
+            console.log(`📤 [${marketType}] 해외 주식 구독 시작...`);
             webSocketService.subscribeAllOverseasStocks(codes, (data) => {
+              console.log(`📈 [${marketType}] 실시간 데이터 수신:`, data);
               setPrices((prev) => ({ ...prev, [data.code]: data }));
             });
           }
         } catch (error) {
+          console.error(`❌ [${marketType}] WebSocket 연결 실패:`, error);
           if (!mounted) return;
 
           setConnectionError("실시간 데이터를 받을 수 없습니다.");

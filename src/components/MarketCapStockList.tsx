@@ -22,7 +22,7 @@ export default function MarketCapStockList({number,price,name,marketCap,image}:S
                 <Text style={styles.stockName}>{name}</Text>
                 <View style={styles.numContainer}>
                     <Text style={styles.stockPrice}>{price+"원"}</Text>
-                    <Text style={styles.stockMarketCap}>{marketCap}</Text>
+                    <Text style={styles.stockMarketCap}>{marketCap+"조 원"}</Text>
                 </View>
             </View>
             </View>

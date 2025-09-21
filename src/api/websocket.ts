@@ -60,6 +60,7 @@ class WebSocketService {
 
       this.stompClient.onConnect = (frame) => {
         console.log("🎉 STOMP 연결 성공!");
+        console.log("📊 STOMP 프레임:", JSON.stringify(frame));
         this.isConnected = true;
 
         if (this.pendingSubscribes.length > 0) {
@@ -88,6 +89,15 @@ class WebSocketService {
       };
 
       this.stompClient.activate();
+      
+      // STOMP 연결 타임아웃 (10초)
+      setTimeout(() => {
+        if (!this.isConnected) {
+          console.error("⏰ STOMP 연결 타임아웃 (10초)");
+          reject(new Error("STOMP 연결 타임아웃"));
+        }
+      }, 10000);
+      
     } catch (error) {
       console.error("❌ WebSocket 초기화 실패:", JSON.stringify(error));
       reject(error);

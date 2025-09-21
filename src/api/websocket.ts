@@ -1,6 +1,8 @@
 import { Client } from "@stomp/stompjs";
+
+// React Native에서 사용할 수 있는 WebSocket
 // @ts-ignore
-import WebSocket from 'react-native-websocket';
+const WebSocket = global.WebSocket || require('react-native-websocket');
 
 export interface StockPriceData {
   code: string;
@@ -28,22 +30,39 @@ class WebSocketService {
       return;
     }
 
+    const wsUrl = "wss://fintory.xyz/ws";
+    console.log("🔍 WebSocket 연결 시도 - URL:", wsUrl);
+
+    
     try {
       this.stompClient = new Client({
-        webSocketFactory: () => new WebSocket("wss://fintory.xyz/ws"),
-        debug: (str) => console.log("🐛 STOMP:", str),
+        webSocketFactory: () => {
+          const ws = new WebSocket(wsUrl);
+          
+          ws.onopen = (event: any) => {
+            console.log("✅ WebSocket 연결 성공 - URL:", wsUrl);
+          };
+          
+          ws.onerror = (error: any) => {
+            console.error("❌ WebSocket 연결 실패 - URL:", wsUrl, "오류:", JSON.stringify(error));
+          };
+          
+          ws.onclose = (event: any) => {
+            console.log("🔌 WebSocket 연결 종료 - 코드:", event.code, "이유:", event.reason);
+          };
+          
+          return ws;
+        },
         reconnectDelay: 5000,
         heartbeatIncoming: 4000,
         heartbeatOutgoing: 4000,
       });
 
       this.stompClient.onConnect = (frame) => {
-        console.log("웹소켓 연결 성공:", frame);
+        console.log("🎉 STOMP 연결 성공!");
         this.isConnected = true;
 
-
         if (this.pendingSubscribes.length > 0) {
-          console.log("대기 중이던 구독 실행...", this.pendingSubscribes.length);
           this.pendingSubscribes.forEach((fn) => fn());
           this.pendingSubscribes = [];
         }
@@ -52,25 +71,25 @@ class WebSocketService {
       };
 
       this.stompClient.onStompError = (frame) => {
-        console.error("웹소켓 STOMP 오류:", frame);
+        console.error("❌ STOMP 프로토콜 오류:", JSON.stringify(frame));
         this.isConnected = false;
         reject(frame);
       };
 
       this.stompClient.onWebSocketError = (error) => {
-        console.error("웹소켓 연결 오류 (RN):", JSON.stringify(error));
+        console.error("❌ WebSocket 레벨 오류:", JSON.stringify(error));
         this.isConnected = false;
         reject(error);
       };
 
       this.stompClient.onDisconnect = () => {
-        console.log("웹소켓 연결 해제됨.");
+        console.log("🔌 STOMP 연결 해제됨");
         this.isConnected = false;
       };
 
       this.stompClient.activate();
     } catch (error) {
-      console.error("웹소켓 초기화 실패:", error);
+      console.error("❌ WebSocket 초기화 실패:", JSON.stringify(error));
       reject(error);
     }
   });
@@ -82,20 +101,19 @@ class WebSocketService {
     if (this.stompClient) {
       this.subscriptions.forEach((subscription, topic) => {
         subscription.unsubscribe();
-        console.log(`구독 해제: ${topic}`);
       });
       this.subscriptions.clear();
 
       this.stompClient.deactivate();
       this.isConnected = false;
-      console.log("웹소켓 연결 해제 완료");
+      console.log("🔌 WebSocket 연결 해제 완료");
     }
   }
 
   //토픽 구독
   subscribe(topic: string, callback: (message: any) => void): void {
     if (!this.isConnected || !this.stompClient) {
-      console.error("웹소켓이 연결되지 않았습니다.");
+      console.error("❌ WebSocket이 연결되지 않았습니다.");
       return;
     }
 
@@ -105,15 +123,14 @@ class WebSocketService {
           const data = JSON.parse(message.body);
           callback(data);
         } catch (error) {
-          console.error("메시지 파싱 오류:", error);
+          console.error("❌ 메시지 파싱 오류:", error);
           callback(message.body);
         }
       });
 
       this.subscriptions.set(topic, subscription);
-      console.log(`구독 시작: ${topic}`);
     } catch (error) {
-      console.error(`구독 실패 (${topic}):`, error);
+      console.error(`❌ 구독 실패 (${topic}):`, error);
     }
   }
 
@@ -122,14 +139,13 @@ class WebSocketService {
     if (subscription) {
       subscription.unsubscribe();
       this.subscriptions.delete(topic);
-      console.log(`구독 해제: ${topic}`);
     }
   }
 
   // 메시지 전송 
   send(destination: string, body: any = {}, headers: any = {}): void {
     if (!this.isConnected || !this.stompClient) {
-      console.error("웹소켓이 연결되지 않았습니다.");
+      console.error("❌ WebSocket이 연결되지 않았습니다.");
       return;
     }
 
@@ -139,9 +155,8 @@ class WebSocketService {
         body: JSON.stringify(body),
         headers,
       });
-      console.log(`메시지 전송 → ${destination}`, body);
     } catch (error) {
-      console.error(`메시지 전송 실패 (${destination}):`, error);
+      console.error(`❌ 메시지 전송 실패 (${destination}):`, error);
     }
   }
 
@@ -155,7 +170,6 @@ class WebSocketService {
     callback: (data: StockPriceData) => void
   ): void {
     if (!this.isConnected || !this.stompClient) {
-      console.log("아직 연결 전, 구독 예약:", codes);
       this.pendingSubscribes.push(() =>
         this.subscribeAllKoreanStocks(codes, callback)
       );
@@ -164,15 +178,12 @@ class WebSocketService {
 
     //일괄 구독 요청 (딱 1번만 보냄)
     this.send("/app/stock/subscribe-all/korean", {});
-    console.log("📤 한국 주식 일괄 구독 요청 보냄");
 
     //종목별 토픽 구독
     codes.forEach((code) => {
       const topic = `/topic/stock/live-Price/${code}`;
       this.subscribe(topic, callback);
     });
-
-    console.log(`한국 주식 토픽 구독 (${codes.length}개)`, codes);
   }
 
   unsubscribeAllKoreanStocks(codes: string[]): void {
@@ -182,8 +193,6 @@ class WebSocketService {
     codes.forEach((code) => {
       this.unsubscribe(`/topic/stock/live-Price/${code}`);
     });
-
-    console.log(`한국 주식 일괄 구독 해제 (${codes.length}개)`, codes);
   }
 
   // === 해외 주식 일괄 구독 ===
@@ -192,7 +201,6 @@ class WebSocketService {
     callback: (data: StockPriceData) => void
   ): void {
     if (!this.isConnected || !this.stompClient) {
-      console.log("아직 연결 전, 구독 예약:", codes);
       this.pendingSubscribes.push(() =>
         this.subscribeAllOverseasStocks(codes, callback)
       );
@@ -201,15 +209,12 @@ class WebSocketService {
 
     //일괄 구독 요청 (딱 1번만 보냄)
     this.send("/app/stock/subscribe-all/overseas", {});
-    console.log("해외 주식 일괄 구독 요청 보냄");
 
     //종목별 토픽 구독
     codes.forEach((code) => {
       const topic = `/topic/stock/live-Price/${code}`;
       this.subscribe(topic, callback);
     });
-
-    console.log(`해외 주식 토픽 구독 (${codes.length}개)`, codes);
   }
 
   unsubscribeAllOverseasStocks(codes: string[]): void {
@@ -219,8 +224,6 @@ class WebSocketService {
     codes.forEach((code) => {
       this.unsubscribe(`/topic/stock/live-Price/${code}`);
     });
-
-    console.log(`해외 주식 일괄 구독 해제 (${codes.length}개)`, codes);
   }
 }
 

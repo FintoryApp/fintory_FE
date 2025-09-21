@@ -60,9 +60,7 @@ function ReportStack() {
 function StockStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {/* 탭에서 처음 보이는 화면 */}
-      <Stack.Screen name="StockMain" component={StockMainScreen} />
-      {/* ReportScreen → navigation.navigate('DetailReport') 로 이동 */}
+      <Stack.Screen name="Stock" component={StockMainScreen} />
     </Stack.Navigator>
   );
 }
@@ -81,7 +79,7 @@ function MainTabNavigator(){
       screenOptions={{headerShown:false}}
     >
       <Tab.Screen name="Home" component={HomeScreen}/>
-      {/* <Tab.Screen name="Stock" component={StockStack}/> */}
+      <Tab.Screen name="Stock" component={StockMainScreen}/>
       <Tab.Screen name="Report" component={ReportStack}/>
       <Tab.Screen name="Profile" component={ProfileScreen}/>
     </Tab.Navigator>
@@ -105,11 +103,8 @@ function RootNavigation(  ) {
       {/* ② 실제 네비게이션 트리 */}
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-
-        <Stack.Screen name="Stock" component={StockMainScreen}/>
+        <Stack.Screen name="First" component={FirstScreen} />
         <Stack.Screen name="BuyStock" component={BuyStockScreen}/>
-        
-        
         <Stack.Screen name="SellStock" component={SellStockScreen}/>
         
         <Stack.Screen name="WantPrice" component={WantPriceScreen}/>
@@ -119,7 +114,6 @@ function RootNavigation(  ) {
         <Stack.Screen name="StockChart" component={StockChartScreen}/>
         
         
-        <Stack.Screen name="First" component={FirstScreen} />
         <Stack.Screen name="Main" component={MainTabNavigator} />
         
           <Stack.Screen name="MyPage" component={MyPageScreen} />
@@ -136,9 +130,6 @@ function RootNavigation(  ) {
          
          
          <Stack.Screen name="Login" component={LoginScreen} />
-         
-         <Stack.Screen name="Home" component={HomeScreen} />
-         <Stack.Screen name="Profile" component={ProfileScreen} />
          <Stack.Screen name="FindPassword" component={FindPasswordScreen} />
          <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
          <Stack.Screen name="FindId" component={FindIdScreen} />

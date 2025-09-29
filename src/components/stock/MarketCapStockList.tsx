@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import { hScale, vScale } from '../styles/Scale.styles';
-import Colors from '../styles/Color.styles';
+import { hScale, vScale } from '../../styles/Scale.styles';
+import Colors from '../../styles/Color.styles';
 
 interface StockListProps {
     name:string;
@@ -17,7 +17,7 @@ export default function MarketCapStockList({number,price,name,marketCap,image}:S
             <Text style={styles.number}>{number}</Text>
             
             <View style={styles.stockContainer}>
-            <Image source={image||require('../../assets/icons/red_circle.png')} style={styles.image} />
+            <Image source={image||require('../../../assets/icons/red_circle.png')} style={styles.image} />
             <View style={styles.stockInfoContainer}>
                 <Text style={styles.stockName}>{name}</Text>
                 <View style={styles.numContainer}>

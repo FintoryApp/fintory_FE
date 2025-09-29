@@ -4,6 +4,7 @@
         <domain includeSubdomains="true">infodesk-zinny3.game.kakao.com</domain>
         <domain includeSubdomains="true">kauth.kakao.com</domain>
         <domain includeSubdomains="true">kapi.kakao.com</domain>
+        <domain includeSubdomains="true">fintory.xyz</domain>
     </domain-config>
     <base-config cleartextTrafficPermitted="true">
         <trust-anchors>

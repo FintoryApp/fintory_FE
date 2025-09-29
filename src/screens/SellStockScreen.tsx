@@ -4,8 +4,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../styles/Color.styles';
 import { hScale, vScale } from '../styles/Scale.styles';
 import HugeButton from '../components/HugeButton';
-import BuyStockModal from '../components/BuyStockModal';
-import { SellBuy } from '../api/sellBuy';
+import BuyStockModal from '../components/stock/BuyStockModal';
+import { SellBuy } from '../api/stock/trading';
 
 export default function SellStockScreen() {
     const {top} = useSafeAreaInsets();

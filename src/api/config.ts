@@ -1,14 +1,9 @@
 // API 기본 설정
 export const API_CONFIG = {
-  // 개발 환경 (Android 에뮬레이터용)
-  BASE_URL: 'https://fintory.xyz', // Android 에뮬레이터에서 호스트 컴퓨터 접근
+  // BASE_URL: 'https://fintory.xyz',
   
-  // iOS 시뮬레이터용 (필요시 주석 해제)
-  // BASE_URL: 'http://localhost:8080',
-  
-  // 프로덕션 환경
-  // BASE_URL: 'https://your-production-server.com',
-  
+  BASE_URL: 'http://10.0.2.2:8080',
+    
   // API 엔드포인트
   ENDPOINTS: {
     // 인증 관련

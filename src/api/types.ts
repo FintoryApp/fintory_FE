@@ -10,7 +10,5 @@ export interface StockCodeResponse {
   export interface StockPriceData {
     code: string;
     currentPrice: number;
-    priceChange: number;
-    priceChangeRate: number;
   }
   

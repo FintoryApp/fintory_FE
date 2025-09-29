@@ -34,6 +34,7 @@
     "react-native-svg-charts": "^5.4.0",
     "react-native-vector-icons": "^10.2.0",
     "react-native-websocket": "^1.0.2",
+    "sockjs-client": "^1.6.1",
     "victory-native": "^41.20.1"
   },
   "devDependencies": {

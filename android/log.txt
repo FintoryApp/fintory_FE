@@ -1,0 +1,56 @@
+info Starting logkitty
+[17:20:39] I | ReactNativeJS ▶︎ Running "fintory_FE" with {"rootTag":11,"initialProps":{},"fabric":true}
+
+[17:20:41] I | ReactNativeJS ▶︎ overseas stock market cap api success
+
+[17:20:41] I | ReactNativeJS ▶︎ korean stock market cap api success
+
+[17:20:41] I | ReactNativeJS ▶︎ 'allStockCodes 설정됨:', [ '373220',
+                             │ '105560',
+                             │ '051910',
+                             │ '000660',
+                             │ '096770',
+                             │ '207940',
+                             │ '015760',
+                             │ '005380',
+                             │ '005930',
+                             │ '006400',
+                             │ '068270',
+                             │ '035420',
+                             │ '000270',
+                             │ '066570',
+                             │ '012330',
+                             │ '035720',
+                             │ '011200',
+                             │ '090430',
+                             │ '005490',
+                             │ '055550',
+                             │ 'MSFT',
+                             │ 'AAPL',
+                             │ 'GOOGL',
+                             │ 'NVDA',
+                             │ 'AMZN',
+                             │ 'TSLA',
+                             │ 'ADBE',
+                             │ 'META',
+                             │ 'NFLX',
+                             │ 'QCOM',
+                             │ 'AMD',
+                             │ 'COST',
+                             │ 'INTC',
+                             │ 'ABNB',
+                             │ 'PYPL',
+                             │ 'SBUX',
+                             │ 'PEP',
+                             │ 'CSCO',
+                             │ 'EBAY',
+                             └ 'LYFT' ]
+
+[17:20:41] I | ReactNativeJS ▶︎ websocket connect started
+
+[17:20:41] I | ReactNativeJS ▶︎ STOMP client activating...
+
+[17:20:41] I | ReactNativeJS ▶︎ STOMP client activated
+
+[17:20:41] I | ReactNativeJS ▶︎ 'STOMP Debug:', 'Opening Web Socket...'
+

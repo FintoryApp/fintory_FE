@@ -1,6 +1,6 @@
-import api from './index';
+import api from '../index';
 
-export const SellBuy = async (data: any) => {
+export const trading = async (data: any) => {
     try {
         // 인증 토큰 가져오기 (AsyncStorage에서)
         const token = await getAuthToken();

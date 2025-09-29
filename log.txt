@@ -1,0 +1,58 @@
+info Starting logkitty
+[21:44:03] I | ReactNativeJS ▶︎ overseas stock market cap api success
+
+[21:44:03] I | ReactNativeJS ▶︎ korean stock market cap api success
+
+[21:44:03] I | ReactNativeJS ▶︎ 'allStockCodes 설정됨:', [ '373220',
+                             │ '105560',
+                             │ '051910',
+                             │ '000660',
+                             │ '096770',
+                             │ '207940',
+                             │ '015760',
+                             │ '005380',
+                             │ '005930',
+                             │ '006400',
+                             │ '068270',
+                             │ '035420',
+                             │ '000270',
+                             │ '066570',
+                             │ '012330',
+                             │ '035720',
+                             │ '011200',
+                             │ '090430',
+                             │ '005490',
+                             │ '055550',
+                             │ 'MSFT',
+                             │ 'AAPL',
+                             │ 'GOOGL',
+                             │ 'NVDA',
+                             │ 'AMZN',
+                             │ 'TSLA',
+                             │ 'ADBE',
+                             │ 'META',
+                             │ 'NFLX',
+                             │ 'QCOM',
+                             │ 'AMD',
+                             │ 'COST',
+                             │ 'INTC',
+                             │ 'ABNB',
+                             │ 'PYPL',
+                             │ 'SBUX',
+                             │ 'PEP',
+                             │ 'CSCO',
+                             │ 'EBAY',
+                             └ 'LYFT' ]
+
+[21:44:03] I | ReactNativeJS ▶︎ websocket connect started for StockMainScreen
+
+[21:44:03] I | ReactNativeJS ▶︎ 'WebSocket 연결 시도:', 'http://10.0.2.2:8080/ws-stomp'
+
+[21:44:03] I | ReactNativeJS ▶︎ SockJS 열림
+
+[21:44:03] I | ReactNativeJS ▶︎ STOMP CONNECT 전송
+
+[21:44:03] I | ReactNativeJS ▶︎ STOMP 연결 성공!
+
+[21:46:01] I | ReactNativeJS ▶︎ 연결 종료
+

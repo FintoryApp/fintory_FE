@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { hScale, vScale } from '../styles/Scale.styles';
 import Colors from '../styles/Color.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import StockChart from '../components/StockChart';
+import StockChart from '../components/stock/StockChart';
 import { useStockChart } from '../hook/useStockChart';
 import { useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';

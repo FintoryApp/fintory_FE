@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { StockChart } from "../api/stockChart";
+import { StockChart } from "../api/stock/stockChart";
 
 export const useStockChart = (code: string, period: string) => {
   const [data, setData] = useState<any>(null); // chartData 전체 객체

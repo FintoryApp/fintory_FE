@@ -1,96 +1,73 @@
-import { useEffect, useState } from "react";
-import webSocketService from "../api/websocket";
+import { useEffect, useState, useRef } from "react";
+import webSocketService from "../api/webSocketService";
 import { StockPriceData } from "../api/types";
 
-export function useStockWebSocket(
-  codes: string[],
-  marketType: "korean" | "overseas",
-  autoConnect = true
-) {
+// 현재 훅의 상태를 추적하기 위한 Ref
+// 이 훅은 단일 연결을 관리하며, codes가 변경되어도 연결은 유지되어야 합니다.
+export function useStockWebSocket(codes: string[]) {
   const [prices, setPrices] = useState<Record<string, StockPriceData>>({});
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+  const isInitialConnect = useRef(true); // 최초 연결 시만 connect()를 호출하도록 제어
 
+  // 1. 가격 업데이트 핸들러 (코드 변경 여부와 상관없이 동일)
+  const handlePriceUpdate = (data: StockPriceData) => {
+    // 단일 채널로 모든 데이터가 들어오므로, data.code를 키로 사용하여 상태를 업데이트합니다.
+    setPrices(prevPrices => ({
+      ...prevPrices,
+      [data.code]: data
+    }));
+  };
+  
+  // 2. 연결 및 초기 구독 명령 (최초 마운트 시에만)
   useEffect(() => {
-    if (autoConnect && codes.length > 0) {
-      let mounted = true;
+    if (!codes || codes.length === 0) {
+      return;
+    }
 
-      const connectWebSocket = async () => {
-        try {
-          console.log(`🚀 [${marketType}] WebSocket 연결 시도 시작...`);
-          console.log(`📋 [${marketType}] 구독할 코드 개수:`, codes.length);
-          console.log(`📋 [${marketType}] 구독할 코드들:`, codes);
-          
-          // WebSocket 연결 시도 (최초 연결이거나 재연결)
+    const connectAndSubscribe = async () => {
+      try {
+        // 최초 진입 시에만 connect() 시도
+        if (isInitialConnect.current || !webSocketService.isWebSocketConnected()) {
+          console.log('websocket connect started for StockMainScreen');
           await webSocketService.connect();
-          
-          console.log(`✅ [${marketType}] WebSocket 연결 성공 - 구독 시작`);
-          
-          if (!mounted) return;
-
           setIsConnected(true);
           setConnectionError(null);
-
-          // ✅ 연결 후 구독
-          if (marketType === "korean") {
-            console.log(`📤 [${marketType}] 한국 주식 구독 시작...`);
-            webSocketService.subscribeAllKoreanStocks(codes, (data) => {
-              console.log(`📈 [${marketType}] 실시간 데이터 수신:`, data);
-              setPrices((prev) => ({ ...prev, [data.code]: data }));
-            });
-          } else {
-            console.log(`📤 [${marketType}] 해외 주식 구독 시작...`);
-            webSocketService.subscribeAllOverseasStocks(codes, (data) => {
-              console.log(`📈 [${marketType}] 실시간 데이터 수신:`, data);
-              setPrices((prev) => ({ ...prev, [data.code]: data }));
-            });
-          }
-        } catch (error) {
-          console.error(`❌ [${marketType}] WebSocket 연결 실패:`, error);
-          if (!mounted) return;
-
-          setConnectionError("실시간 데이터를 받을 수 없습니다.");
-          setIsConnected(false);
-
-          // 기본값 세팅
-          const defaultPrices: Record<string, StockPriceData> = {};
-          codes.forEach((code) => {
-            defaultPrices[code] = {
-              code,
-              currentPrice: 0,
-              priceChange: 0,
-              priceChangeRate: 0,
-            };
-          });
-          setPrices(defaultPrices);
+          isInitialConnect.current = false; // 연결 성공 후 플래그 해제
+          
+          // 연결 성공 후, 단일 채널 구독 요청 (SUBSCRIBE 명령 포함)
+          webSocketService.subscribeAllStocks(codes, handlePriceUpdate);
+          
+        } else {
+          // 이미 연결된 상태라면, codes만 서버에 다시 전송하여 구독 목록 갱신을 명령 (SEND 명령)
+          console.log('codes changed, sending updated subscription list to server.');
+          webSocketService.send("/app/stock/subscribe-all", { stockCodes: codes });
         }
-      };
+        
+      } catch (error) {
+        setIsConnected(false);
+        setConnectionError('실시간 데이터를 받을 수 없습니다.');
+        console.error("WebSocket connection error:", error);
+      }
+    };
 
-      connectWebSocket();
+    connectAndSubscribe();
+    
+    // 3. 정리 함수 (화면 언마운트 시에만)
+    return () => {
+      // 훅이 언마운트될 때만 전체 구독 해제 및 연결 종료
+      if (!isInitialConnect.current) {
+        console.log('StockMainScreen unmounting. Disconnecting WebSocket.');
+        webSocketService.unsubscribeAllStocks(); // 서버에 구독 해제 명령 (SEND)
+        webSocketService.disconnect();           // SockJS 연결 종료 (DISCONNECT)
+      }
+    };
+  }, [codes]); 
+  // codes가 변경될 때마다 useEffect가 실행되어 connectAndSubscribe 내부의 else 문(SEND 명령)을 실행합니다.
 
-      return () => {
-        mounted = false;
-        console.log(`🔌 [${marketType}] 화면 벗어남 - 구독 해제 시작`);
-
-        // 👉 구독 해제
-        if (codes.length > 0) {
-          if (marketType === "korean") {
-            webSocketService.unsubscribeAllKoreanStocks(codes);
-            console.log(`📤 [${marketType}] 한국 주식 구독 해제 완료`);
-          } else {
-            webSocketService.unsubscribeAllOverseasStocks(codes);
-            console.log(`📤 [${marketType}] 해외 주식 구독 해제 완료`);
-          }
-        }
-
-        // WebSocket 연결 해제 (화면 벗어날 때)
-        console.log(`🔌 [${marketType}] WebSocket 연결 해제`);
-        webSocketService.disconnect();
-        console.log(`✅ [${marketType}] 구독 및 연결 해제 완료`);
-      };
-    }
-  }, [autoConnect, codes, marketType]);
-
-
-  return { prices, isConnected, connectionError };
+  return {
+    prices,
+    isConnected,
+    connectionError,
+  };
 }

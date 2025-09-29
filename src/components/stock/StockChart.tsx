@@ -1,8 +1,8 @@
 import { LineChart, XAxis, YAxis } from "react-native-svg-charts";
-import { makeChartData, formatXAxisLabel, xScale } from "../utils/chart";
+import { makeChartData, formatXAxisLabel, xScale } from "../../utils/chart";
 import { Text, TouchableOpacity, View } from "react-native";
-import Colors from "../styles/Color.styles";
-import { hScale, vScale } from "../styles/Scale.styles";
+import Colors from "../../styles/Color.styles";
+import { hScale, vScale } from "../../styles/Scale.styles";
 import { Line as SvgLine, Circle, G, Text as SvgText } from "react-native-svg";
 import React, { useMemo, useRef, useState } from "react";
 import * as d3Scale from "d3-scale";

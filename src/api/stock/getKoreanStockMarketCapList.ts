@@ -1,8 +1,9 @@
-import api from './index';
+import api from '../index';
 
-export const KoreanStock_marketCap = async () => {
+export const getKoreanStock_marketCap = async () => {
     try {
         const response = await api.get(`/api/child/stock/korean/rankings/market-cap`);
+        console.log('korean stock market cap api success');
         return response.data;
     } catch (error) {
         console.error('Error fetching korean stock:', error);   

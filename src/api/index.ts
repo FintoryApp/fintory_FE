@@ -3,7 +3,6 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_CONFIG } from './config';
 import { saveTokens } from './auth';
-import { API_BASE_URL } from '@env';
 import { resetToFirst } from '../navigation/NavigationService';
 
 const api = axios.create({
@@ -25,6 +24,11 @@ const WITHOUT_AT_PATHS: string[] = [
   '/api/child/auth/reissue',
   // news
   '/api/news/crawl-test',
+  // stock
+  '/api/child/stock/korean/rankings/market-cap',
+  '/api/child/stock/overseas/rankings/market-cap',
+  '/api/child/stock/korean/stockPriceHistory',
+  '/api/child/portfolio/stocks',
 ];
 
 // 요청 인터셉터: 화이트리스트를 제외하고 Authorization 헤더 첨부

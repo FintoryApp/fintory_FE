@@ -5,9 +5,9 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
-import { hScale, vScale } from '../styles/Scale.styles';
+import { hScale, vScale } from '../../styles/Scale.styles';
 
-import { Colors } from '../styles/Color.styles';
+import { Colors } from '../../styles/Color.styles';
 
 interface BuyStockModalProps {
   isVisible: boolean;

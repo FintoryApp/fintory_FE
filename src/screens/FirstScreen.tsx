@@ -137,7 +137,7 @@ export default function FirstScreen() {
                 <Text style={styles.text}>Create your own Finance Story!</Text>
             </View>  
 
-            <View style={[styles.loginContainer, {top:top+vScale(440)}]}> 
+            <View style={[styles.loginContainer, {top:top+vScale(460)}]}> 
                 <HugeButton title="시작하기" onPress={() => navigation.navigate('SignIn' as never)}   
                         backgroundColor={Colors.white}
                         textColor={Colors.primary}/>

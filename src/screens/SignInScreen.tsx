@@ -41,6 +41,40 @@ export default function SignInScreen() {
     }
   };
 
+  // 이메일 입력값이 변경될 때 이메일 검증 상태 리셋
+  const handleEmailChange = (text: string) => {
+    setEmail(text);
+    if (text !== email) {
+      setIsEmailVerified(false);
+      setEmailCheck('');
+    }
+  };
+
+  // 닉네임 입력값이 변경될 때 닉네임 검증 상태 리셋
+  const handleNicknameChange = (text: string) => {
+    setNickname(text);
+    // 닉네임이 5-10자 범위를 벗어나면 검증 실패
+    if (text.length < 5 || text.length > 10) {
+      // 닉네임 검증 실패 시 시작하기 버튼 비활성화를 위해 별도 상태 관리
+      // 여기서는 단순히 닉네임 길이만 체크
+    }
+  };
+
+  // 비밀번호 입력값이 변경될 때 비밀번호 확인 상태 리셋
+  const handlePasswordChange = (text: string) => {
+    setPassword(text);
+    // 비밀번호가 변경되면 비밀번호 확인도 다시 검증해야 함
+    if (confirmPassword !== '') {
+      if (text === confirmPassword && text !== '') {
+        setIsPasswordVerified(true);
+        setPasswordVerificationMessage('비밀번호가 일치합니다');
+      } else {
+        setIsPasswordVerified(false);
+        setPasswordVerificationMessage('비밀번호가 일치하지 않습니다.');
+      }
+    }
+  };
+
   // 이메일 중복 확인
   const handleEmailDuplicationCheck = async () => {
     if (!email) {
@@ -106,6 +140,14 @@ export default function SignInScreen() {
       console.log('회원가입 API 응답:', result);
 
       if (result.resultCode === 'SUCCESS' && result.data) {
+        // 닉네임과 포인트를 AsyncStorage에 저장
+        try {
+          await AsyncStorage.setItem('nickname', nickname);
+          await AsyncStorage.setItem('points', '0');
+        } catch (error) {
+          console.error('Error saving user data:', error);
+        }
+        
         Alert.alert('성공', result.message || '회원가입이 완료되었습니다. 자동으로 로그인됩니다.', [
           {
             text: '확인',
@@ -161,17 +203,19 @@ export default function SignInScreen() {
             onChangeText={handleConfirmPasswordChange}
             checkText={passwordVerificationMessage}
             secureTextEntry={true}
+            isCheckTextSuccess={isPasswordVerified}
         />
 
         <LoginInput 
                 titleText="이메일" 
                 placeholderText="이메일을 입력하세요" 
                 value={email} 
-                onChangeText={setEmail} 
+                onChangeText={handleEmailChange} 
                 checkText={emailCheck}        
                 showVerificationButton={true}
                 onVerificationPress={handleEmailDuplicationCheck}
-                verificationButtonText='중복 확인' />
+                verificationButtonText='중복 확인'
+                isCheckTextSuccess={isEmailVerified} />
             
         </View>
 

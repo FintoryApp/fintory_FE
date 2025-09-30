@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
         width:hScale(328),
         height:vScale(211),
         flexDirection:'column',
-        justifyContent:'space-between',
+        justifyContent:'flex-start',
         alignItems:'center',
         position:'absolute',
         
@@ -82,7 +82,7 @@ export const styles = StyleSheet.create({
     },
 
     snsLoginContainer:{
-        marginTop:vScale(16),
+        marginTop:vScale(25),
         width:hScale(328),
         height:hScale(35),
         flexDirection:'row',
@@ -141,7 +141,7 @@ export const styles = StyleSheet.create({
     },
 
     buttonGap:{
-        height:vScale(8),
+        height:vScale(25),
     },
 
 

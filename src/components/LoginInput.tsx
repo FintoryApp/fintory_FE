@@ -13,6 +13,7 @@ interface LoginInputProps {
     onVerificationPress?: () => void;
     verificationButtonText?: string;
     secureTextEntry?: boolean;
+    isCheckTextSuccess?: boolean;
 }
 
 const LoginInput: React.FC<LoginInputProps> = ({ 
@@ -24,7 +25,8 @@ const LoginInput: React.FC<LoginInputProps> = ({
     showVerificationButton = false,
     onVerificationPress,
     verificationButtonText,
-    secureTextEntry = false
+    secureTextEntry = false,
+    isCheckTextSuccess = false
 }) => {
     return (
         <View style={styles.container}>
@@ -49,7 +51,7 @@ const LoginInput: React.FC<LoginInputProps> = ({
 
             </View>
 
-            <Text style={styles.checkText}>{checkText}</Text>
+            <Text style={[styles.checkText, { color: isCheckTextSuccess ? Colors.primary : Colors.red }]}>{checkText}</Text>
         </View>
     );
 };      
@@ -95,12 +97,11 @@ const styles = StyleSheet.create({
     checkText: {
         marginTop: vScale(4),
         fontSize: hScale(12),
-        color: Colors.red,
     },
     verificationButton: {
         width: hScale(90),
         height: vScale(24),
-        backgroundColor: Colors.middleGray,
+        backgroundColor: Colors.blue,
         borderRadius: hScale(8),
         justifyContent: 'center',
         alignItems: 'center',

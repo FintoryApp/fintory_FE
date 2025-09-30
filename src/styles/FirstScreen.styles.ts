@@ -122,8 +122,6 @@ export const styles = StyleSheet.create({
         marginLeft:'auto',
         backgroundColor:Colors.white,
         borderRadius:hScale(6),
-        borderWidth:1,
-        borderColor:Colors.black,
         justifyContent:'center',
         alignItems:'center',
         flexDirection:'row',
@@ -143,7 +141,7 @@ export const styles = StyleSheet.create({
     },
 
     buttonGap:{
-        height:vScale(16),
+        height:vScale(8),
     },
 
 

@@ -1,30 +1,26 @@
 import { useEffect, useState, useRef } from "react";
 import webSocketService from "../api/webSocketService";
 import { StockPriceData } from "../api/types";
+import { getOpenedMarket } from "../api/stock/getOpenedMarket";
 
 // 현재 훅의 상태를 추적하기 위한 Ref
 // 이 훅은 단일 연결을 관리하며, codes가 변경되어도 연결은 유지되어야 합니다.
-export function useStockWebSocket(codes: string[]) {
+export function useStockWebSocket(koreanStocks: any[], overseasStocks: any[]) {
   const [prices, setPrices] = useState<Record<string, StockPriceData>>({});
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const isInitialConnect = useRef(true); // 최초 연결 시만 connect()를 호출하도록 제어
 
-  // 1. 가격 업데이트 핸들러 (코드 변경 여부와 상관없이 동일)
+  // 1. 가격 업데이트 핸들러
   const handlePriceUpdate = (data: StockPriceData) => {
-    // 단일 채널로 모든 데이터가 들어오므로, data.code를 키로 사용하여 상태를 업데이트합니다.
     setPrices(prevPrices => ({
       ...prevPrices,
       [data.code]: data
     }));
   };
   
-  // 2. 연결 및 초기 구독 명령 (최초 마운트 시에만)
+  // 2. 연결 및 구독 (최초 마운트 시에만)
   useEffect(() => {
-    if (!codes || codes.length === 0) {
-      return;
-    }
-
     const connectAndSubscribe = async () => {
       try {
         // 최초 진입 시에만 connect() 시도
@@ -35,13 +31,16 @@ export function useStockWebSocket(codes: string[]) {
           setConnectionError(null);
           isInitialConnect.current = false; // 연결 성공 후 플래그 해제
           
-          // 연결 성공 후, 단일 채널 구독 요청 (SUBSCRIBE 명령 포함)
-          webSocketService.subscribeAllStocks(codes, handlePriceUpdate);
+          // 장 검사 API 호출하여 열린 장 확인
+          const openedMarketResponse = await getOpenedMarket();
+          console.log('열린 장:', openedMarketResponse);
           
-        } else {
-          // 이미 연결된 상태라면, codes만 서버에 다시 전송하여 구독 목록 갱신을 명령 (SEND 명령)
-          console.log('codes changed, sending updated subscription list to server.');
-          webSocketService.send("/app/stock/subscribe-all", { stockCodes: codes });
+          // API 응답에서 실제 상태값 추출
+          const openedMarket = openedMarketResponse.data?.status;
+          console.log('추출된 장 상태:', openedMarket);
+          
+          // 열린 장에 따라 해당 주식들만 구독
+          webSocketService.subscribeToOpenedMarkets(openedMarket, koreanStocks, overseasStocks, handlePriceUpdate);
         }
         
       } catch (error) {
@@ -58,12 +57,10 @@ export function useStockWebSocket(codes: string[]) {
       // 훅이 언마운트될 때만 전체 구독 해제 및 연결 종료
       if (!isInitialConnect.current) {
         console.log('StockMainScreen unmounting. Disconnecting WebSocket.');
-        webSocketService.unsubscribeAllStocks(); // 서버에 구독 해제 명령 (SEND)
-        webSocketService.disconnect();           // SockJS 연결 종료 (DISCONNECT)
+        webSocketService.disconnect(); // SockJS 연결 종료
       }
     };
-  }, [codes]); 
-  // codes가 변경될 때마다 useEffect가 실행되어 connectAndSubscribe 내부의 else 문(SEND 명령)을 실행합니다.
+  }, []); // 의존성 배열 제거 - 한 번만 실행
 
   return {
     prices,

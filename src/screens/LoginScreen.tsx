@@ -66,7 +66,8 @@ export default function LoginScreen() {
                 placeholderText="비밀번호를 입력하세요" 
                 value={password} 
                 onChangeText={setPassword} 
-                checkText='' />
+                checkText=''
+                secureTextEntry={true} />
             
         </View>
 

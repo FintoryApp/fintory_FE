@@ -1,9 +1,30 @@
 info Starting logkitty
-[21:44:03] I | ReactNativeJS ▶︎ overseas stock market cap api success
+[03:59:16] I | ReactNativeJS ▶︎ Running "fintory_FE" with {"rootTag":11,"initialProps":{},"fabric":true}
 
-[21:44:03] I | ReactNativeJS ▶︎ korean stock market cap api success
+[03:59:30] I | ReactNativeJS ▶︎ 로그인 성공
 
-[21:44:03] I | ReactNativeJS ▶︎ 'allStockCodes 설정됨:', [ '373220',
+[03:59:32] I | ReactNativeJS ▶︎ websocket connect started for StockMainScreen
+
+[03:59:32] I | ReactNativeJS ▶︎ 'WebSocket 연결 시도:', 'http://10.0.2.2:8080/ws-sockjs'
+
+[03:59:32] I | ReactNativeJS ▶︎ overseas stock market cap api success
+
+[03:59:32] I | ReactNativeJS ▶︎ SockJS 열림
+
+[03:59:32] I | ReactNativeJS ▶︎ STOMP CONNECT 전송
+
+[03:59:32] I | ReactNativeJS ▶︎ STOMP 연결 성공!
+
+[03:59:32] I | ReactNativeJS ▶︎ opened market api success
+
+[03:59:32] I | ReactNativeJS ▶︎ '열린 장:', { resultCode: 'SUCCESS', data: { status: 'overseas' } }
+
+[03:59:32] I | ReactNativeJS ▶︎ '추출된 장 상태:', 'overseas'
+
+[03:59:32] I | ReactNativeJS ▶︎ owned stock api success
+
+[03:59:34] I | ReactNativeJS ▶︎ korean stock market cap api success
+                             │ 'allStockCodes 설정됨:', [ '373220',
                              │ '105560',
                              │ '051910',
                              │ '000660',
@@ -44,15 +65,621 @@ info Starting logkitty
                              │ 'EBAY',
                              └ 'LYFT' ]
 
-[21:44:03] I | ReactNativeJS ▶︎ websocket connect started for StockMainScreen
+[04:02:06] I | ReactNativeJS ▶︎ StockMainScreen unmounting. Disconnecting WebSocket.
 
-[21:44:03] I | ReactNativeJS ▶︎ 'WebSocket 연결 시도:', 'http://10.0.2.2:8080/ws-stomp'
+[04:02:06] I | ReactNativeJS ▶︎ websocket connect started for StockMainScreen
 
-[21:44:03] I | ReactNativeJS ▶︎ SockJS 열림
+[04:02:06] I | ReactNativeJS ▶︎ 'WebSocket 연결 시도:', 'http://10.0.2.2:8080/ws-sockjs'
 
-[21:44:03] I | ReactNativeJS ▶︎ STOMP CONNECT 전송
+[04:02:06] I | ReactNativeJS ▶︎ 연결 종료
 
-[21:44:03] I | ReactNativeJS ▶︎ STOMP 연결 성공!
+[04:02:06] I | ReactNativeJS ▶︎ overseas stock market cap api success
 
-[21:46:01] I | ReactNativeJS ▶︎ 연결 종료
+[04:02:06] I | ReactNativeJS ▶︎ SockJS 열림
+
+[04:02:06] I | ReactNativeJS ▶︎ STOMP CONNECT 전송
+
+[04:02:06] I | ReactNativeJS ▶︎ STOMP 연결 성공!
+
+[04:02:06] I | ReactNativeJS ▶︎ opened market api success
+
+[04:02:06] I | ReactNativeJS ▶︎ '열린 장:', { resultCode: 'SUCCESS', data: { status: 'overseas' } }
+
+[04:02:06] I | ReactNativeJS ▶︎ '추출된 장 상태:', 'overseas'
+
+[04:02:06] I | ReactNativeJS ▶︎ '해외 주식 구독 시작:', 20, '개'
+
+[04:02:06] I | ReactNativeJS ▶︎ '해외 주식 구독 완료:', 20, '개'
+
+[04:02:06] I | ReactNativeJS ▶︎ owned stock api success
+
+[04:02:08] I | ReactNativeJS ▶︎ korean stock market cap api success
+
+[04:02:08] I | ReactNativeJS ▶︎ 'allStockCodes 설정됨:', [ '373220',
+                             │ '105560',
+                             │ '051910',
+                             │ '000660',
+                             │ '096770',
+                             │ '207940',
+                             │ '015760',
+                             │ '005380',
+                             │ '005930',
+                             │ '006400',
+                             │ '068270',
+                             │ '035420',
+                             │ '000270',
+                             │ '066570',
+                             │ '012330',
+                             │ '035720',
+                             │ '011200',
+                             │ '090430',
+                             │ '005490',
+                             │ '055550',
+                             │ 'MSFT',
+                             │ 'AAPL',
+                             │ 'GOOGL',
+                             │ 'NVDA',
+                             │ 'AMZN',
+                             │ 'TSLA',
+                             │ 'ADBE',
+                             │ 'META',
+                             │ 'NFLX',
+                             │ 'QCOM',
+                             │ 'AMD',
+                             │ 'COST',
+                             │ 'INTC',
+                             │ 'ABNB',
+                             │ 'PYPL',
+                             │ 'SBUX',
+                             │ 'PEP',
+                             │ 'CSCO',
+                             │ 'EBAY',
+                             └ 'LYFT' ]
+
+[04:05:09] I | ReactNativeJS ▶︎ 연결 종료
+
+[04:06:42] I | ReactNativeJS ▶︎ StockMainScreen unmounting. Disconnecting WebSocket.
+
+[04:06:42] I | ReactNativeJS ▶︎ websocket connect started for StockMainScreen
+
+[04:06:42] I | ReactNativeJS ▶︎ 'WebSocket 연결 시도:', 'http://10.0.2.2:8080/ws-sockjs'
+
+[04:06:42] I | ReactNativeJS ▶︎ SockJS 열림
+
+[04:06:42] I | ReactNativeJS ▶︎ STOMP CONNECT 전송
+
+[04:06:42] I | ReactNativeJS ▶︎ STOMP 연결 성공!
+
+[04:06:42] I | ReactNativeJS ▶︎ overseas stock market cap api success
+
+[04:06:42] I | ReactNativeJS ▶︎ opened market api success
+
+[04:06:42] I | ReactNativeJS ▶︎ '열린 장:', { resultCode: 'SUCCESS', data: { status: 'overseas' } }
+
+[04:06:42] I | ReactNativeJS ▶︎ '추출된 장 상태:', 'overseas'
+
+[04:06:42] I | ReactNativeJS ▶︎ '해외 주식 구독 시작:', 20, '개'
+
+[04:06:42] I | ReactNativeJS ▶︎ '해외 주식 구독 완료:', 20, '개'
+
+[04:06:42] I | ReactNativeJS ▶︎ owned stock api success
+
+[04:06:43] I | ReactNativeJS ▶︎ korean stock market cap api success
+
+[04:06:43] I | ReactNativeJS ▶︎ 'allStockCodes 설정됨:', [ '373220',
+                             │ '105560',
+                             │ '051910',
+                             │ '000660',
+                             │ '096770',
+                             │ '207940',
+                             │ '015760',
+                             │ '005380',
+                             │ '005930',
+                             │ '006400',
+                             │ '068270',
+                             │ '035420',
+                             │ '000270',
+                             │ '066570',
+                             │ '012330',
+                             │ '035720',
+                             │ '011200',
+                             │ '090430',
+                             │ '005490',
+                             │ '055550',
+                             │ 'MSFT',
+                             │ 'AAPL',
+                             │ 'GOOGL',
+                             │ 'NVDA',
+                             │ 'AMZN',
+                             │ 'TSLA',
+                             │ 'ADBE',
+                             │ 'META',
+                             │ 'NFLX',
+                             │ 'QCOM',
+                             │ 'AMD',
+                             │ 'COST',
+                             │ 'INTC',
+                             │ 'ABNB',
+                             │ 'PYPL',
+                             │ 'SBUX',
+                             │ 'PEP',
+                             │ 'CSCO',
+                             │ 'EBAY',
+                             └ 'LYFT' ]
+
+[04:06:46] W | ReactNativeJS ▶︎ Warning: React has detected a change in the order of Hooks called by StockMainScreen. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://react.dev/link/rules-of-hooks
+                             │ 
+                             │ Previous render            Next render
+                             │ ------------------------------------------------------
+                             │ 1. useState                   useState
+                             │ 2. useState                   useState
+                             │ 3. useState                   useState
+                             │ 4. useState                   useState
+                             │ 5. useState                   useState
+                             │ 6. useState                   useState
+                             │ 7. useState                   useState
+                             │ 8. useEffect                  useEffect
+                             │ 9. useState                   useState
+                             │ 10. useState                  useState
+                             │ 11. useState                  useState
+                             │ 12. useRef                    useRef
+                             │ 13. useEffect                 useEffect
+                             │ 14. useContext                useEffect
+                             │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                             │ 
+                             │ at StockMainScreen (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:131522:41)
+                             │ at StaticContainer (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107608:17)
+                             │ at EnsureSingleNavigator (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:103217:24)
+                             │ at SceneView (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107448:22)
+                             │ at RCTView (<anonymous>)
+                             │ at View (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:52462:43)
+                             │ at RCTView (<anonymous>)
+                             │ at View (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:52462:43)
+                             │ at Animated(View) (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:61943:47)
+                             │ at Background (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:177604:21)
+                             │ at Screen (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:181217:105)
+                             │ at RNSScreen (<anonymous>)
+                             │ at Animated(Anonymous) (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:61943:47)
+                             │ at Suspender (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182528:22)
+                             │ at Suspense (<anonymous>)
+                             │ at Freeze (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182538:23)
+                             │ at DelayedFreeze (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182493:22)
+                             └ at InnerScreen (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182285:41)
+
+[04:06:46] W | ReactNativeJS ▶︎ at Screen (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182461:50)
+                             │ at MaybeScreen (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:185620:24)
+                             │ at RNSScreenContainer (<anonymous>)
+                             │ at ScreenContainer (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:183059:31)
+                             │ at MaybeScreenContainer (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:185609:23)
+                             │ at FrameSizeProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:179964:28)
+                             │ at RCTView (<anonymous>)
+                             │ at View (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:52462:43)
+                             │ at SafeAreaProviderCompat (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:181174:24)
+                             │ at BottomTabView (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:185255:30)
+                             │ at PreventRemoveProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:103414:25)
+                             │ at NavigationStateListenerProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107716:21)
+                             │ at NavigationContent (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107660:22)
+                             │ at anonymous (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107675:27)
+                             │ at BottomTabNavigator (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:185644:18)
+                             │ at MainTabNavigator (<anonymous>)
+                             │ at StaticContainer (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107608:17)
+                             │ at EnsureSingleNavigator (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:103217:24)
+                             │ at SceneView (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107448:22)
+                             │ at RNSScreenContentWrapper (<anonymous>)
+                             │ at ScreenContentWrapper (<anonymous>)
+                             │ at DebugContainer (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:183364:36)
+                             │ at RNSScreen (<anonymous>)
+                             │ at Animated(Anonymous) (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:61943:47)
+                             │ at Suspender (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182528:22)
+                             │ at Suspense (<anonymous>)
+                             │ at Freeze (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182538:23)
+                             │ at DelayedFreeze (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182493:22)
+                             │ at InnerScreen (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182285:41)
+                             │ at Screen (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182461:50)
+                             │ at ScreenStackItem (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:183242:24)
+                             │ at SceneView (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:176937:21)
+                             │ at RNSScreenStack (<anonymous>)
+                             │ at anonymous (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:183218:22)
+                             │ at ScreenStack (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:183135:30)
+                             │ at FrameSizeProviderInner (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:179977:29)
+                             │ at FrameSizeProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:179964:28)
+                             │ at RCTView (<anonymous>)
+                             │ at View (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:52462:43)
+                             │ at SafeAreaProviderCompat (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:181174:24)
+                             │ at NativeStackView (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:177258:22)
+                             │ at PreventRemoveProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:103414:25)
+                             │ at NavigationStateListenerProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107716:21)
+                             └ at NavigationContent (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107660:22)
+
+[04:06:46] W | ReactNativeJS ▶︎ at anonymous (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107675:27)
+                             │ at NativeStackNavigator (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:184252:18)
+                             │ at ThemeProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:103254:21)
+                             │ at EnsureSingleNavigator (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:103217:24)
+                             │ at BaseNavigationContainer (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:100918:28)
+                             │ at NavigationContainerInner (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:108180:30)
+                             │ at RootNavigation (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:98916:54)
+                             │ at RNCSafeAreaProvider (<anonymous>)
+                             │ at SafeAreaProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:99332:24)
+                             │ at App (<anonymous>)
+                             │ at RCTView (<anonymous>)
+                             │ at View (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:52462:43)
+                             │ at RCTView (<anonymous>)
+                             │ at View (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:52462:43)
+                             │ at AppContainer (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:52352:25)
+                             └ at fintory_FE(RootComponent) (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:69429:28)
+
+[04:06:46] W | ReactNativeJS ▶︎ Warning: TypeError: Cannot read property 'length' of undefined
+                             │ 
+                             │ This error is located at:
+                             │ at StockMainScreen (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:131522:41)
+                             │ at StaticContainer (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107608:17)
+                             │ at EnsureSingleNavigator (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:103217:24)
+                             │ at SceneView (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107448:22)
+                             │ at RCTView (<anonymous>)
+                             │ at View (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:52462:43)
+                             │ at RCTView (<anonymous>)
+                             │ at View (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:52462:43)
+                             │ at Animated(View) (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:61943:47)
+                             │ at Background (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:177604:21)
+                             │ at Screen (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:181217:105)
+                             │ at RNSScreen (<anonymous>)
+                             │ at Animated(Anonymous) (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:61943:47)
+                             │ at Suspender (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182528:22)
+                             │ at Suspense (<anonymous>)
+                             │ at Freeze (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182538:23)
+                             │ at DelayedFreeze (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182493:22)
+                             │ at InnerScreen (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182285:41)
+                             │ at Screen (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182461:50)
+                             │ at MaybeScreen (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:185620:24)
+                             │ at RNSScreenContainer (<anonymous>)
+                             └ at ScreenContainer (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:183059:31)
+
+[04:06:46] W | ReactNativeJS ▶︎ at MaybeScreenContainer (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:185609:23)
+                             │ at FrameSizeProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:179964:28)
+                             │ at RCTView (<anonymous>)
+                             │ at View (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:52462:43)
+                             │ at SafeAreaProviderCompat (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:181174:24)
+                             │ at BottomTabView (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:185255:30)
+                             │ at PreventRemoveProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:103414:25)
+                             │ at NavigationStateListenerProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107716:21)
+                             │ at NavigationContent (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107660:22)
+                             │ at anonymous (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107675:27)
+                             │ at BottomTabNavigator (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:185644:18)
+                             │ at MainTabNavigator (<anonymous>)
+                             │ at StaticContainer (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107608:17)
+                             │ at EnsureSingleNavigator (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:103217:24)
+                             │ at SceneView (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107448:22)
+                             │ at RNSScreenContentWrapper (<anonymous>)
+                             │ at ScreenContentWrapper (<anonymous>)
+                             │ at DebugContainer (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:183364:36)
+                             │ at RNSScreen (<anonymous>)
+                             │ at Animated(Anonymous) (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:61943:47)
+                             │ at Suspender (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182528:22)
+                             │ at Suspense (<anonymous>)
+                             │ at Freeze (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182538:23)
+                             │ at DelayedFreeze (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182493:22)
+                             │ at InnerScreen (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182285:41)
+                             │ at Screen (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:182461:50)
+                             │ at ScreenStackItem (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:183242:24)
+                             │ at SceneView (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:176937:21)
+                             │ at RNSScreenStack (<anonymous>)
+                             │ at anonymous (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:183218:22)
+                             │ at ScreenStack (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:183135:30)
+                             │ at FrameSizeProviderInner (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:179977:29)
+                             │ at FrameSizeProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:179964:28)
+                             │ at RCTView (<anonymous>)
+                             │ at View (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:52462:43)
+                             │ at SafeAreaProviderCompat (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:181174:24)
+                             │ at NativeStackView (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:177258:22)
+                             │ at PreventRemoveProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:103414:25)
+                             │ at NavigationStateListenerProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107716:21)
+                             │ at NavigationContent (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107660:22)
+                             │ at anonymous (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:107675:27)
+                             │ at NativeStackNavigator (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:184252:18)
+                             │ at ThemeProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:103254:21)
+                             │ at EnsureSingleNavigator (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:103217:24)
+                             │ at BaseNavigationContainer (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:100918:28)
+                             │ at NavigationContainerInner (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:108180:30)
+                             │ at RootNavigation (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:98916:54)
+                             │ at RNCSafeAreaProvider (<anonymous>)
+                             │ at SafeAreaProvider (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:99332:24)
+                             │ at App (<anonymous>)
+                             │ at RCTView (<anonymous>)
+                             │ at View (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:52462:43)
+                             │ at RCTView (<anonymous>)
+                             │ at View (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:52462:43)
+                             │ at AppContainer (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:52352:25)
+                             └ at fintory_FE(RootComponent) (http://10.0.2.2:8081/index.bundle//&platform=android&dev=true&lazy=true&minify=false&app=com.fintory_fe&modulesOnly=false&runModule=true&excludeSource=true&sourcePaths=url-server:69429:28), js engine: hermes
+
+[04:06:46] I | ReactNativeJS ▶︎ StockMainScreen unmounting. Disconnecting WebSocket.
+
+[04:06:47] I | ReactNativeJS ▶︎ 연결 종료
+
+[04:08:04] I | ReactNativeJS ▶︎ 로그인 성공
+
+[04:08:07] I | ReactNativeJS ▶︎ websocket connect started for StockMainScreen
+
+[04:08:07] I | ReactNativeJS ▶︎ 'WebSocket 연결 시도:', 'http://10.0.2.2:8080/ws-sockjs'
+
+[04:08:07] I | ReactNativeJS ▶︎ overseas stock market cap api success
+
+[04:08:07] I | ReactNativeJS ▶︎ SockJS 열림
+
+[04:08:07] I | ReactNativeJS ▶︎ STOMP CONNECT 전송
+
+[04:08:07] I | ReactNativeJS ▶︎ STOMP 연결 성공!
+
+[04:08:07] I | ReactNativeJS ▶︎ opened market api success
+
+[04:08:07] I | ReactNativeJS ▶︎ '열린 장:', { resultCode: 'SUCCESS', data: { status: 'overseas' } }
+
+[04:08:07] I | ReactNativeJS ▶︎ '추출된 장 상태:', 'overseas'
+
+[04:08:07] I | ReactNativeJS ▶︎ owned stock api success
+
+[04:08:08] I | ReactNativeJS ▶︎ korean stock market cap api success
+
+[04:08:08] I | ReactNativeJS ▶︎ 'allStockCodes 설정됨:', [ '373220',
+                             │ '105560',
+                             │ '051910',
+                             │ '000660',
+                             │ '096770',
+                             │ '207940',
+                             │ '015760',
+                             │ '005380',
+                             │ '005930',
+                             │ '006400',
+                             │ '068270',
+                             │ '035420',
+                             │ '000270',
+                             │ '066570',
+                             │ '012330',
+                             │ '035720',
+                             │ '011200',
+                             │ '090430',
+                             │ '005490',
+                             │ '055550',
+                             │ 'MSFT',
+                             │ 'AAPL',
+                             │ 'GOOGL',
+                             │ 'NVDA',
+                             │ 'AMZN',
+                             │ 'TSLA',
+                             │ 'ADBE',
+                             │ 'META',
+                             │ 'NFLX',
+                             │ 'QCOM',
+                             │ 'AMD',
+                             │ 'COST',
+                             │ 'INTC',
+                             │ 'ABNB',
+                             │ 'PYPL',
+                             │ 'SBUX',
+                             │ 'PEP',
+                             │ 'CSCO',
+                             │ 'EBAY',
+                             └ 'LYFT' ]
+
+[04:09:09] I | ReactNativeJS ▶︎ Heartbeat 수신 - 응답 전송
+
+[04:09:19] I | ReactNativeJS ▶︎ Heartbeat 수신 - 응답 전송
+
+[04:09:22] I | ReactNativeJS ▶︎ StockMainScreen unmounting. Disconnecting WebSocket.
+
+[04:09:22] I | ReactNativeJS ▶︎ websocket connect started for StockMainScreen
+
+[04:09:22] I | ReactNativeJS ▶︎ 'WebSocket 연결 시도:', 'http://10.0.2.2:8080/ws-sockjs'
+
+[04:09:22] I | ReactNativeJS ▶︎ 연결 종료
+
+[04:09:22] I | ReactNativeJS ▶︎ SockJS 열림
+
+[04:09:22] I | ReactNativeJS ▶︎ STOMP CONNECT 전송
+
+[04:09:22] I | ReactNativeJS ▶︎ STOMP 연결 성공!
+
+[04:09:22] I | ReactNativeJS ▶︎ overseas stock market cap api success
+
+[04:09:22] I | ReactNativeJS ▶︎ opened market api success
+
+[04:09:22] I | ReactNativeJS ▶︎ '열린 장:', { resultCode: 'SUCCESS', data: { status: 'overseas' } }
+
+[04:09:22] I | ReactNativeJS ▶︎ '추출된 장 상태:', 'overseas'
+
+[04:09:22] I | ReactNativeJS ▶︎ '해외 주식 구독 시작:', 20, '개'
+
+[04:09:22] I | ReactNativeJS ▶︎ '해외 주식 구독 완료:', 20, '개'
+
+[04:09:22] I | ReactNativeJS ▶︎ owned stock api success
+
+[04:09:23] I | ReactNativeJS ▶︎ korean stock market cap api success
+                             │ 'allStockCodes 설정됨:', [ '373220',
+                             │ '105560',
+                             │ '051910',
+                             │ '000660',
+                             │ '096770',
+                             │ '207940',
+                             │ '015760',
+                             │ '005380',
+                             │ '005930',
+                             │ '006400',
+                             │ '068270',
+                             │ '035420',
+                             │ '000270',
+                             │ '066570',
+                             │ '012330',
+                             │ '035720',
+                             │ '011200',
+                             │ '090430',
+                             │ '005490',
+                             │ '055550',
+                             │ 'MSFT',
+                             │ 'AAPL',
+                             │ 'GOOGL',
+                             │ 'NVDA',
+                             │ 'AMZN',
+                             │ 'TSLA',
+                             │ 'ADBE',
+                             │ 'META',
+                             │ 'NFLX',
+                             │ 'QCOM',
+                             │ 'AMD',
+                             │ 'COST',
+                             │ 'INTC',
+                             │ 'ABNB',
+                             │ 'PYPL',
+                             │ 'SBUX',
+                             │ 'PEP',
+                             │ 'CSCO',
+                             │ 'EBAY',
+                             └ 'LYFT' ]
+
+[04:12:00] I | ReactNativeJS ▶︎ 연결 종료
+
+[04:13:39] I | ReactNativeJS ▶︎ StockMainScreen unmounting. Disconnecting WebSocket.
+
+[04:13:39] I | ReactNativeJS ▶︎ websocket connect started for StockMainScreen
+
+[04:13:39] I | ReactNativeJS ▶︎ 'WebSocket 연결 시도:', 'http://10.0.2.2:8080/ws-sockjs'
+
+[04:13:39] I | ReactNativeJS ▶︎ SockJS 열림
+
+[04:13:39] I | ReactNativeJS ▶︎ STOMP CONNECT 전송
+
+[04:13:39] I | ReactNativeJS ▶︎ STOMP 연결 성공!
+
+[04:13:39] I | ReactNativeJS ▶︎ overseas stock market cap api success
+
+[04:13:39] I | ReactNativeJS ▶︎ opened market api success
+
+[04:13:39] I | ReactNativeJS ▶︎ '열린 장:', { resultCode: 'SUCCESS', data: { status: 'overseas' } }
+
+[04:13:39] I | ReactNativeJS ▶︎ '추출된 장 상태:', 'overseas'
+
+[04:13:39] I | ReactNativeJS ▶︎ '해외 주식 구독 시작:', 20, '개'
+
+[04:13:39] I | ReactNativeJS ▶︎ '해외 주식 구독 완료:', 20, '개'
+
+[04:13:39] I | ReactNativeJS ▶︎ owned stock api success
+
+[04:13:40] I | ReactNativeJS ▶︎ korean stock market cap api success
+                             │ 'allStockCodes 설정됨:', [ '373220',
+                             │ '105560',
+                             │ '051910',
+                             │ '000660',
+                             │ '096770',
+                             │ '207940',
+                             │ '015760',
+                             │ '005380',
+                             │ '005930',
+                             │ '006400',
+                             │ '068270',
+                             │ '035420',
+                             │ '000270',
+                             │ '066570',
+                             │ '012330',
+                             │ '035720',
+                             │ '011200',
+                             │ '090430',
+                             │ '005490',
+                             │ '055550',
+                             │ 'MSFT',
+                             │ 'AAPL',
+                             │ 'GOOGL',
+                             │ 'NVDA',
+                             │ 'AMZN',
+                             │ 'TSLA',
+                             │ 'ADBE',
+                             │ 'META',
+                             │ 'NFLX',
+                             │ 'QCOM',
+                             │ 'AMD',
+                             │ 'COST',
+                             │ 'INTC',
+                             │ 'ABNB',
+                             │ 'PYPL',
+                             │ 'SBUX',
+                             │ 'PEP',
+                             │ 'CSCO',
+                             │ 'EBAY',
+                             └ 'LYFT' ]
+
+[04:13:42] I | ReactNativeJS ▶︎ StockMainScreen unmounting. Disconnecting WebSocket.
+
+[04:13:42] I | ReactNativeJS ▶︎ websocket connect started for StockMainScreen
+
+[04:13:42] I | ReactNativeJS ▶︎ 'WebSocket 연결 시도:', 'http://10.0.2.2:8080/ws-sockjs'
+
+[04:13:42] I | ReactNativeJS ▶︎ 연결 종료
+
+[04:13:42] I | ReactNativeJS ▶︎ SockJS 열림
+
+[04:13:42] I | ReactNativeJS ▶︎ STOMP CONNECT 전송
+
+[04:13:42] I | ReactNativeJS ▶︎ STOMP 연결 성공!
+
+[04:13:42] I | ReactNativeJS ▶︎ overseas stock market cap api success
+
+[04:13:42] I | ReactNativeJS ▶︎ opened market api success
+
+[04:13:42] I | ReactNativeJS ▶︎ '열린 장:', { resultCode: 'SUCCESS', data: { status: 'overseas' } }
+
+[04:13:42] I | ReactNativeJS ▶︎ '추출된 장 상태:', 'overseas'
+
+[04:13:42] I | ReactNativeJS ▶︎ '해외 주식 구독 시작:', 20, '개'
+
+[04:13:42] I | ReactNativeJS ▶︎ '해외 주식 구독 완료:', 20, '개'
+
+[04:13:42] I | ReactNativeJS ▶︎ owned stock api success
+
+[04:13:43] I | ReactNativeJS ▶︎ korean stock market cap api success
+
+[04:13:43] I | ReactNativeJS ▶︎ 'allStockCodes 설정됨:', [ '373220',
+                             │ '105560',
+                             │ '051910',
+                             │ '000660',
+                             │ '096770',
+                             │ '207940',
+                             │ '015760',
+                             │ '005380',
+                             │ '005930',
+                             │ '006400',
+                             │ '068270',
+                             │ '035420',
+                             │ '000270',
+                             │ '066570',
+                             │ '012330',
+                             │ '035720',
+                             │ '011200',
+                             │ '090430',
+                             │ '005490',
+                             │ '055550',
+                             │ 'MSFT',
+                             │ 'AAPL',
+                             │ 'GOOGL',
+                             │ 'NVDA',
+                             │ 'AMZN',
+                             │ 'TSLA',
+                             │ 'ADBE',
+                             │ 'META',
+                             │ 'NFLX',
+                             │ 'QCOM',
+                             │ 'AMD',
+                             │ 'COST',
+                             │ 'INTC',
+                             │ 'ABNB',
+                             │ 'PYPL',
+                             │ 'SBUX',
+                             │ 'PEP',
+                             │ 'CSCO',
+                             │ 'EBAY',
+                             └ 'LYFT' ]
+
+[04:14:20] I | ReactNativeJS ▶︎ 연결 종료
+
+[04:14:20] I | ReactNativeJS ▶︎ '종료 코드:', 1002
+
+[04:14:20] I | ReactNativeJS ▶︎ '종료 이유:', ''
+
+[04:14:20] I | ReactNativeJS ▶︎ '정상 종료 여부:', true
 

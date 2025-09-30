@@ -20,7 +20,7 @@ class WebSocketService {
         return;
       }
 
-      const wsUrl = "http://10.0.2.2:8080/ws-stomp";
+      const wsUrl = "http://10.0.2.2:8080/ws-sockjs";
       console.log("WebSocket 연결 시도:", wsUrl);
 
       this.sock = new SockJS(wsUrl);
@@ -32,7 +32,7 @@ class WebSocketService {
         const connectFrame = 
           "CONNECT\n" +
           "accept-version:1.0,1.1,1.2\n" +
-          "heart-beat:10000,10000\n" +
+          "heart-beat:50000,50000\n" +
           "\n" +
           "\x00";
         
@@ -58,6 +58,12 @@ class WebSocketService {
 
         if (data.startsWith("MESSAGE")) {
           this.handleMessage(data);
+        }
+
+        // Heartbeat 응답 처리
+        if (data === "\n") {
+          console.log("Heartbeat 수신 - 응답 전송");
+          this.sock.send("\n");
         }
       };
 
@@ -85,11 +91,9 @@ class WebSocketService {
       const body = parts[1].replace(/\x00$/, "");
       const data = JSON.parse(body);
       
-      // 단일 채널로 들어오는 데이터이므로 destination 체크 후 단일 콜백 실행
-      if (destination === LIVE_PRICES_TOPIC && this.priceUpdateCallback) {
+      // /topic/stock/live-Price/* 패턴으로 들어오는 모든 데이터 처리
+      if (destination.startsWith("/topic/stock/live-Price/") && this.priceUpdateCallback) {
         this.priceUpdateCallback(data as StockPriceData);
-      } else {
-        // 기존의 개별 구독(topic/...)을 처리하던 로직은 제거 (현재 플로우 불필요)
       }
 
     } catch (error) {
@@ -152,36 +156,43 @@ class WebSocketService {
   }
 
   /**
-   * 클라이언트의 모든 주식(보유, 국내, 해외)에 대한 구독을 시작합니다.
-   * 서버에 SEND 명령을 보내고, 단일 채널(/topic/stock/live-prices)을 구독합니다.
+   * 열린 장에 따라 해당 주식들만 구독합니다.
+   * @param openedMarket - 열린 장 정보 ('korean', 'overseas', 'no' 중 하나)
+   * @param koreanStocks - 국내 주식 리스트 (API에서 가져온 데이터)
+   * @param overseasStocks - 해외 주식 리스트 (API에서 가져온 데이터)
+   * @param callback - 가격 업데이트 콜백
    */
-  subscribeAllStocks(codes: string[], callback: (data: StockPriceData) => void): void {
+  subscribeToOpenedMarkets(openedMarket: string, koreanStocks: any[], overseasStocks: any[], callback: (data: StockPriceData) => void): void {
     if (!this.isConnected) {
-      this.pendingSubscribes.push(() => this.subscribeAllStocks(codes, callback));
+      this.pendingSubscribes.push(() => this.subscribeToOpenedMarkets(openedMarket, koreanStocks, overseasStocks, callback));
       return;
     }
     
-    // 1. 클라이언트 콜백 등록 (단일)
+    // 1. 클라이언트 콜백 등록
     this.priceUpdateCallback = callback;
     
-    // 2. 메시지 브로커에 단일 채널 구독 요청 (STOMP SUBSCRIBE)
-    // 이 채널로 모든 실시간 데이터가 들어옵니다.
-    this.subscribe(LIVE_PRICES_TOPIC); 
-
-    // 3. 서버의 /app 컨트롤러에 구독 시작 명령 전송 (STOMP SEND)
-    // 서버는 이 코드를 받고 외부 API 연동 및 데이터 전송을 시작합니다.
-    this.send("/app/stock/subscribe-all", { stockCodes: codes });
-  }
-
-  /**
-   * 서버에 모든 주식 구독 해제 명령을 전송합니다.
-   */
-  unsubscribeAllStocks(): void {
-    // 1. 서버에게 구독 중지 명령 전송 (서버는 외부 API 연결 정리 및 자원 해제)
-    this.send("/app/stock/unsubscribe-all", {});
+    // 2. 열린 장에 따라 해당 주식들만 구독
+    if (openedMarket === 'korean' && koreanStocks.length > 0) {
+      // 국내 주식만 구독
+      koreanStocks.forEach(stock => {
+        this.subscribe(`/topic/stock/live-Price/${stock.stockCode}`);
+      });
+      console.log('국내 주식 구독 완료:', koreanStocks.length, '개');
+    }
     
-    // 2. 클라이언트 내부 상태 정리 (실제 연결은 useEffect cleanup에서 disconnect로 끊음)
-    this.priceUpdateCallback = null;
+    if (openedMarket === 'overseas' && overseasStocks.length > 0) {
+      console.log('해외 주식 구독 시작:', overseasStocks.length, '개');
+      // 해외 주식만 구독
+      overseasStocks.forEach(stock => {
+        this.subscribe(`/topic/stock/live-Price/${stock.stockCode}`);
+      });
+      console.log('해외 주식 구독 완료:', overseasStocks.length, '개');
+    }
+    
+    if (openedMarket === 'no') {
+      // 모든 장이 닫힘 - 구독하지 않음
+      console.log('모든 장이 닫혀있음 - 구독하지 않음');
+    }
   }
 }
 

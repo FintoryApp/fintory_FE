@@ -103,9 +103,9 @@ function RootNavigation(  ) {
       {/* ② 실제 네비게이션 트리 */}
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="First" component={FirstScreen} />
         <Stack.Screen name="Main" component={MainTabNavigator} />
 
-        <Stack.Screen name="First" component={FirstScreen} />
         <Stack.Screen name="BuyStock" component={BuyStockScreen}/>
         <Stack.Screen name="SellStock" component={SellStockScreen}/>
         

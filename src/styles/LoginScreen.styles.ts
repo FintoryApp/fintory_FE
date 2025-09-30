@@ -57,6 +57,7 @@ export const styles = StyleSheet.create({
         width: hScale(360),
         height: vScale(114),
         position:'absolute',
+        alignItems: 'center',
     },
 
     logInContainer: {

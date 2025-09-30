@@ -36,21 +36,21 @@ export default function StockMainScreen() {
   useEffect(() => {
     (async () => {
       try {
-        const [koreanRes, overseasRes] = await Promise.all([
+        const [koreanRes, overseasRes, ownedRes] = await Promise.all([
           getKoreanStock_marketCap(),
           getOverseasStock_marketCap(),
-          // getOwnedStockList(), // 임시 주석처리 - 로그인 스킵으로 인한 401 오류 방지
+          getOwnedStockList()
         ]);
         
         setKoreanStocks(koreanRes.data);
         setOverseasStocks(overseasRes.data);
-        setHoldings([]); // 빈 배열로 초기화
+        setHoldings(ownedRes.data);
 
-        // 모든 종목 코드 통합 (보유주식 제외)
+        // 모든 종목 코드 통합
         const allCodes = [
           ...koreanRes.data.map((stock: any) => stock.stockCode),
           ...overseasRes.data.map((stock: any) => stock.stockCode),
-          // ...holdingsRes.data.map((holding: any) => holding.stockCode) // 임시 주석처리
+          ...ownedRes.data.map((holding: any) => holding.stockCode)
         ];
         const uniqueCodes = [...new Set(allCodes)]; // 중복 제거
         console.log('allStockCodes 설정됨:', uniqueCodes);
@@ -64,7 +64,7 @@ export default function StockMainScreen() {
 
   // Hook은 항상 호출되어야 하므로 조건부 호출 제거
   const { prices, isConnected, connectionError } = useStockWebSocket(
-    isInitialized && allStockCodes.length > 0 ? allStockCodes : []
+    koreanStocks, overseasStocks
   );
 
   
@@ -182,15 +182,25 @@ export default function StockMainScreen() {
           <Text style={styles.stockInfoText}>나의 보유 주식</Text>
           <View style={[styles.stockInfoBlockContainer]}>
             {holdings.length > 0 ? (
-              filteredHoldings.map((holding, index) => (
-                <OwnedStockList
-                  key={holding.stockCode}
-                  name={holding.stockName}
-                  price={getCurrentPrice(holding)}
-                  percentage={getCurrentPercentage(holding)}
-                  image={holding.profileImageUrl || require("../../assets/icons/red_circle.png")}
-                />
-              ))
+              filteredHoldings.map((holding, index) => {
+                const currentPrice = getCurrentPrice(holding);
+                const averagePrice = holding.averagePrice || 0;
+                const quantity = holding.quantity || 0;
+                const profitLoss = quantity > 0 ? (currentPrice - averagePrice) * quantity : 0;
+                const profitLossRate = averagePrice > 0 ? ((currentPrice - averagePrice) / averagePrice) * 100 : 0;
+                
+                return (
+                  <OwnedStockList
+                    key={holding.stockCode}
+                    name={holding.stockName}
+                    price={currentPrice}
+                    percentage={profitLossRate}
+                    image={holding.profileImageUrl || require("../../assets/icons/red_circle.png")}
+                    quantity={quantity}
+                    profitLoss={profitLoss}
+                  />
+                );
+              })
             ) : (
               <Text style={styles.stockInfoText}>보유 주식이 없습니다.</Text>
             )}

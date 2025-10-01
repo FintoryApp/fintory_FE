@@ -92,7 +92,7 @@ export const styles = StyleSheet.create({
         paddingVertical: vScale(16),
     },
     textContainer: {
-        width: hScale(191),
+        //width: hScale(191),
         height: vScale(49),
     },
     wordText: {

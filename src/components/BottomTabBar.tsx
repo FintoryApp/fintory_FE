@@ -1,36 +1,23 @@
 // BottomTabBar.tsx
 import React from 'react';
 import { View, Image, TouchableOpacity, StyleSheet, PixelRatio,Dimensions } from 'react-native';
-
+import { hScale, vScale } from '../styles/Scale.styles';
+import { Colors } from '../styles/Color.styles';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const HomeIcon = require('../../assets/icons/home.png');
-const HomeIconActive = require('../../assets/icons/home_active.png');
 const ProfileIcon = require('../../assets/icons/profile.png');
-const ProfileIconActive = require('../../assets/icons/profile_active.png');
 const StockIcon = require('../../assets/icons/stock.png');
-const StockIconActive = require('../../assets/icons/stock_active.png');
-const ReportIcon = require('../../assets/icons/report.png');
-const ReportIconActive = require('../../assets/icons/report_active.png');
+const PrizeIcon = require('../../assets/icons/prize.png');
+const QuizIcon = require('../../assets/icons/study.png');
 
 
 
-const { width: W, height: H } = Dimensions.get('window');
-
-const guidelineW = 360;
-const guidelineH = 740;
-
-const hScale = (s: number) => {
-    const newSize = (W / guidelineW) * s;
-    return Math.round(PixelRatio.roundToNearestPixel(newSize));
-  };
-  
-  const vScale = (s: number) => {
-    const newSize = (H / guidelineH) * s;
-    return Math.round(PixelRatio.roundToNearestPixel(newSize));
-  };
   
 const BottomTabBar = ({ state, descriptors, navigation }:any) => {
+  const { bottom } = useSafeAreaInsets();
+  
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { marginBottom: bottom }]}>
       {state.routes.map((route:any, index:any) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
@@ -48,14 +35,18 @@ const BottomTabBar = ({ state, descriptors, navigation }:any) => {
         };
 
         let iconSource;
+        let tintColor = isFocused ? Colors.primary : Colors.middleGray; // 선택된 상태: 파란색, 비선택: 회색
+        
         if (route.name === 'Home') {
-          iconSource = isFocused ? HomeIconActive : HomeIcon;
+          iconSource = HomeIcon;
         } else if (route.name === 'Stock') {
-          iconSource = isFocused ? StockIconActive : StockIcon;
-        } else if (route.name === 'Report') {
-          iconSource = isFocused ? ReportIconActive : ReportIcon;
+          iconSource = StockIcon;
+        } else if (route.name === 'Prize') {
+          iconSource = PrizeIcon;
+        } else if (route.name === 'EconomyStudy') {
+          iconSource = QuizIcon;
         } else if (route.name === 'Profile') {
-          iconSource = isFocused ? ProfileIconActive : ProfileIcon;
+          iconSource = ProfileIcon;
         }
 
         return (
@@ -66,11 +57,11 @@ const BottomTabBar = ({ state, descriptors, navigation }:any) => {
           >
             <Image 
               source={iconSource}
+              style={{ tintColor }}
             />
           </TouchableOpacity>
         );
       })}
-      <View style={styles.bottomSafeArea}/>
     </View>
   );
 };
@@ -79,21 +70,23 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: 'white',
-    height: 88,
-    //borderTopWidth: 1,
+    height: vScale(60),
+    //borderWidth: 1,
     borderTopColor: '#ECECEC',
+    borderTopRightRadius: hScale(16),
+    borderTopLeftRadius: hScale(16),
+    paddingHorizontal: hScale(30),
+    paddingVertical: vScale(16),
+
   },
   tabButton: {
     flex: 1,
-    justifyContent: 'center',
+    
     alignItems: 'center',
-    width:44,
-    height:44,
-    top:vScale(16),
+    width:hScale(44),
+    height:hScale(44),
+    
   },
-  bottomSafeArea:{
-    height:24,
-  }
 });
 
 export default BottomTabBar;

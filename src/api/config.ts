@@ -1,8 +1,8 @@
 // API 기본 설정
 export const API_CONFIG = {
-  // BASE_URL: 'https://fintory.xyz',
+  BASE_URL: 'https://fintory.xyz',
   
-  BASE_URL: 'http://10.0.2.2:8080',
+  //BASE_URL: 'http://10.0.2.2:8080',
     
   // API 엔드포인트
   ENDPOINTS: {

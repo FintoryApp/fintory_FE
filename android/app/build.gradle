@@ -124,6 +124,13 @@ android {
     }
 }
 
+repositories {
+    google()
+    mavenCentral()
+    maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/' }
+    maven { url 'https://repo1.maven.org/maven2/' }
+}
+
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")

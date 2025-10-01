@@ -41,6 +41,7 @@ import StockChartScreen from './src/screens/StockChart';
 import BuyStockScreen from './src/screens/BuyStockScreen';
 import SellStockScreen from './src/screens/SellStockScreen';
 import WantPriceScreen from './src/screens/WantPriceScreen';
+import PrizeScreen from './src/screens/PrizeScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -61,6 +62,9 @@ function StockStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Stock" component={StockMainScreen} />
+      <Stack.Screen name="BuyStock" component={BuyStockScreen}/>
+      <Stack.Screen name="SellStock" component={SellStockScreen}/>
+      <Stack.Screen name="WantPrice" component={WantPriceScreen}/>
     </Stack.Navigator>
   );
 }
@@ -68,6 +72,9 @@ function EconomyStudyStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="EconomyStudy" component={EconomyStudyScreen} />
+        <Stack.Screen name="EconomyWordScreen" component={EconomyWordScreen} />
+        <Stack.Screen name="EconomyWordDetailScreen" component={WordDetailScreen} />
+        <Stack.Screen name="EconomyNewsDetailScreen" component={EconomyNewsDetailScreen} />
     </Stack.Navigator>
   );
 }
@@ -80,7 +87,8 @@ function MainTabNavigator(){
     >
       <Tab.Screen name="Home" component={HomeScreen}/>
       <Tab.Screen name="Stock" component={StockMainScreen}/>
-      <Tab.Screen name="Report" component={ReportStack}/>
+      <Tab.Screen name="Prize" component={PrizeScreen}/>
+      <Tab.Screen name="EconomyStudy" component={EconomyStudyScreen}/>
       <Tab.Screen name="Profile" component={ProfileScreen}/>
     </Tab.Navigator>
   );
@@ -103,29 +111,27 @@ function RootNavigation(  ) {
       {/* ② 실제 네비게이션 트리 */}
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="First" component={FirstScreen} />
         <Stack.Screen name="Main" component={MainTabNavigator} />
+        <Stack.Screen name="First" component={FirstScreen} />
+        
+        
+        <Stack.Screen name="Report" component={ReportStack} />
+        <Stack.Screen name="Stock" component={StockStack} />
+        <Stack.Screen name="EconomyStudy" component={EconomyStudyStack} />
 
-        <Stack.Screen name="BuyStock" component={BuyStockScreen}/>
-        <Stack.Screen name="SellStock" component={SellStockScreen}/>
         
-        <Stack.Screen name="WantPrice" component={WantPriceScreen}/>
         
         
 
-        <Stack.Screen name="StockChart" component={StockChartScreen}/>
-        
+        {/* <Stack.Screen name="StockChart" component={StockChartScreen}/> */}
         
         
           <Stack.Screen name="MyPage" component={MyPageScreen} />
           <Stack.Screen name="VirtualAccount" component={VirtualAccountScreen} />
           <Stack.Screen name="Point" component={PointScreen} />
         <Stack.Screen name="SignIn" component={SignInScreen} />
-        <Stack.Screen name="EconomyStudy" component={EconomyStudyScreen} />
-        <Stack.Screen name="EconomyWordScreen" component={EconomyWordScreen} />
-          <Stack.Screen name="EconomyWordDetailScreen" component={WordDetailScreen} />
-          <Stack.Screen name="EconomyNewsDetailScreen" component={EconomyNewsDetailScreen} />
-          <Stack.Screen name="Report" component={ReportScreen} />
+        
+          <Stack.Screen name="ReportMain" component={ReportScreen} />
           <Stack.Screen name="NoReport" component={NoReportScreen} />
           <Stack.Screen name="DetailReport" component={DetailReportScreen} />
          

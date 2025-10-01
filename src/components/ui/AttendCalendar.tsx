@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -13,22 +13,67 @@ import {
 } from 'react-native';
 import { hScale, vScale } from '../../styles/Scale.styles';
 import { Colors } from '../../styles/Color.styles';
+import { getAttendance } from '../../api/getAttendance.ts';
 
 interface AttendCalendarProps {
   month?: number;
   year?: number;
-  attendanceData?: { [key: number]: boolean };
-  streakDays?: number;
+  attendance?: { [key: number]: boolean };
+  streak?: number;
+  refreshTrigger?: number; // 데이터 새로고침을 위한 트리거
 }
 
-export default function AttendCalendar({ 
-  month = 7, 
-  year = 2025, 
-  attendanceData = {},
-  streakDays = 3 
-}: AttendCalendarProps) {
+export default function AttendCalendar({
+  month = new Date().getMonth()+1, 
+  year = new Date().getFullYear(), 
+  attendance = {},
+  streak = 0,
+  refreshTrigger = 0,
+}: AttendCalendarProps) 
+{
   const [isModalVisible, setModalVisible] = useState(false);
+  const [streakDays, setStreakDays] = useState(streak);
+  const [attendanceData, setAttendanceData] = useState<{ [key: number]: boolean }>({});
+  const daysInMonth = new Date(year, month, 0).getDate();
 
+  // 출석 데이터 가져오기 (연속 출석일수는 로그인 시에만 처리)
+  useEffect(() => {
+    const fetchAttendanceData = async () => {
+      try {
+        const attendanceResponse = await getAttendance();
+        
+        // 현재 달의 모든 날짜를 false로 초기화
+        const daysInMonth = new Date(year, month, 0).getDate();
+        const newAttendanceData: { [key: number]: boolean } = {};
+        
+        for (let i = 1; i <= daysInMonth; i++) {
+          newAttendanceData[i] = false;
+        }
+        
+        // 출석 데이터 처리
+        if (attendanceResponse.data && Array.isArray(attendanceResponse.data)) {
+          attendanceResponse.data.forEach((item: any) => {
+            const raw = item.attendanceLog;      // 예: "2025-10-01" 또는 "2025-10-01T09:00:00"
+            if (!raw) return;
+
+            const [datePart] = String(raw).split('T');
+            const [y, m, d] = datePart.split('-').map(Number);
+
+            if (y === year && m === month) {
+              newAttendanceData[d] = true;
+            }
+          });
+        }
+
+        setAttendanceData(newAttendanceData);
+      } catch (error) {
+        console.error('출석 데이터 가져오기 실패:', error);
+      }
+    };
+    
+    fetchAttendanceData();
+  }, [month, year, refreshTrigger]);
+  
   // 7월 달력 데이터 생성 (2025년 7월 기준)
   const generateCalendarDays = () => {
     const days = [];
@@ -99,9 +144,10 @@ export default function AttendCalendar({
                     {item.day}
                   </Text>
                   {item.isAttended && (
-                    <View style={styles.checkMark}>
-                      <Text style={styles.checkMarkText}>✓</Text>
-                    </View>
+                    <Image 
+                      source={require('../../../assets/icons/attendCheck.png')} 
+                      style={styles.checkMarkImage} 
+                    />
                   )}
                 </View>
               )}
@@ -147,9 +193,10 @@ export default function AttendCalendar({
                             {item.day}
                           </Text>
                           {item.isAttended && (
-                            <View style={styles.modalCheckMark}>
-                              <Text style={styles.modalCheckMarkText}>✓</Text>
-                            </View>
+                            <Image 
+                              source={require('../../../assets/icons/attendCheck.png')} 
+                              style={styles.modalCheckMarkImage} 
+                            />
                           )}
                         </View>
                       )}
@@ -173,6 +220,7 @@ const styles = StyleSheet.create({
     borderRadius: hScale(16),
     paddingHorizontal: hScale(16),
     paddingVertical: vScale(16),
+    alignSelf: 'center',
   },
   header: {
   },
@@ -181,6 +229,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: vScale(16), 
+    //alignSelf: 'center',
   },
   
   calendarIcon: {
@@ -221,14 +270,14 @@ const styles = StyleSheet.create({
   calendarGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: hScale(10),
+    //gap: hScale(10),
   },
   dayContainer: {
-    width: hScale(32),
-    height: vScale(32),
+    width: '14.2857%',
+    aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
+    marginBottom: vScale(24),
   },
   dayButton: {
     width: hScale(32),
@@ -256,21 +305,12 @@ const styles = StyleSheet.create({
   attendedDayText: {
     color: Colors.primary,
   },
-  checkMark: {
+  checkMarkImage: {
     position: 'absolute',
     top: -2,
     right: -2,
     width: hScale(12),
     height: hScale(12),
-    borderRadius: hScale(6),
-    backgroundColor: Colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkMarkText: {
-    fontSize: hScale(8),
-    color: Colors.white,
-    fontWeight: 'bold',
   },
   
   // 모달 스타일
@@ -351,21 +391,12 @@ const styles = StyleSheet.create({
   modalAttendedDayText: {
     color: Colors.primary,
   },
-  modalCheckMark: {
-    position: 'absolute',
-    top: -2,
-    right: -2,
-    width: hScale(14),
-    height: hScale(14),
-    borderRadius: hScale(7),
-    backgroundColor: Colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalCheckMarkText: {
-    fontSize: hScale(10),
-    color: Colors.white,
-    fontWeight: 'bold',
+  modalCheckMarkImage: {
+    // position: 'absolute',
+    // top: -2,
+    // right: -2,
+    width: hScale(32),
+    height: hScale(32),
   },
 });
 

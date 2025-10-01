@@ -148,16 +148,39 @@ export default function SignInScreen() {
           console.error('Error saving user data:', error);
         }
         
-        Alert.alert('성공', result.message || '회원가입이 완료되었습니다. 자동으로 로그인됩니다.', [
-          {
-            text: '확인',
-            onPress: () =>
-              (navigation as any).reset({
-                index: 0,
-                routes: [{ name: 'Main' }],
-              }),
-          },
-        ]);
+        // 회원가입 후 출석체크 처리
+        try {
+          const { handleAttendanceCheck } = await import('../../utils/attendance');
+          const attendanceResult = await handleAttendanceCheck(email);
+          
+          let message = result.message || '회원가입이 완료되었습니다. 자동으로 로그인됩니다.';
+          if (attendanceResult.success && !attendanceResult.alreadyChecked) {
+            message += `\n${attendanceResult.message}`;
+          }
+          
+          Alert.alert('성공', message, [
+            {
+              text: '확인',
+              onPress: () =>
+                (navigation as any).reset({
+                  index: 0,
+                  routes: [{ name: 'Main' }],
+                }),
+            },
+          ]);
+        } catch (attendanceError) {
+          console.error('회원가입 후 출석체크 오류:', attendanceError);
+          Alert.alert('성공', result.message || '회원가입이 완료되었습니다. 자동으로 로그인됩니다.', [
+            {
+              text: '확인',
+              onPress: () =>
+                (navigation as any).reset({
+                  index: 0,
+                  routes: [{ name: 'Main' }],
+                }),
+            },
+          ]);
+        }
       } else {
         Alert.alert('실패', result.message || '알 수 없는 오류');
       }

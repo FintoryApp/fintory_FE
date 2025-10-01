@@ -12,6 +12,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { login } from '@react-native-seoul/kakao-login';
 import api from '../../api/index';
 import { API_CONFIG } from '../../api/config';
+import { getCurrentUser } from '../../api/auth';
+import { handleAttendanceCheck } from '../../utils/attendance';
 
 export default function FirstScreen() {
     const {top} = useSafeAreaInsets();
@@ -68,7 +70,8 @@ export default function FirstScreen() {
                 console.log('Kakao login - Saved AT:', savedAT);
                 console.log('Kakao login - Saved RT:', savedRT);
                 
-                (navigation as any).reset({ index: 0, routes: [{ name: 'Main' }] });
+                // 출석체크 처리
+                await handleSocialLoginAttendance();
             } else {
                 console.error('Invalid response structure');
                 Alert.alert('로그인 오류', '서버 응답이 올바르지 않습니다.');
@@ -80,6 +83,67 @@ export default function FirstScreen() {
             console.error('Kakao login failed - Message:', error?.message);
             console.error('Kakao login failed - Code:', error?.code);
             Alert.alert('로그인 실패', '로그인에 실패했습니다. 다시 시도해주세요.');
+        }
+    };
+
+    // 소셜 로그인 출석체크 공통 함수
+    const handleSocialLoginAttendance = async () => {
+        try {
+            // 사용자 정보 가져오기
+            const userResult = await getCurrentUser();
+            if (userResult.resultCode === 'SUCCESS' && userResult.data?.email) {
+                const userEmail = userResult.data.email;
+                
+                // 출석체크 처리
+                const attendanceResult = await handleAttendanceCheck(userEmail);
+                
+                let message = '로그인이 완료되었습니다.';
+                if (attendanceResult.success) {
+                    if (attendanceResult.alreadyChecked) {
+                        message += `\n${attendanceResult.message}`;
+                    } else {
+                        message += `\n${attendanceResult.message}`;
+                    }
+                } else {
+                    message += `\n${attendanceResult.message}`;
+                }
+                
+                Alert.alert('성공', message, [
+                    {
+                        text: '확인',
+                        onPress: () =>
+                            (navigation as any).reset({
+                                index: 0,
+                                routes: [{ name: 'Main' }],
+                            }),
+                    },
+                ]);
+            } else {
+                // 사용자 정보를 가져올 수 없는 경우 기본 메시지
+                Alert.alert('성공', '로그인이 완료되었습니다.', [
+                    {
+                        text: '확인',
+                        onPress: () =>
+                            (navigation as any).reset({
+                                index: 0,
+                                routes: [{ name: 'Main' }],
+                            }),
+                    },
+                ]);
+            }
+        } catch (error) {
+            console.error('출석체크 처리 오류:', error);
+            // 출석체크 실패해도 로그인은 성공으로 처리
+            Alert.alert('성공', '로그인이 완료되었습니다.\n(출석체크는 잠시 후 다시 시도해주세요)', [
+                {
+                    text: '확인',
+                    onPress: () =>
+                        (navigation as any).reset({
+                            index: 0,
+                            routes: [{ name: 'Main' }],
+                        }),
+                },
+            ]);
         }
     };
 
@@ -101,7 +165,9 @@ export default function FirstScreen() {
                 const { data: responseData } = await api.post(`${API_CONFIG.ENDPOINTS.SOCIAL_LOGIN_GOOGLE}`, { idToken });
                 if (responseData.resultCode === 'SUCCESS' && responseData.data?.accessToken && responseData.data?.refreshToken) {
                     await saveTokens(responseData.data.accessToken, responseData.data.refreshToken);
-                    (navigation as any).reset({ index: 0, routes: [{ name: 'Main' }] });
+                    
+                    // 출석체크 처리
+                    await handleSocialLoginAttendance();
                 } else {
                     console.error('Invalid response structure');
                     Alert.alert('로그인 오류', '서버 응답이 올바르지 않습니다.');

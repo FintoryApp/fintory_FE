@@ -13,9 +13,7 @@ export default function EconomyStudyScreen() {
     const {top} = useSafeAreaInsets();
     const [newsList, setNewsList] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    
-    const [todayWord, setTodayWord] = useState<string>('');
-    const [todayExplain, setTodayExplain] = useState<string>('');
+    const [today_word, setTodayWord] = useState<{word: string, summary: string}>();
 
     const getTodayDate = () => {
         const today = new Date();
@@ -29,8 +27,7 @@ export default function EconomyStudyScreen() {
         (async()=>{
             try{
             const res_word = await getWordRandom();
-                setTodayWord(res_word.word);
-                setTodayExplain(res_word.summary);
+            setTodayWord(res_word.data);
             }catch(error){
                 console.error('Error fetching word random:',error);
             }
@@ -198,8 +195,8 @@ export default function EconomyStudyScreen() {
                 </View>
                 <TouchableOpacity style={styles.wordItemContainer}>
                     <View style={styles.textContainer}>
-                        <Text style={styles.wordText}>{todayWord}</Text>
-                        <Text style={styles.explainText}>{todayExplain}</Text>
+                        <Text style={styles.wordText}>{today_word?.word}</Text>
+                        <Text style={styles.explainText}>{today_word?.summary}</Text>
                     </View>
                 </TouchableOpacity>
             </View>

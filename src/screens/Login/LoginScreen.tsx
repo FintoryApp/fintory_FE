@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, TextInput, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from '../../styles/LoginScreen.styles.ts';
-import { hScale,vScale } from '../../styles/Scale.styles.ts';
+import { hScale, vScale } from '../../styles/Scale.styles.ts';
 import { Colors } from '../../styles/Color.styles.ts';
 import TopBar from '../../components/ui/TopBar.tsx';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LoginInput from '../../components/login/LoginInput.tsx';
 import BigButton from '../../components/button/BigButton.tsx';
 import { login } from '../../api/auth.ts';
+import { handleAttendanceCheck } from '../../utils/attendance';
 
 export default function LoginScreen() {
-    const {top} = useSafeAreaInsets();
+  const { top } = useSafeAreaInsets();
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,23 +26,40 @@ export default function LoginScreen() {
 
     setIsLoading(true);
     try {
-        const result = await login(email, password);
-      if (result.resultCode === 'SUCCESS' && result.data) {
-        console.log('로그인 성공');
-        Alert.alert('성공', '로그인이 완료되었습니다.', [
-          {
-            text: '확인',
-            onPress: () =>
-              (navigation as any).reset({
-                index: 0,
-                routes: [{ name: 'Main' }],
-              }),
-          },
-        ]);
-      } else {
-          Alert.alert('실패', result.message || '알 수 없는 오류');
+      // 1) 로그인 먼저
+      const result = await login(email, password);
+
+      if (result.resultCode !== 'SUCCESS' || !result.data) {
+        Alert.alert('실패', result.message || '알 수 없는 오류');
+        return;
       }
+
+      // 2) 로그인 성공 후 출석체크 처리
+      const attendanceResult = await handleAttendanceCheck(email);
+      
+      let message = '로그인이 완료되었습니다.';
+      if (attendanceResult.success) {
+        if (attendanceResult.alreadyChecked) {
+          message += `\n${attendanceResult.message}`;
+        } else {
+          message += `\n${attendanceResult.message}`;
+        }
+      } else {
+        message += `\n${attendanceResult.message}`;
+      }
+
+      Alert.alert('성공', message, [
+        {
+          text: '확인',
+          onPress: () =>
+            (navigation as any).reset({
+              index: 0,
+              routes: [{ name: 'Main' }],
+            }),
+        },
+      ]);
     } catch (error) {
+      console.error(error);
       Alert.alert('오류', '로그인 중 오류가 발생했습니다.');
     } finally {
       setIsLoading(false);

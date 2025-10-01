@@ -56,8 +56,8 @@ export const styles = StyleSheet.create({
         marginBottom:vScale(16),
     },
     wordTitleIcon: {
-        width: hScale(32),
-        height: vScale(32),
+        width: hScale(28.66),
+        //height: vScale(22),
     },
     wordTitleText: {
         fontSize: hScale(16),

@@ -4,11 +4,21 @@ import FastImage from 'react-native-fast-image';
 import { Colors } from '../../styles/Color.styles';
 import { hScale, vScale } from '../../styles/Scale.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useState, useEffect } from 'react';
+import { getCurrentUser } from '../../api/auth';
 
 
-const text = `김나무 님의 데이터를\n아직 분석할 수 없어요.\n\n핀토리와 함께 모의 주식을 시작하고\nAI 투자 분석을 받아보세요!`
 export default function NoReportScreen() {
+    const [nickname, setNickname] = useState<string>('');
 
+    useEffect(()=>{
+        const fetchNickname = async () => {
+            const res = await getCurrentUser();
+            setNickname(res.data.nickname);
+        };
+        fetchNickname();
+    },[]);
+    const text = ` ${nickname}님의 데이터를\n아직 분석할 수 없어요.\n\n핀토리와 함께 모의 주식을 시작하고\nAI 투자 분석을 받아보세요!`
     const {top} = useSafeAreaInsets();
     return (
         <View>

@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     },
     newsTitleContainer: {
         width: hScale(328),
-        height: vScale(90),
+        height: 'auto',
     },
     newsTitleText: {
         fontSize: hScale(24),

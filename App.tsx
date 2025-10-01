@@ -75,6 +75,7 @@ function HomeStack() {
   return (
     <HomeStackNav.Navigator screenOptions={{ headerShown: false }}>
       <HomeStackNav.Screen name="Home" component={HomeScreen} />
+      <HomeStackNav.Screen name="Report" component={ReportStack}/>
     </HomeStackNav.Navigator>
   );
 }
@@ -95,9 +96,7 @@ function StockStack() {
   return (
     <StockStackNav.Navigator screenOptions={{ headerShown: false }}>
       <StockStackNav.Screen name="StockMain" component={StockMainScreen} />
-      <StockStackNav.Screen name="BuyStock" component={BuyStockScreen}/>
-      <StockStackNav.Screen name="SellStock" component={SellStockScreen}/>
-      <StockStackNav.Screen name="WantPrice" component={WantPriceScreen}/>
+      
     </StockStackNav.Navigator>
   );
 }
@@ -156,13 +155,20 @@ function RootNavigation(  ) {
       {/* ② 실제 네비게이션 트리 */}
       <NavigationContainer ref={navigationRef}>
         <RootStack.Navigator screenOptions={{ headerShown: false }}>
-        <RootStack.Screen name="Main" component={MainTabs} />
         <RootStack.Screen name="First" component={FirstScreen} />
+        <RootStack.Screen name="BuyStock" component={BuyStockScreen}/>
+        <RootStack.Screen name="WantPrice" component={WantPriceScreen}/>
+        <RootStack.Screen name="SellStock" component={SellStockScreen}/>
+        <RootStack.Screen name="Study" component={EconomyStudyStack}/>
+        
+        <RootStack.Screen name="Main" component={MainTabs} />
+        
         <RootStack.Screen name="Login" component={LoginScreen} />
         <RootStack.Screen name="SignIn" component={SignInScreen} />
         <RootStack.Screen name="FindPassword" component={FindPasswordScreen} />
         <RootStack.Screen name="ChangePassword" component={ChangePasswordScreen} />
         <RootStack.Screen name="FindId" component={FindIdScreen} />
+        
         </RootStack.Navigator>
       </NavigationContainer>
     </>

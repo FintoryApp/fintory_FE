@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getReport } from '../../api/report';
 import { ReportStackParamList } from '../../navigation/RootStackParamList';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { getCurrentUser } from '../../api/auth';
 
 type ReportNavigationProp = NativeStackNavigationProp<ReportStackParamList, 'ReportMain'>;
 type ReportRouteProp = RouteProp<ReportStackParamList, 'ReportMain'>;
@@ -23,6 +24,14 @@ export default function ReportScreen() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [report,setReport] = useState<any>(null);
   const [loading,setLoading] = useState(true);
+  const [nickname,setNickname] = useState('');
+
+  useEffect(()=>{
+    (async()=>{
+      const res = await getCurrentUser();
+      setNickname(res.data.nickname);
+    })();
+  },[]);
 
 
   useEffect(()=>{
@@ -104,7 +113,7 @@ export default function ReportScreen() {
       <TopBar title="현황 리포트"/>
       <View style={{...styles.wholeContainer,marginTop:top}}>
       <CharacterContainer 
-      userName={userName} 
+      userName={nickname} 
       userStyle={found ?? {
         title:'',
         characteristic:'',

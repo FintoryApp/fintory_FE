@@ -7,12 +7,35 @@ import { Colors } from '../../styles/Color.styles';
 import { useNavigation } from '@react-navigation/native';
 import { getNewsList } from '../../api/newsList';
 import { useState, useEffect } from 'react';
-
+import {getWordRandom} from '../../api/wordRandom';
 export default function EconomyStudyScreen() {
     const navigation = useNavigation();
     const {top} = useSafeAreaInsets();
     const [newsList, setNewsList] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    
+    const [todayWord, setTodayWord] = useState<string>('');
+    const [todayExplain, setTodayExplain] = useState<string>('');
+
+    const getTodayDate = () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth() + 1;
+        const day = today.getDate();
+        return `${year}.${month}.${day}`;
+    }
+
+    useEffect(()=>{
+        (async()=>{
+            try{
+            const res_word = await getWordRandom();
+                setTodayWord(res_word.word);
+                setTodayExplain(res_word.summary);
+            }catch(error){
+                console.error('Error fetching word random:',error);
+            }
+        })();
+    },[]);
 
     useEffect(()=>{
         (async()=>{
@@ -113,7 +136,7 @@ export default function EconomyStudyScreen() {
                 <View style={styles.newsTitleContainer}>
                     <Image source={require('../../../assets/icons/speaker.png')} style={styles.newsTitleIcon} />
                     <Text style={styles.newsTitleText}>오늘의 경제 뉴스</Text>
-                    <Text style={styles.dateTitleText}>2025.07.16</Text>
+                    <Text style={styles.dateTitleText}>{getTodayDate()}</Text>
                 </View>
                 
                 {loading ? (
@@ -129,7 +152,7 @@ export default function EconomyStudyScreen() {
                             }}>
                                 <NewsSummary 
                                     title={newsList[0].title} 
-                                    image={newsList[0].thumbnailUrl} 
+                                    image={newsList[0].thumbnailUrl && newsList[0].thumbnailUrl.trim() !== '' ? { uri: newsList[0].thumbnailUrl } : null} 
                                     hour={calculateHoursAgo(newsList[0].publishedAt)} 
                                 />
                             </TouchableOpacity >
@@ -141,7 +164,7 @@ export default function EconomyStudyScreen() {
                             }}>
                                 <NewsSummary 
                                     title={newsList[1].title} 
-                                    image={newsList[1].thumbnailUrl} 
+                                    image={newsList[1].thumbnailUrl && newsList[1].thumbnailUrl.trim() !== '' ? { uri: newsList[1].thumbnailUrl } : null} 
                                     hour={calculateHoursAgo(newsList[1].publishedAt)} 
                                 />
                             </TouchableOpacity>
@@ -153,7 +176,7 @@ export default function EconomyStudyScreen() {
                             }}>
                                 <NewsSummary 
                                     title={newsList[2].title} 
-                                    image={newsList[2].thumbnailUrl} 
+                                    image={newsList[2].thumbnailUrl && newsList[2].thumbnailUrl.trim() !== '' ? { uri: newsList[2].thumbnailUrl } : null} 
                                     hour={calculateHoursAgo(newsList[2].publishedAt)} 
                                 />
                             </TouchableOpacity>
@@ -175,8 +198,8 @@ export default function EconomyStudyScreen() {
                 </View>
                 <TouchableOpacity style={styles.wordItemContainer}>
                     <View style={styles.textContainer}>
-                        <Text style={styles.wordText}>금리</Text>
-                        <Text style={styles.explainText}>빌리거나 빌려 준 돈에 대한 이자, 이율</Text>
+                        <Text style={styles.wordText}>{todayWord}</Text>
+                        <Text style={styles.explainText}>{todayExplain}</Text>
                     </View>
                 </TouchableOpacity>
             </View>

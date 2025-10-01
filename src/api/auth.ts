@@ -168,14 +168,7 @@ export const logout = async (): Promise<ApiResponse<string>> => {
   try {
     const res = await api.post(`${API_CONFIG.ENDPOINTS.LOGOUT}`);
     if (res.status >= 200 && res.status < 300) {
-      try {
-        const token = await messaging().getToken();
-        if (token) {
-          await deleteFcmToken(token);
-        }
-      } catch (e) {
-        console.warn('FCM 토큰 삭제 중 오류(무시):', e);
-      }
+      // FCM 토큰 삭제는 현재 구현되지 않음
       await removeTokens();
       return { resultCode: 'SUCCESS', data: '로그아웃 성공' };
     } else {

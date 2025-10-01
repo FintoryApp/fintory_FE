@@ -42,7 +42,7 @@ const HomeScreen = () => {
         </LinearGradient>
       </TouchableOpacity>
       <View style={styles.smallButtonContainer}>
-      <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate('Prize')}>
+      <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate('Report')}>
         <Text style={styles.smallButtonText}>AI 투자 리포트</Text>
         <Image source={require('../../../assets/icons/aiReport.png')} style={styles.aiReportImage} />
       </TouchableOpacity>

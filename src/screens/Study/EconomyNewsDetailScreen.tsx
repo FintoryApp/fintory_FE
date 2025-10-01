@@ -9,17 +9,9 @@ import { getNewsDetail } from "../../api/newsDetail";
 import NewsImage from "../../components/NewsImage";
 
 
-const aiSummary = `미국의 1분기 경제 성장률이 마이너스 0.3%로 하락하며 트럼프 대통령의 경제 성적표가 부정적으로 나타났습니다.
-
-트럼프 대통령은 이 결과를 전임 바이든 정부의 탓으로 돌리며, 자신의 관세 정책이 미국 내 투자를 촉진하고 있다고 주장했습니다.
-
-그러나 여론 조사에 따르면 그의 경제 지지율은 36%로 최저치를 기록하고 있으며, 백악관은 비판적인 언론을 탓하고 있습니다.`;
-
 export default function EconomyNewsDetailScreen({route}:any) {
     const id = route?.params?.id || {};
-    const [isAiSummaryOpen, setIsAiSummaryOpen] = useState(false);
     const {top,bottom} = useSafeAreaInsets();
-    const [loading, setLoading] = useState(true);
     const [news, setNews] = useState<any>({});
 
 
@@ -31,7 +23,7 @@ export default function EconomyNewsDetailScreen({route}:any) {
             }catch(error){
                 console.error('Error fetching news list:',error);
             }finally{
-                setLoading(false);
+                
             }
         })();
     },[id]);
@@ -62,9 +54,11 @@ export default function EconomyNewsDetailScreen({route}:any) {
                     }}
                     showsVerticalScrollIndicator={false}
                 >
-                    <NewsImage
-                        uri={news.images} 
-                    />
+                    {news.images && news.images.trim() !== '' && (
+                        <NewsImage
+                            uri={news.images} 
+                        />
+                    )}
                     <Text style={styles.newsContentText}>
                         {news.contents ? 
                             // contents가 배열인 경우 문단별로 나누어 표시

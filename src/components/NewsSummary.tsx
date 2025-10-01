@@ -15,10 +15,10 @@ const NewsSummary: React.FC<NewsSummaryProps> = ({title, image, hour}) => {
                 <Text style={styles.newsSummaryTitle}>{title}</Text>
                 <Text style={styles.newsInfoTitle}>조선일보 • {hour}</Text>
             </View>
-            <Image 
+            {image ? <Image 
                 source={typeof image === 'string' ? { uri: image } : image} 
-                style={styles.newsSummaryImage} 
-            />
+                style={image ? styles.newsSummaryImage : {backgroundColor:'#D9D9D9'}} 
+            /> : <View style={{backgroundColor:'#D9D9D9',width:hScale(72),height:vScale(72),borderRadius:hScale(8)}} />}
         </View>
     )
 }

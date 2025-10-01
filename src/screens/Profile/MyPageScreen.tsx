@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import TopBar from '../../components/ui/TopBar';
 import Colors from '../../styles/Color.styles';
@@ -8,6 +8,7 @@ import AttendCalendar from '../../components/ui/AttendCalendar';
 import { useNavigation } from '@react-navigation/native';
 import { ProfileStackParamList } from '../../navigation/RootStackParamList';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { getCurrentUser } from '../../api/auth';
 
 type VirtualAccountNavigationProp = NativeStackNavigationProp<ProfileStackParamList, 'VirtualAccount'>;
 type PointNavigationProp = NativeStackNavigationProp<ProfileStackParamList, 'Point'>;
@@ -15,11 +16,21 @@ type PointNavigationProp = NativeStackNavigationProp<ProfileStackParamList, 'Poi
 export default function MyPageScreen() {
     const navigation = useNavigation<VirtualAccountNavigationProp>();
     const pointNavigation = useNavigation<PointNavigationProp>();
+    const [nickname, setNickname] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    useEffect(() => {
+        const fetchNickname = async () => {
+            const res = await getCurrentUser();
+            setNickname(res.data.nickname);
+            setEmail(res.data.username);
+        };
+        fetchNickname();
+    }, []);
     return (
         <View style={{width:'100%',height:'100%',backgroundColor:Colors.surface,alignItems:'center'}}>
         <TopBar title='마이페이지' />
         <ScrollView contentContainerStyle={{alignItems:'center'}}>
-        <Profile name='홍길동' image={require('../../../assets/icons/profile.png')} id='1234567890' />
+        <Profile name={nickname} image={require('../../../assets/icons/profile.png')} id={email} />
         
         <View style={{width:hScale(328),height:vScale(755)}}>
             <View style={{

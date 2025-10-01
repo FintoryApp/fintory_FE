@@ -6,13 +6,19 @@ import { hScale, vScale } from '../../styles/Scale.styles';
 import HugeButton from '../../components/button/HugeButton';
 import BuyStockModal from '../../components/stock/BuyStockModal';
 
+
 export default function BuyStockScreen() {
     const {top} = useSafeAreaInsets();
     const [quantity, setQuantity] = useState('');
     const price = 367890;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [SeeMore, setSeeMore] = useState(false);
-    
+    const [wantPriceList, setWantPriceList] = useState([
+        {price: 80000},
+        {price: 450000},
+        {price: 200000},
+        {price: 100000},
+    ]);
     return (
         <View style={{flex: 1, width: '100%', height: '100%', backgroundColor: Colors.surface}}>
             <View style={[styles.headerContainer,{marginTop:top}]}>
@@ -24,8 +30,24 @@ export default function BuyStockScreen() {
                 <TouchableOpacity style={styles.headerRightContainer} onPress={() => setSeeMore(!SeeMore)}>
                 <Text style={styles.headerText}>내가 지정한 감시가</Text>
                 <Image source={ SeeMore ? require('../../../assets/icons/arrow_drop_up.png') : require('../../../assets/icons/arrow_drop_down.png')} style={styles.headerButtonImage} />
+
                 </TouchableOpacity>
             </View>
+
+            {/* 드롭다운 메뉴 */}
+            {SeeMore && (
+                <View style={styles.dropdownContainer}>
+                    {wantPriceList.map((item, index) => (
+                        <View style={[styles.dropdownItemContainer, {borderBottomWidth: index === wantPriceList.length - 1 ? 0 : 1, borderBottomColor: Colors.outlineVariant}]} key={index}>
+                        <Text style={styles.dropdownItem} key={index}>{item.price.toLocaleString()}원</Text>
+                        <TouchableOpacity style={styles.dropdownItemButton} onPress={() => setWantPriceList(wantPriceList.filter((_, i) => i !== index))}>
+                            <Image source={require('../../../assets/icons/delete.png')} style={styles.dropdownItemButtonImage} />
+                        </TouchableOpacity>
+                        </View>
+                    ))}
+                    
+                </View>
+            )}
 
             
             <View style={styles.stockInfoContainer}>
@@ -281,5 +303,48 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginRight: hScale(16),
         flexDirection: 'row',
+    },
+    dropdownContainer: {
+        position: 'absolute',
+        top: vScale(62), 
+        right: hScale(16),
+        width: hScale(156),
+        backgroundColor: Colors.white,
+        borderRadius: hScale(8),
+        padding: hScale(12),
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        zIndex: 1000,
+    },
+    dropdownItemContainer: {
+        width: hScale(124),
+        height: vScale(20),
+        borderBottomWidth: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    dropdownItemButton: {
+        width: hScale(16),
+        height: vScale(16),
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    dropdownItemButtonImage: {
+        width: hScale(10),
+        height: vScale(12),
+        tintColor: Colors.outlineVariant,
+    },
+    dropdownItem: {
+        fontSize: hScale(12),
+        fontWeight: 'bold',
+        color: Colors.outline,
+        
     },
 });

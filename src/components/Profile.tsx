@@ -22,7 +22,7 @@ const Profile = ({ name, image, id }: ProfileProps) => {
 
 const styles = StyleSheet.create({
     container: {
-        width:hScale(124),
+        //width:hScale(124),
         height:vScale(205),
         alignItems:'center',
         justifyContent:'center',
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         borderRadius:hScale(124),
     },
     name: {
-        fontSize:hScale(36),
+        fontSize:hScale(25),
         fontWeight:'bold',
         color:Colors.black,
     },

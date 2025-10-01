@@ -221,17 +221,19 @@ const styles = StyleSheet.create({
   calendarGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    gap: hScale(10),
   },
   dayContainer: {
-    width: hScale(328) / 7,
+    width: hScale(32),
     height: vScale(32),
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
   },
   dayButton: {
-    width: hScale(28),
-    height: hScale(28),
-    borderRadius: hScale(14),
+    width: hScale(32),
+    height: hScale(32),
+    borderRadius: hScale(16),
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',

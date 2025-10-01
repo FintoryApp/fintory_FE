@@ -45,7 +45,7 @@ react {
     //   The path to the CLI configuration file. Default is empty.
     // bundleConfig = file(../rn-cli.config.js)
     //
-    //   The name of the generated asset file containing your JS bundle
+    //   The name of the generated assets file containing your JS bundle
     // bundleAssetName = "MyApplication.android.bundle"
     //
     //   The entry file for bundle generation. Default is 'index.android.js' or 'index.js'

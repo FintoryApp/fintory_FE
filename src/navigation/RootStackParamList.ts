@@ -60,7 +60,7 @@ export type HomeStackParamList = {
 export type EconomyStudyStackParamList = {
   EconomyStudy: undefined;
   EconomyWordScreen: undefined;
-  WordDetailScreen: { word: string };
+  WordDetailScreen: { id: number };
   EconomyNewsDetailScreen: {id:number};
 };
 

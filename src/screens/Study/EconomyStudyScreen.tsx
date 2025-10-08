@@ -5,15 +5,19 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import NewsSummary from '../../components/NewsSummary';
 import { Colors } from '../../styles/Color.styles';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { getNewsList } from '../../api/newsList';
 import { useState, useEffect } from 'react';
 import {getWordRandom} from '../../api/wordRandom';
+import { EconomyStudyStackParamList } from '../../navigation/RootStackParamList';
+type EconomyStudyNavigationProp = NativeStackNavigationProp<EconomyStudyStackParamList, 'EconomyStudy'>;
+
 export default function EconomyStudyScreen() {
-    const navigation = useNavigation();
+    const navigation = useNavigation<EconomyStudyNavigationProp>();
     const {top} = useSafeAreaInsets();
     const [newsList, setNewsList] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [today_word, setTodayWord] = useState<{word: string, summary: string}>();
+    const [today_word, setTodayWord] = useState<{word: string, summary: string,id:number}>();
 
     const getTodayDate = () => {
         const today = new Date();
@@ -27,6 +31,7 @@ export default function EconomyStudyScreen() {
         (async()=>{
             try{
             const res_word = await getWordRandom();
+            console.log('Word random response:', res_word.data);
             setTodayWord(res_word.data);
             }catch(error){
                 console.error('Error fetching word random:',error);
@@ -145,7 +150,7 @@ export default function EconomyStudyScreen() {
                         {newsList.length > 0 && (
                             <TouchableOpacity onPress={()=>{
                                 console.log('Navigating with newsList[0]:', newsList[0]);
-                                (navigation as any).navigate('EconomyNewsDetailScreen', {id:1});
+                                (navigation as any).navigate('EconomyNewsDetailScreen', {id:22});
                             }}>
                                 <NewsSummary 
                                     title={newsList[0].title} 
@@ -157,7 +162,7 @@ export default function EconomyStudyScreen() {
                         
                         {newsList.length > 1 && (
                             <TouchableOpacity onPress={()=>{
-                                (navigation as any).navigate('EconomyNewsDetailScreen', {id:2});
+                                (navigation as any).navigate('EconomyNewsDetailScreen', {id:23});
                             }}>
                                 <NewsSummary 
                                     title={newsList[1].title} 
@@ -169,7 +174,7 @@ export default function EconomyStudyScreen() {
                         
                         {newsList.length > 2 && (
                             <TouchableOpacity onPress={()=>{
-                                (navigation as any).navigate('EconomyNewsDetailScreen', {id:3});
+                                (navigation as any).navigate('EconomyNewsDetailScreen', {id:24});
                             }}>
                                 <NewsSummary 
                                     title={newsList[2].title} 
@@ -193,10 +198,27 @@ export default function EconomyStudyScreen() {
                         <Image source={require('../../../assets/icons/chevron_forward.png')} style={styles.narrowImage} />
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.wordItemContainer}>
+                <TouchableOpacity style={styles.wordItemContainer} onPress={()=>{
+                    if (today_word?.id) {
+                        navigation.navigate('WordDetailScreen', {id: today_word.id});
+                    }
+                }}>
                     <View style={styles.textContainer}>
                         <Text style={styles.wordText}>{today_word?.word}</Text>
-                        <Text style={styles.explainText}>{today_word?.summary}</Text>
+                        <Text style={styles.explainText}>
+                            {today_word?.summary ? (() => {
+                                const text = today_word.summary;
+                                const sentences = text.split(/[.!?。]/);
+                                
+                                // 두 문장 이상이 있으면 첫 번째 문장만 표시하고 ... 추가
+                                if (sentences.length >= 2 && sentences[0].trim()) {
+                                    return `${sentences[0].trim()}...`;
+                                }
+                                
+                                // 한 문장이거나 문장 구분이 없는 경우 원본 텍스트 반환
+                                return text;
+                            })() : ''}
+                        </Text>
                     </View>
                 </TouchableOpacity>
             </View>

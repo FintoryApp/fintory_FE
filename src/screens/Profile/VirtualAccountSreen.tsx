@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import TopBar from '../../components/ui/TopBar';
 import Colors from '../../styles/Color.styles';
 import { hScale,vScale } from '../../styles/Scale.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AccountList from '../../components/AccountList';
-
+import { getMoneyList } from '../../api/moneyList';
 
 export default function VirtualAccountScreen() {
     const {top} = useSafeAreaInsets();
+    const [moneyList, setMoneyList] = useState<any[]>([]);
+    useEffect(() => {
+        const loadMoneyList = async () => {
+            const res = await getMoneyList();
+            setMoneyList(res.data);
+        };
+        loadMoneyList();
+    }, []);
   return (
     <View style={{width:'100%',height:'100%',backgroundColor:Colors.surface}}>
         
@@ -22,33 +30,9 @@ export default function VirtualAccountScreen() {
 
         <ScrollView style={styles.scrollViewStyle} contentContainerStyle={styles.scrollContainer}>
             <Text style={styles.listText}>가상 계좌 내역</Text>
-            <AccountList title='환전' category='(포인트 환전)' amount={300} date='2025.04.03' />
-            <AccountList title='삼성전자' category='(매수)' amount={-23400} date='2025.04.03' />
-            <AccountList title='카카오 모빌리티' category='(매입)' amount={345600} date='2025.04.03' />
-            <AccountList title='환전' category='(포인트 환전)' amount={300} date='2025.04.03' />
-            <AccountList title='삼성전자' category='(매수)' amount={-23400} date='2025.04.03' />
-            <AccountList title='카카오 모빌리티' category='(매입)' amount={345600} date='2025.04.03' />
-            <AccountList title='환전' category='(포인트 환전)' amount={300} date='2025.04.03' />
-            <AccountList title='삼성전자' category='(매수)' amount={-23400} date='2025.04.03' />
-            <AccountList title='카카오 모빌리티' category='(매입)' amount={345600} date='2025.04.03' />
-            <AccountList title='환전' category='(포인트 환전)' amount={300} date='2025.04.03' />
-            <AccountList title='삼성전자' category='(매수)' amount={-23400} date='2025.04.03' />
-            <AccountList title='카카오 모빌리티' category='(매입)' amount={345600} date='2025.04.03' />
-            <AccountList title='환전' category='(포인트 환전)' amount={300} date='2025.04.03' />
-            <AccountList title='삼성전자' category='(매수)' amount={-23400} date='2025.04.03' />
-            <AccountList title='카카오 모빌리티' category='(매입)' amount={345600} date='2025.04.03' />
-            <AccountList title='환전' category='(포인트 환전)' amount={300} date='2025.04.03' />
-            <AccountList title='삼성전자' category='(매수)' amount={-23400} date='2025.04.03' />
-            <AccountList title='카카오 모빌리티' category='(매입)' amount={345600} date='2025.04.03' />
-            <AccountList title='환전' category='(포인트 환전)' amount={300} date='2025.04.03' />
-            <AccountList title='삼성전자' category='(매수)' amount={-23400} date='2025.04.03' />
-            <AccountList title='카카오 모빌리티' category='(매입)' amount={345600} date='2025.04.03' />
-            <AccountList title='환전' category='(포인트 환전)' amount={300} date='2025.04.03' />
-            <AccountList title='삼성전자' category='(매수)' amount={-23400} date='2025.04.03' />
-            <AccountList title='카카오 모빌리티' category='(매입)' amount={345600} date='2025.04.03' />
-            <AccountList title='환전' category='(포인트 환전)' amount={300} date='2025.04.03' />
-            <AccountList title='삼성전자' category='(매수)' amount={-23400} date='2025.04.03' />
-            <AccountList title='카카오 모빌리티' category='(매입)' amount={345600} date='2025.04.03' />
+            {moneyList.map((item, index) => (
+                <AccountList key={index} title={item.title} category={item.category} amount={item.amount} date={item.date} />
+            ))}
         </ScrollView>
     </View>
   );

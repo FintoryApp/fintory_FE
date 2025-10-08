@@ -7,6 +7,8 @@ import { EconomyStudyStackParamList } from '../../navigation/RootStackParamList'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getWordInfo } from '../../api/wordInfo';
+import { useEffect, useState } from 'react';
 
 type WordDetailNavigationProp = NativeStackNavigationProp<EconomyStudyStackParamList, 'WordDetailScreen'>;
 type WordDetailRouteProp = RouteProp<EconomyStudyStackParamList, 'WordDetailScreen'>;
@@ -14,32 +16,37 @@ type WordDetailRouteProp = RouteProp<EconomyStudyStackParamList, 'WordDetailScre
 
     
 export default function WordDetailScreen() {
-    const content = `매수는 경제 용어로, 어떤 것을 구입해서 내 것으로 만드는 행위를 말해요. 특히 주식, 부동산, 코인 같은 투자 대상과 관련해서 자주 사용하는 말이에요.
-쉽게 말해서, 무언가를 사는 것, 바로 그게 매수예요.
-
-참고로, 매수의 반대는 매도(賣渡)라고 해요. 매도는 내가 가진 것을 파는 것을 말해요.`;
+    
 
     const route = useRoute<WordDetailRouteProp>();
-    const { word } = route.params;
-    const top = useSafeAreaInsets().top;
+    const { id } = route.params;
+    const top= useSafeAreaInsets().top;
+    const [wordInfo, setWordInfo] = useState<any>({});
+
+    useEffect(() => {
+        (async () => {
+            const res = await getWordInfo(id);
+            setWordInfo(res.data);
+        })();
+    }, [id]);
     return (
         <View style={{width:'100%',height:'100%',backgroundColor:Colors.surface}}>
             <TopBar title='경제 용어' />
             <View style={[styles.titleContainer,{marginTop:top}]}>
                 <Image source={require('../../../assets/icons/pencil.png')} style={styles.pencilIcon} />
-                <Text style={styles.titleText}>{word}란?</Text>
+                <Text style={styles.titleText}>{wordInfo.word}</Text>
             </View>
             <View style={styles.contentContainer}>
                 <Text style={styles.definitionText}>정의</Text>
                 <Text style={styles.contentText}>
-                    {content}
+                    {wordInfo.definition}
                 </Text>
             </View>
 
             <View style={styles.exampleContainer}>
                 <Text style={styles.definitionText}>좀 더 쉽게 이해해보기</Text>
                 <Text style={styles.contentText}>
-                    {content}
+                    {wordInfo.moreInfo}
                 </Text>
             </View>
         </View> 
@@ -48,12 +55,10 @@ export default function WordDetailScreen() {
 
 const styles = StyleSheet.create({
     titleContainer: {
-        width: hScale(114),
         height: vScale(33),
-        marginLeft: hScale(16),
         flexDirection: 'row',
+        paddingLeft: hScale(16),
         alignItems: 'center',
-        justifyContent: 'center',
     },
 
     titleText: {
@@ -63,8 +68,8 @@ const styles = StyleSheet.create({
     },
     pencilIcon: {
         marginRight: hScale(4),
-        width: hScale(32),
-        height: vScale(32),
+        width: hScale(20),
+        height: vScale(20),
     },  
     contentContainer: {
         marginTop: vScale(15),

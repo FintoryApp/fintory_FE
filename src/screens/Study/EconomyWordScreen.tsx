@@ -40,7 +40,7 @@ export default function EconomyWordScreen() {
                     </Text>
                 ) : (
                     wordList.map((word, index) => (
-                        <WordContainer key={word.id || index} word={word.word} />
+                        <WordContainer key={word.id || index} id={word.id} />
                     ))
                 )}
             </ScrollView>

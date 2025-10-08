@@ -89,11 +89,12 @@ export const styles = StyleSheet.create({
         alignSelf:'center',
         borderRadius: hScale(8),
         paddingHorizontal: hScale(16),
-        paddingVertical: vScale(16),
+        paddingVertical: vScale(8),
     },
     textContainer: {
         //width: hScale(191),
         height: vScale(49),
+        marginBottom: vScale(8),
     },
     wordText: {
         fontSize: hScale(24),

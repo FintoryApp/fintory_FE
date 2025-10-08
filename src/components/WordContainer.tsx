@@ -4,18 +4,27 @@ import Colors from '../styles/Color.styles';
 import { useNavigation } from '@react-navigation/native';
 import { EconomyStudyStackParamList } from '../navigation/RootStackParamList';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
+import { getWordInfo } from '../api/wordInfo';
+import { useState, useEffect } from 'react';
 type WordDetailNavigationProp = NativeStackNavigationProp<EconomyStudyStackParamList, 'WordDetailScreen'>;
 
 interface WordContainerProps {
-    word: string;
+    id: number;
 }
 
-const WordContainer = ({ word }: WordContainerProps) => {
+const WordContainer = ({ id }: WordContainerProps) => {
     const navigation = useNavigation<WordDetailNavigationProp>();
+    const [wordInfo, setWordInfo] = useState<any>({});
+
+    useEffect(() => {
+        (async () => {
+            const res = await getWordInfo(id);
+            setWordInfo(res.data);
+        })();
+    }, [id]);
     return (
-        <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('WordDetailScreen', { word:word })}>
-            <Text style={styles.wordText}>{word}</Text>
+        <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('WordDetailScreen', { id:id })}>
+            <Text style={styles.wordText}>{wordInfo.word}</Text>
             <Image source={require('../../assets/icons/chevron_forward.png')} style={styles.arrowRight} />
         </TouchableOpacity>
     )

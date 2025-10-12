@@ -10,7 +10,7 @@ import { trading } from '../../api/stock/trading';
 export default function BuyStockScreen() {
     const {top} = useSafeAreaInsets();
     const [quantity, setQuantity] = useState('');
-    const price = 40000;
+    const price = 100;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     
@@ -20,7 +20,7 @@ export default function BuyStockScreen() {
         setIsLoading(true);
         try {
             const buyData = {
-                stockCode: "005930", // 삼성전자 코드 (실제로는 props나 상태에서 가져와야 함)
+                stockCode: "000660", // 삼성전자 코드 (실제로는 props나 상태에서 가져와야 함)
                 quantity: parseInt(quantity),
                 price: price,
                 transactionType: "BUY"

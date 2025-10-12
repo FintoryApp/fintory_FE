@@ -95,7 +95,7 @@ function ReportStack() {
 function StockStack() {
   return (
     <StockStackNav.Navigator screenOptions={{ headerShown: false }}>
-      <RootStack.Screen name="BuyStock" component={BuyStockScreen}/>
+      {/* <RootStack.Screen name="BuyStock" component={BuyStockScreen}/> */}
       <StockStackNav.Screen name="StockMain" component={StockMainScreen} />
       
     </StockStackNav.Navigator>

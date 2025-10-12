@@ -3,25 +3,32 @@ import { hScale, vScale } from '../../styles/Scale.styles';
 import Colors from '../../styles/Color.styles';
 
 interface StockListProps {
-    name:string;
-    price:number;
+    stockCode:string;
+    stockName:string;
     marketCap:number;
-    image:any;
-    number:number;
-    
+    currentPrice:number;
+    stockImage:string;
 }
 
-export default function MarketCapStockList({number,price,name,marketCap,image}:StockListProps) {
+export default function MarketCapStockList({stockName,stockCode,stockImage,marketCap,currentPrice}:StockListProps) {
     return (
         <TouchableOpacity style={styles.container}>
-            <Text style={styles.number}>{number}</Text>
+            <Text style={styles.number}>{stockCode}</Text>
             
             <View style={styles.stockContainer}>
-            <Image source={image||require('../../../assets/icons/red_circle.png')} style={styles.image} />
+            <Image source={stockImage||require('../../../assets/icons/red_circle.png')} style={styles.image} />
             <View style={styles.stockInfoContainer}>
-                <Text style={styles.stockName}>{name}</Text>
+                <Text style={styles.stockName}>{stockName}</Text>
                 <View style={styles.numContainer}>
-                    <Text style={styles.stockPrice}>{price+"원"}</Text>
+                    <Text style={styles.stockPrice}>{currentPrice+"원"}</Text>
+                    {marketCap !== undefined && (
+                        <Text style={[
+                            styles.stockPercentage,
+                            { color: marketCap >= 0 ? Colors.red : Colors.blue }
+                        ]}>
+                            {marketCap >= 0 ? '+' : ''}{marketCap.toFixed(2)}%
+                        </Text>
+                    )}
                     <Text style={styles.stockMarketCap}>{marketCap+"조 원"}</Text>
                 </View>
             </View>

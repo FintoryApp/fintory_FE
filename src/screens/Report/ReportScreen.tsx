@@ -12,6 +12,7 @@ import { getReport } from '../../api/report';
 import { ReportStackParamList } from '../../navigation/RootStackParamList';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { getCurrentUser } from '../../api/auth';
+import { getPortfolio } from '../../api/portfolio';
 
 type ReportNavigationProp = NativeStackNavigationProp<ReportStackParamList, 'ReportMain'>;
 type ReportRouteProp = RouteProp<ReportStackParamList, 'ReportMain'>;

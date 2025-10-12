@@ -3,26 +3,30 @@ import { hScale, vScale } from '../../styles/Scale.styles';
 import Colors from '../../styles/Color.styles';
 
 interface ChangeRateStockListProps {
-    name:string;
-    price:number;   
-    percentage:number;
-    image:string;
-    number:number;
+    stockCode:string;
+    stockName:string;
+    closePrice:number;
+    stockImage:string;
     
 }
 
-export default function ChangeRateStockList({number,name,price,percentage,image}:ChangeRateStockListProps) {
+export default function ChangeRateStockList({stockCode,stockName,closePrice,stockImage}:ChangeRateStockListProps) {
     return (
         <TouchableOpacity style={styles.container}>
-            <Text style={styles.number}>{number}</Text>
+            <Text style={styles.number}>{stockCode}</Text>
             
             <View style={styles.stockContainer}>
-            <Image source={require('../../../assets/icons/red_circle.png')} style={styles.image} />
+            <Image source={stockImage || require('../../../assets/icons/red_circle.png')} style={styles.image} />
             <View style={styles.stockInfoContainer}>
-                <Text style={styles.stockName}>{name}</Text>
+                <Text style={styles.stockName}>{stockName}</Text>
                 <View style={styles.numContainer}>
-                    <Text style={styles.stockPrice}>{price.toLocaleString()+"원"}</Text>
-                    <Text style={[styles.stockPercentage,{color: percentage > 0 ? Colors.red : Colors.blue}]}>{percentage > 0 ? '+' + percentage + '%' : percentage + '%'}</Text>
+                    <Text style={styles.stockPrice}>{closePrice.toLocaleString()+"원"}</Text>
+                    <Text style={[
+                        styles.stockPercentage,
+                        { color: closePrice >= 0 ? Colors.red : Colors.primary }
+                    ]}>
+                        {closePrice >= 0 ? '+' : ''}{closePrice.toFixed(2)}%
+                    </Text>
                 </View>
             </View>
             </View>

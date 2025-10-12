@@ -3,7 +3,6 @@
 export interface UserData {
   nickname: string;
   email: string;
-  totalPoint: number;
   streakDays: number;
   isLoading: boolean;
   hasError: boolean;

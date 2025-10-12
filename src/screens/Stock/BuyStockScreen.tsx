@@ -10,7 +10,7 @@ import { trading } from '../../api/stock/trading';
 export default function BuyStockScreen() {
     const {top} = useSafeAreaInsets();
     const [quantity, setQuantity] = useState('');
-    const price = 367890;
+    const price = 40000;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     

@@ -16,7 +16,7 @@ export default function AccountList({title,category,amount,date}:AccountListProp
             <View style={styles.leftContainer}>
                 <View style={styles.listContainer}>
                 <Text style={styles.title}>{title}</Text>
-                <Text style={styles.category}>{category}</Text>
+                <Text style={styles.category}>({category})</Text>
                 </View>
                 <Text style={styles.date}>{date}</Text>
             </View>

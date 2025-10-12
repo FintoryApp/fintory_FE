@@ -10,6 +10,8 @@ import BigButton from '../../components/button/BigButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getTotalPoint } from '../../api/totalPoint';
 import { getPointList } from '../../api/pointList';
+import BottomSheet from '../../components/ui/BottomSheet';
+import ExchangeBottomSheet from '../../components/ExchangeBottomSheet';
 
 // API 응답 타입 정의
 interface PointTransaction {
@@ -19,19 +21,12 @@ interface PointTransaction {
     createdAt: string;
 }
 
-interface PointListResponse {
-    resultCode: string;
-    data: {
-        totalAmount: number;
-        transactions: PointTransaction[];
-    };
-    message: string;
-}
 
 export default function PointScreen() {
     const {top} = useSafeAreaInsets();
     const [totalPoint, setTotalPoint] = useState<number>(0);
     const [pointList, setPointList] = useState<PointTransaction[]>([]);
+    const [isBottomSheetVisible, setIsBottomSheetVisible] = useState<boolean>(false);
 
     // 날짜 포맷팅 함수
     const formatDate = (dateString: string): string => {
@@ -47,16 +42,23 @@ export default function PointScreen() {
         if (type === 'EARN') {
             switch (source) {
                 case 'ATTENDANCE_POINT':
-                    return { title: '출석체크', category: '(출석 보상)' };
-                case 'CHALLENGE_REWARD':
+                    return { title: '적립', category: '(출석체크)' };
+                case 'CHALLENGE_POINT':
                     return { title: '적립', category: '(챌린지 보상)' };
                 default:
-                    return { title: '적립', category: `(${source})` };
+                    return { title: '', category: '' };
+                
             }
-        } else if (type === 'SPEND') {
-            return { title: '환전', category: '(가상머니)' };
+         } else if (type === 'WITHDRAW') {
+            switch (source) {
+                case 'EXCHANGE_POINT':
+                    return { title: '환전', category: '(가상머니)' };
+                default:
+                    return { title: '', category: '' };
+            }
+            
         }
-        return { title: type, category: `(${source})` };
+        return { title: '', category: `` };
     };
     useEffect(() => {
         const loadTotalPoint = async () => {
@@ -93,33 +95,70 @@ export default function PointScreen() {
         };
         loadPointList();
     }, []);
+
+    const handleExchange = async (amount: number) => {
+        try {
+            // 환전 성공 시 포인트 차감
+            const newTotalPoint = totalPoint - amount;
+            setTotalPoint(newTotalPoint);
+            
+            // AsyncStorage 업데이트
+            await AsyncStorage.setItem('totalPoint', newTotalPoint.toString());
+            
+            // 포인트 내역 새로고침
+            const pointList = await getPointList();
+            setPointList(pointList.data.transactions);
+            
+            console.log('환전 완료:', amount);
+        } catch (error) {
+            console.error('환전 후 업데이트 실패:', error);
+        }
+    };
+
+    const openBottomSheet = () => {
+        setIsBottomSheetVisible(true);
+    };
+
+    const closeBottomSheet = () => {
+        setIsBottomSheetVisible(false);
+    };
   return (
     <View style={{width:'100%',height:'100%',backgroundColor:Colors.surface}}>
         
-        <TopBar title='나의 가상 머니' />
+        <TopBar title='포인트 내역' />
         <View style={[styles.accountContainer,{marginTop:top}]}>
             <View style={styles.textContainer}>
                 <Text style={styles.titleText}>보유 포인트</Text>
-                <Text style={styles.numText}>{totalPoint} P</Text>
+                <Text style={styles.numText}>{totalPoint.toLocaleString()} P</Text>
             </View>
-            <BigButton title='가상 머니로 환전하기' buttonColor={Colors.primaryDim} textColor={Colors.primaryDark} onPress={() => {}} />
+            <BigButton title='가상 머니로 환전하기' buttonColor={Colors.primaryDim} textColor={Colors.primaryDark} onPress={openBottomSheet} />
         </View>
 
         <ScrollView style={styles.scrollViewStyle} contentContainerStyle={styles.scrollContainer}>
-            <Text style={styles.listText}>가상 계좌 내역</Text>
-            {pointList.map((transaction, index) => {
+            <Text style={styles.listText}>포인트 내역</Text>
+            {pointList.slice().reverse().map((transaction, index) => {
                 const { title, category } = getTitleAndCategory(transaction.type, transaction.source);
+                // WITHDRAW 타입일 경우 amount를 음수로 변환
+                const displayAmount = transaction.type === 'WITHDRAW' ? -transaction.amount : transaction.amount;
                 return (
                     <PointList
                         key={index}
                         title={title}
                         category={category}
-                        amount={transaction.amount}
+                        amount={displayAmount}
                         date={formatDate(transaction.createdAt)}
                     />
                 );
             })}
         </ScrollView>
+
+        {/* ExchangeBottomSheet */}
+        <ExchangeBottomSheet
+            visible={isBottomSheetVisible}
+            totalPoint={totalPoint}
+            onExchange={handleExchange}
+            onClose={closeBottomSheet}
+        />
     </View>
   );
 }

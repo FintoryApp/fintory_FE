@@ -113,7 +113,7 @@ export const login = async (email: string, password: string): Promise<ApiRespons
     }
   } catch (error) {
     console.error('로그인 API 호출 실패:', error);
-    return { resultCode: 'ERROR', message: '네트워크 오류' };
+    return { resultCode: 'ERROR', message: '아이디 또는 비밀번호가 일치하지 않습니다' };
   }
 };
 

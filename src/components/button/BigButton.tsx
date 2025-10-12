@@ -9,11 +9,12 @@ interface BigButtonProps {
     buttonColor?: string;
     textColor?: string;
     disabled?: boolean;
+    height?: number;
 }
 
-const BigButton: React.FC<BigButtonProps> = ({ title, onPress, buttonColor=Colors.primary, textColor=Colors.white, disabled=false }) => {
+const BigButton: React.FC<BigButtonProps> = ({ title, onPress, buttonColor=Colors.primary, textColor=Colors.white, disabled=false, height=vScale(56) }) => {
     return (
-        <TouchableOpacity style={[styles.button, {backgroundColor: buttonColor}]} onPress={onPress}>
+        <TouchableOpacity style={[styles.button, {backgroundColor: buttonColor, height: height}]} onPress={onPress}>
             <Text style={[styles.buttonText, {color: textColor}]}>{title}</Text>
         </TouchableOpacity>
     );
@@ -22,7 +23,6 @@ const BigButton: React.FC<BigButtonProps> = ({ title, onPress, buttonColor=Color
 const styles = StyleSheet.create({
     button: {
         width: hScale(328),
-        height: vScale(56),
         borderRadius: hScale(8),
         alignItems: 'center',
         justifyContent: 'center',

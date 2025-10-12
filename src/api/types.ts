@@ -10,6 +10,7 @@ export interface StockInfo {
   stockCode: string;
   stockName: string;
   profileImageUrl?: string | null;
+  rank:number;
 }
 
 // 시가총액 주식 정보 (marketCap, priceChange, priceChangeRate 추가)

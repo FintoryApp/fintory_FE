@@ -23,94 +23,74 @@ import { getOverseasStock_roc } from '../../api/stock/getOverseasRoc';
 import { MarketCapStockInfo, RocStockInfo, OwnedStockInfo } from '../../api/types';
 
 // hook
-import { useStockWebSocket } from '../../hook/useWebsocket';
+// import { useStockWebSocket } from '../../hook/useWebsocket';
 
 export default function StockMainScreen() {
 
   const [koreanMarketCapList, setKoreanMarketCapList] = useState<MarketCapStockInfo[]>([]);
   const [overseasMarketCapList, setOverseasMarketCapList] = useState<MarketCapStockInfo[]>([]);
   const [holdings, setHoldings] = useState<OwnedStockInfo[]>([]);
-  // const [allStockCodes, setAllStockCodes] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [isKorean, setIsKorean] = useState(true);
   const [selectedButton, setSelectedButton] = useState<'등락률' | '시가총액'>('등락률');
   const [koreanRocList, setKoreanRocList] = useState<RocStockInfo[]>([]);
   const [overseasRocList, setOverseasRocList] = useState<RocStockInfo[]>([]);
-  // const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
+
+  async function safeCall<T>(label: string, call: () => Promise<T>, fallbackValue: T) {
+    try {
+      const res = await call();
+      console.log(`[OK] ${label}`, { url: (res as any)?.config?.url, status: (res as any)?.status });
+      return res;
+    } catch (err: any) {
+      console.error(`[FAIL] ${label}`, {
+        message: err?.message,
+        status: err?.response?.status,
+        url: err?.config?.url,
+        method: err?.config?.method,
+        params: err?.config?.params,
+        data: err?.response?.data,
+      });
+      return fallbackValue;
+    }
+  }
   
-  // 초기 데이터 로딩: 화면이 처음 렌더링될 때 한 번만 실행
   useEffect(() => {
-    console.log('useEffect 시작 - API 호출 준비');
+    let mounted = true;
     (async () => {
       try {
-        console.log('API 호출 시작');
-        const [koreanMarketCapRes, overseasMarketCapRes, ownedRes, koreanRocRes, overseasRocRes] = await Promise.all([
-          getKoreanStock_marketCap(),
-          getOverseasStock_marketCap(),
-          getOwnedStockList(),
-          getKoreanStock_roc(),
-          getOverseasStock_roc()
-        ]);
+        setIsLoading(true);
         
-        console.log('API 응답 받음:', {
-          koreanMarketCap: koreanMarketCapRes,
-          overseasMarketCap: overseasMarketCapRes,
-          owned: ownedRes,
-          koreanRoc: koreanRocRes,
-          overseasRoc: overseasRocRes
-        });
-        
-        setKoreanMarketCapList(koreanMarketCapRes.data);
-        setOverseasMarketCapList(overseasMarketCapRes.data);
-        setHoldings(ownedRes.data);
-        setKoreanRocList(koreanRocRes.data);
-        setOverseasRocList(overseasRocRes.data);
-        
-        console.log('State 설정 완료');
-        
-        // 모든 종목 코드 통합
-        const allCodes = [
-          ...koreanMarketCapRes.data.map((stock: any) => stock.stockCode),
-          ...overseasMarketCapRes.data.map((stock: any) => stock.stockCode),
-          ...ownedRes.data.map((holding: any) => holding.stockCode),
-          ...koreanRocList.map((stock: any) => stock.stockCode),
-          ...overseasRocList.map((stock: any) => stock.stockCode)
-        ];
-        const uniqueCodes = [...new Set(allCodes)]; // 중복 제거
-        console.log('allStockCodes 설정됨:', uniqueCodes);
-        // setAllStockCodes(uniqueCodes);
-        // setIsInitialized(true);
-      } catch (error) {
-        console.error('Error fetching initial data:', error);
-        console.error('Error details:', {
-          message: (error as any).message,
-          status: (error as any).response?.status,
-          data: (error as any).response?.data
-        });
+        // API 호출 시 실패하면 빈 배열로 fallback
+        const koreanMarketCapRes = await safeCall('korean market-cap', getKoreanStock_marketCap, { data: [] });
+        // const ownedRes = await safeCall('owned list', getOwnedStockList, { data: [] });
+        if (!mounted) return;
+        setKoreanMarketCapList(koreanMarketCapRes.data ?? []);
+        // setHoldings(ownedRes.data ?? []);
+  
+        const overseasMarketCapRes = await safeCall('overseas market-cap', getOverseasStock_marketCap, { data: [] });
+        if (!mounted) return;
+        setOverseasMarketCapList(overseasMarketCapRes.data ?? []);
+  
+        const koreanRocRes = await safeCall('korean roc', getKoreanStock_roc, { data: [] });
+        const overseasRocRes = await safeCall('overseas roc', getOverseasStock_roc, { data: [] });
+        if (!mounted) return;
+        setKoreanRocList(koreanRocRes.data ?? []);
+        setOverseasRocList(overseasRocRes.data ?? []);
+      } catch (e) {
+        console.error('API 호출 중 예상치 못한 오류:', e);
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     })();
+    return () => { mounted = false; };
   }, []);
-
-  // Hook은 항상 호출되어야 하므로 조건부 호출 제거
-  // const { prices, isConnected, connectionError } = useStockWebSocket(
-  //   koreanStocks, overseasStocks
-  // );
-
   
   
-  // 실시간 가격 기준 등락률 정렬 (현재 장마감으로 웹소켓 안됨 - 주석처리)
-  // const getSortedStocks = (stocks: (MarketCapStockInfo | RocStockInfo)[], sortType: '등락률' | '시가총액') => {
-  //   if (sortType === '시가총액') {
-  //     return stocks;
-  //   } else {
-  //     return [...stocks].sort((a, b) => {
-  //       const priceA = getCurrentPercentage(a);
-  //       const priceB = getCurrentPercentage(b);
-  //       return priceB - priceA;
-  //     });
-  //   }
-  // };
+
 
   
   const {top} = useSafeAreaInsets();
@@ -246,14 +226,16 @@ export default function StockMainScreen() {
         <View style={styles.stockInfoContainer}>
           <Text style={styles.stockInfoText}>나의 보유 주식</Text>
           <View style={[styles.stockInfoBlockContainer]}>
-            {holdings.length > 0 ? (
+            {isLoading ? (
+              <Text style={styles.stockInfoText}>로딩 중...</Text>
+            ) : holdings.length > 0 ? (
               filteredHoldings.map((holding, index) => {
-                const currentPrice = 0;
-                const percentage = 0;
                 const averagePrice = holding.averagePrice || 0;
+                const priceChange = holding.priceChange || 0;
+                const currentPrice = averagePrice + priceChange;
+                const percentage = holding.priceChangeRate || 0;
                 const quantity = holding.quantity || 0;
                 const profitLoss = quantity > 0 ? (currentPrice - averagePrice) * quantity : 0;
-                const profitLossRate = averagePrice > 0 ? ((currentPrice - averagePrice) / averagePrice) * 100 : 0;
                 
                 return (
                   <OwnedStockList
@@ -345,29 +327,33 @@ export default function StockMainScreen() {
           />
 
           <View style={styles.stockListContainer}>
-            {filteredStocks.length > 0 ? (
+            {isLoading ? (
+              <Text style={styles.stockInfoText}>주식 데이터를 불러오는 중...</Text>
+            ) : filteredStocks.length > 0 ? (
               filteredStocks.map((stock, index) => (
                 selectedButton === '시가총액' ? (
                   <MarketCapStockList
-                    key={stock.stockCode}
+                    key={index + 1}
                     stockName={stock.stockName}
                     stockCode={stock.stockCode}
+                    rank={index + 1}
                     stockImage={stock.profileImageUrl || require("../../../assets/icons/red_circle.png")}
                     marketCap={(stock as MarketCapStockInfo).marketCap}
                     currentPrice={(stock as MarketCapStockInfo).currentPrice}
                   />
                 ) : (
                   <ChangeRateStockList
-                    key={stock.stockCode}
-                    stockCode={stock.stockCode}
+                    key={index + 1}
                     stockName={stock.stockName}
+                    stockCode={stock.stockCode}
+                    rank={index + 1}
                     closePrice={(stock as RocStockInfo).closePrice}
                     stockImage={stock.profileImageUrl || require("../../../assets/icons/red_circle.png")}
                   />
                 )
               ))
             ) : (
-              <Text style={styles.stockInfoText}>주식 데이터를 불러오는 중...</Text>
+              <Text style={styles.stockInfoText}>주식 데이터가 없습니다.</Text>
             )}
           </View>
         </View>

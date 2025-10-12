@@ -3,17 +3,17 @@ import { hScale, vScale } from '../../styles/Scale.styles';
 import Colors from '../../styles/Color.styles';
 
 interface ChangeRateStockListProps {
-    stockCode:string;
+    rank:number;
     stockName:string;
+    stockCode:string;
     closePrice:number;
     stockImage:string;
-    
 }
 
-export default function ChangeRateStockList({stockCode,stockName,closePrice,stockImage}:ChangeRateStockListProps) {
+export default function ChangeRateStockList({rank,stockName,stockCode,closePrice,stockImage}:ChangeRateStockListProps) {
     return (
         <TouchableOpacity style={styles.container}>
-            <Text style={styles.number}>{stockCode}</Text>
+            <Text style={styles.number}>{rank}</Text>
             
             <View style={styles.stockContainer}>
             <Image source={stockImage || require('../../../assets/icons/red_circle.png')} style={styles.image} />

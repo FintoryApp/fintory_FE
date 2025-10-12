@@ -10,9 +10,10 @@ type WordDetailNavigationProp = NativeStackNavigationProp<EconomyStudyStackParam
 
 interface WordContainerProps {
     id: number;
+    onWordInfoLoaded?: (id: number, wordInfo: any) => void;
 }
 
-const WordContainer = ({ id }: WordContainerProps) => {
+const WordContainer = ({ id, onWordInfoLoaded }: WordContainerProps) => {
     const navigation = useNavigation<WordDetailNavigationProp>();
     const [wordInfo, setWordInfo] = useState<any>({});
 
@@ -20,8 +21,9 @@ const WordContainer = ({ id }: WordContainerProps) => {
         (async () => {
             const res = await getWordInfo(id);
             setWordInfo(res.data);
+            onWordInfoLoaded?.(id, res.data);
         })();
-    }, [id]);
+    }, [id, onWordInfoLoaded]);
     return (
         <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('WordDetailScreen', { id:id })}>
             <Text style={styles.wordText}>{wordInfo.word}</Text>

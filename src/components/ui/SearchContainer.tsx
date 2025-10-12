@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, Image, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { hScale, vScale } from '../../styles/Scale.styles';
 import { Colors } from '../../styles/Color.styles';
@@ -21,6 +21,11 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
   style,
 }) => {
   const [searchText, setSearchText] = useState(value || '');
+
+  // value prop이 변경될 때 내부 상태 동기화
+  useEffect(() => {
+    setSearchText(value || '');
+  }, [value]);
 
   const handleTextChange = (text: string) => {
     setSearchText(text);
@@ -51,8 +56,19 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
         onChangeText={handleTextChange}
         onSubmitEditing={handleSearch}
         returnKeyType="search"
+        autoCorrect={false}
+        autoCapitalize="none"
+        textContentType="none"
+        keyboardType="default"
+        multiline={false}
+        blurOnSubmit={true}
       />
-    
+      
+      {searchText.length > 0 && (
+        <TouchableOpacity style={styles.clearIconContainer} onPress={handleClear}>
+          <Image source={require('../../../assets/icons/cancel.png')} style={styles.clearIcon} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -85,7 +101,17 @@ const styles = StyleSheet.create({
     color: Colors.black,
     textAlignVertical: 'center',
   },
-
+  clearIconContainer: {
+    width: hScale(24),
+    height: vScale(24),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  clearIcon: {
+    width: hScale(16),
+    height: vScale(16),
+    tintColor: Colors.middleGray,
+  },
 });
 
 export default SearchContainer; 

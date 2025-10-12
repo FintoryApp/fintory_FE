@@ -8,12 +8,18 @@ import { useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import HugeButton from '../../components/button/HugeButton';
 
-export default function StockChartScreen() {
+interface StockChartScreenProps {
+  stockCode:string;
+  stockName:string;
+  stockPrice:number;
+}
+
+export default function StockChartScreen({stockCode}: StockChartScreenProps) {
   const {top} = useSafeAreaInsets();
 
   const [stockMarketOpen, setStockMarketOpen] = useState(true);
 
-  const stockCode='005930';
+  //const stockCode='005930';
   const [period, setPeriod] = useState('1일');
 
   const {data, loading, error} = useStockChart(stockCode,period);

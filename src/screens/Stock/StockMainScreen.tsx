@@ -25,7 +25,10 @@ import { getPortfolio } from '../../api/portfolio';
 import { MarketCapStockInfo, RocStockInfo, OwnedStockInfo } from '../../api/types';
 
 // hook
-// import { useStockWebSocket } from '../../hook/useWebsocket';
+import { useStockWebSocket } from '../../hook/useWebsocket';
+
+//utils
+
 
 export default function StockMainScreen() {
 

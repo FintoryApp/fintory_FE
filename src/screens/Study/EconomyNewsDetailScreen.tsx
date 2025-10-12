@@ -7,10 +7,15 @@ import { useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { getNewsDetail } from "../../api/newsDetail";
 import NewsImage from "../../components/NewsImage";
+import { useRoute } from '@react-navigation/native';
+import { EconomyStudyStackParamList } from '../../navigation/RootStackParamList';
+import { RouteProp } from '@react-navigation/native';
 
+type EconomyNewsDetailRouteProp = RouteProp<EconomyStudyStackParamList, 'EconomyNewsDetailScreen'>;
 
-export default function EconomyNewsDetailScreen({route}:any) {
-    const id = route?.params?.id || {};
+export default function EconomyNewsDetailScreen() {
+    const route = useRoute<EconomyNewsDetailRouteProp>();
+    const { id } = route.params;
     const {top,bottom} = useSafeAreaInsets();
     const [news, setNews] = useState<any>({});
 

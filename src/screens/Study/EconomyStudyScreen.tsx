@@ -150,7 +150,7 @@ export default function EconomyStudyScreen() {
                         {newsList.length > 0 && (
                             <TouchableOpacity onPress={()=>{
                                 console.log('Navigating with newsList[0]:', newsList[0]);
-                                (navigation as any).navigate('EconomyNewsDetailScreen', {id:22});
+                                navigation.navigate('EconomyNewsDetailScreen', {id:newsList[0].newsId});
                             }}>
                                 <NewsSummary 
                                     title={newsList[0].title} 
@@ -162,7 +162,7 @@ export default function EconomyStudyScreen() {
                         
                         {newsList.length > 1 && (
                             <TouchableOpacity onPress={()=>{
-                                (navigation as any).navigate('EconomyNewsDetailScreen', {id:23});
+                                navigation.navigate('EconomyNewsDetailScreen', {id:newsList[1].newsId});
                             }}>
                                 <NewsSummary 
                                     title={newsList[1].title} 
@@ -174,7 +174,7 @@ export default function EconomyStudyScreen() {
                         
                         {newsList.length > 2 && (
                             <TouchableOpacity onPress={()=>{
-                                (navigation as any).navigate('EconomyNewsDetailScreen', {id:24});
+                                navigation.navigate('EconomyNewsDetailScreen', {id:newsList[2].newsId});
                             }}>
                                 <NewsSummary 
                                     title={newsList[2].title} 

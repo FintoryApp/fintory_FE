@@ -4,8 +4,8 @@ import { styles } from '../../styles/StockMainScreen.styles';
 
 interface UserInvestmentStatusProps {
     
-    quantity: number;
-    purchaseAmount:number;
+    profitLoss: number;
+    totalPrice:number;
     profileImageUrl:string;
     averagePurchasePrice:number;
     closePrice:number;

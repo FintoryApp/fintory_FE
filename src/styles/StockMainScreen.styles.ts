@@ -124,15 +124,15 @@ export const styles = StyleSheet.create({
         fontSize: hScale(16),
         fontWeight: 'bold',
         color: Colors.black,
-        top: vScale(16),
-        left: hScale(16),
-        position: 'absolute',
+        // top: vScale(16),
+        // left: hScale(16),
+        // position: 'absolute',
     },
 
     stockInfoBlockContainer:{
         width: hScale(296),
         alignSelf: 'center',
-        marginTop: vScale(54),
+        marginTop: vScale(20),
     },
     bottomContainer:{
         width: hScale(360),

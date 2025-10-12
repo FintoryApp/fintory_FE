@@ -22,15 +22,19 @@ export interface MarketCapStockInfo extends StockInfo {
 // 등락률 주식 정보 (rank, priceChange, priceChangeRate 추가)
 export interface RocStockInfo extends StockInfo {
   closePrice: number;
+  openPrice:number;
 }
 
 // 보유 주식 정보
-export interface OwnedStockInfo extends StockInfo {
-  averagePrice: number;
-  quantity: number;
-  isKorean: boolean;
-  priceChange: number;
-  priceChangeRate: number;
+export interface OwnedStockInfo {
+  stockCode: string;
+  stockName: string;
+  quantity: number; //구매 수량
+  purchaseAmount:number; //구매 전체 가격
+  profileImageUrl:string;
+  averagePurchasePrice:number; //평균 구매 가격
+  closePrice:number; //(장마감시) 종가
+  isKorean:boolean;
 }
 
 // WebSocket에서 받는 실시간 가격 데이터

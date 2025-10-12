@@ -9,9 +9,30 @@ interface StockListProps {
     marketCap:number;
     currentPrice:number;
     stockImage:string;
+    isKorean:boolean;
 }
 
-export default function MarketCapStockList({rank,stockName,stockCode,stockImage,marketCap,currentPrice}:StockListProps) {
+export default function MarketCapStockList({rank,stockName,stockCode,stockImage,marketCap,currentPrice,isKorean}:StockListProps) {
+    
+    // 달러의 경우 조/억 단위로 변환하는 함수
+    const formatMarketCap = (value: number, isKorean: boolean) => {
+        if (isKorean) {
+            return value + "조 원";
+        } else {
+            // 달러의 경우: 4732 → "4조 7320억 달러"
+            const trillion = Math.floor(value / 1000);
+            const billion = Math.floor((value % 1000) * 10);
+            
+            if (trillion > 0 && billion > 0) {
+                return `${trillion}조 ${billion}억 달러`;
+            } else if (trillion > 0) {
+                return `${trillion}조 달러`;
+            } else {
+                return `${billion}억 달러`;
+            }
+        }
+    };
+
     return (
         <TouchableOpacity style={styles.container}>
             <Text style={styles.number}>{rank}</Text>
@@ -21,7 +42,7 @@ export default function MarketCapStockList({rank,stockName,stockCode,stockImage,
             <View style={styles.stockInfoContainer}>
                 <Text style={styles.stockName}>{stockName}</Text>
                 <View style={styles.numContainer}>
-                    <Text style={styles.stockPrice}>{currentPrice+"원"}</Text>
+                    <Text style={styles.stockPrice}>{currentPrice.toLocaleString()+(isKorean ? "원" : "달러")}</Text>
                     {/* {marketCap !== undefined && (
                         <Text style={[
                             styles.stockPercentage,
@@ -30,7 +51,7 @@ export default function MarketCapStockList({rank,stockName,stockCode,stockImage,
                             {marketCap >= 0 ? '+' : ''}{marketCap.toFixed(2)}%
                         </Text>
                     )} */}
-                    <Text style={styles.stockMarketCap}>{"   "+marketCap+"조 원"}</Text>
+                    <Text style={styles.stockMarketCap}>{"   "+formatMarketCap(marketCap, isKorean)}</Text>
                 </View>
             </View>
             </View>

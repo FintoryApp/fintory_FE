@@ -11,6 +11,7 @@ import SearchContainer from '../../components/ui/SearchContainer';
 import MarketCapStockList from '../../components/stock/MarketCapStockList';
 import ChangeRateStockList from '../../components/stock/ChangeRateStockList';
 import OwnedStockList from '../../components/stock/OwnedStockList';
+import UserInvestmentStatus from '../../components/stock/UserInvestmentStatus';
 
 // api
 import { getOwnedStockList } from '../../api/stock/getOwnedStockList';
@@ -18,6 +19,7 @@ import { getKoreanStock_marketCap } from '../../api/stock/getKoreanStockMarketCa
 import { getOverseasStock_marketCap } from '../../api/stock/getOverseasStockMarketCapList';
 import { getKoreanStock_roc } from '../../api/stock/getKoreanRoc';
 import { getOverseasStock_roc } from '../../api/stock/getOverseasRoc';
+import { getPortfolio } from '../../api/portfolio';
 
 // types
 import { MarketCapStockInfo, RocStockInfo, OwnedStockInfo } from '../../api/types';
@@ -89,19 +91,18 @@ export default function StockMainScreen() {
     return () => { mounted = false; };
   }, []);
   
-  
+  useEffect(()=>{
+    (async()=>{
+      const res = await getPortfolio();
+      setHoldings(res.data.ownedStockDetails ?? []);
+    })();
+  },[]);
 
 
   
   const {top} = useSafeAreaInsets();
   const handleSearch = (text: string) => {};
-  const [isUserInfoExpanded, setIsUserInfoExpanded] = useState(false);
   const [isStockInfoExpanded, setIsStockInfoExpanded] = useState(false);
-  
-  const toggleUserInfo = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setIsUserInfoExpanded(!isUserInfoExpanded);
-  };
 
   const toggleStockInfo = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -173,6 +174,27 @@ export default function StockMainScreen() {
 
   const StockListToRender = selectedButton === '시가총액' ? MarketCapStockList : ChangeRateStockList;
 
+  // filteredHoldingsToRender를 const로 저장하여 여러 곳에서 재사용
+  const filteredHoldingsToRender = filteredHoldings.map((holding, index) => {
+    const stockCode = holding.stockCode;
+    const stockName = holding.stockName;
+    const quantity = holding.quantity;
+    const purchaseAmount = holding.purchaseAmount;
+    const profileImageUrl = holding.profileImageUrl;
+    const averagePurchasePrice = holding.averagePurchasePrice;
+    const closePrice = holding.closePrice;
+
+    return {
+      stockCode,
+      stockName,
+      quantity,
+      purchaseAmount,
+      profileImageUrl,
+      averagePurchasePrice,
+      closePrice,
+      index
+    };
+  });
 
   return (
     <View style={styles.wholeContainer}>
@@ -186,69 +208,35 @@ export default function StockMainScreen() {
         showsVerticalScrollIndicator={true}
         style={{ marginTop: top }}
       >
-        <View style={styles.userInfoContainer}>
-          <Text style={styles.topContainerText}>내 투자 현황</Text>
-          <Text style={styles.percentageText}>로딩 중...</Text>
-          {isUserInfoExpanded && (
-            <View>
-              <View style={styles.totalPriceContainer}>
-                <View style={styles.totalPriceTextContainer}>
-                  <Text style={styles.totalPriceText}>총 평가금액</Text>
-                  <Text style={styles.totalPriceValue}>로딩 중...</Text>
-                </View>
-              </View>
-              <View style={styles.textContainer}>
-                <View style={styles.smallBox}>
-                  <Text style={styles.smallBoxText}>총 매수</Text>
-                  <Text style={styles.smallBoxText}>로딩 중...</Text>
-                </View>
-                <View style={styles.smallBox}>
-                  <Text style={styles.smallBoxText}>내 보유 머니</Text>
-                  <Text style={styles.smallBoxText}>로딩 중...</Text>
-                </View>
-              </View>
-            </View>
-          )}
-          <TouchableOpacity style={[styles.seeMoreButton]} onPress={toggleUserInfo}>
-            <Animated.Image
-              source={require('../../../assets/icons/arrow_drop_down.png')}
-              style={[
-                styles.seeMoreButtonImage,
-                { transform: [{ rotate: isUserInfoExpanded ? '180deg' : '0deg' }] },
-              ]}
-            />
-            <Text style={styles.seeMoreButtonText}>
-              {isUserInfoExpanded ? '닫기' : '더보기'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {/* {filteredHoldingsToRender.length > 0 && (
+          <UserInvestmentStatus 
+            
+            quantity={filteredHoldingsToRender[0].quantity}
+            purchaseAmount={filteredHoldingsToRender[0].purchaseAmount}
+            profileImageUrl={filteredHoldingsToRender[0].profileImageUrl}
+            averagePurchasePrice={filteredHoldingsToRender[0].averagePurchasePrice}
+            closePrice={filteredHoldingsToRender[0].closePrice}
+          />
+        )} */}
 
         <View style={styles.stockInfoContainer}>
           <Text style={styles.stockInfoText}>나의 보유 주식</Text>
           <View style={[styles.stockInfoBlockContainer]}>
             {isLoading ? (
               <Text style={styles.stockInfoText}>로딩 중...</Text>
-            ) : holdings.length > 0 ? (
-              filteredHoldings.map((holding, index) => {
-                const averagePrice = holding.averagePrice || 0;
-                const priceChange = holding.priceChange || 0;
-                const currentPrice = averagePrice + priceChange;
-                const percentage = holding.priceChangeRate || 0;
-                const quantity = holding.quantity || 0;
-                const profitLoss = quantity > 0 ? (currentPrice - averagePrice) * quantity : 0;
-                
-                return (
-                  <OwnedStockList
-                    key={holding.stockCode}
-                    name={holding.stockName}
-                    price={currentPrice}
-                    percentage={percentage}
-                    image={holding.profileImageUrl || require("../../../assets/icons/red_circle.png")}
-                    quantity={quantity}
-                    profitLoss={profitLoss}
-                  />
-                );
-              })
+            ) : filteredHoldingsToRender.length > 0 ? (
+              filteredHoldingsToRender.map((holding) => (
+                <OwnedStockList
+                  key={holding.index + 1}
+                  stockCode={holding.stockCode}
+                  stockName={holding.stockName}
+                  quantity={holding.quantity}
+                  purchaseAmount={holding.purchaseAmount}
+                  profileImageUrl={holding.profileImageUrl}
+                  averagePurchasePrice={holding.averagePurchasePrice}
+                  closePrice={holding.closePrice}
+                />
+              ))
             ) : (
               <Text style={styles.stockInfoText}>보유 주식이 없습니다.</Text>
             )}
@@ -340,6 +328,7 @@ export default function StockMainScreen() {
                     stockImage={stock.profileImageUrl || require("../../../assets/icons/red_circle.png")}
                     marketCap={(stock as MarketCapStockInfo).marketCap}
                     currentPrice={(stock as MarketCapStockInfo).currentPrice}
+                    isKorean={isKorean}
                   />
                 ) : (
                   <ChangeRateStockList
@@ -348,6 +337,8 @@ export default function StockMainScreen() {
                     stockCode={stock.stockCode}
                     rank={index + 1}
                     closePrice={(stock as RocStockInfo).closePrice}
+                    // openPrice={(stock as RocStockInfo).openPrice}
+                    openPrice={100000}
                     stockImage={stock.profileImageUrl || require("../../../assets/icons/red_circle.png")}
                   />
                 )

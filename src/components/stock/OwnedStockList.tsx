@@ -3,41 +3,46 @@ import { hScale, vScale } from '../../styles/Scale.styles';
 import Colors from '../../styles/Color.styles';
 
 interface OwnedStockListProps {
-    name: string;
-    price: number;
-    percentage: number;
-    image: any;
-    quantity?: number; // 보유 수량
-    profitLoss?: number; // 손익금액
+    stockCode: string;
+    stockName: string;
+    quantity: number;
+    purchaseAmount:number;
+    profileImageUrl:string;
+    averagePurchasePrice:number;
+    closePrice:number;
 }
 
-export default function OwnedStockList({name, price, percentage, image, quantity, profitLoss}: OwnedStockListProps) {
+
+  
+export default function OwnedStockList({stockCode, stockName, quantity, purchaseAmount, profileImageUrl, averagePurchasePrice, closePrice}: OwnedStockListProps) {
+    const profitLoss = (closePrice-averagePurchasePrice)/averagePurchasePrice*100;
+    // const isDomesticStock = (stockCode: string): boolean => {
+    //     if (!stockCode || stockCode.length === 0) {
+    //       return false;
+    //     }
+        
+    //     const firstChar = stockCode.charAt(0);
+    //     return /[0-9]/.test(firstChar);
+    //   };
+      
+    //  const isDomestic = isDomesticStock(stockCode);
     return (
         <TouchableOpacity style={styles.container}>
             <View style={styles.stockContainer}>
-                <Image source={image || require('../../../assets/icons/red_circle.png')} style={styles.image} />
+                <Image source={profileImageUrl|| require('../../../assets/icons/red_circle.png')} style={styles.image} />
                 <View style={styles.stockInfoContainer}>
-                    <Text style={styles.stockName}>{name}</Text>
+                    <Text style={styles.stockName}>{stockName}</Text>
                     <View style={styles.priceContainer}>
-                        <Text style={styles.stockPrice}>{price.toLocaleString()}원</Text>
+                        <Text style={styles.stockPrice}>{purchaseAmount.toLocaleString() + "원"}</Text>
                         <Text style={[
                             styles.stockPercentage,
-                            { color: percentage > 0 ? Colors.red : Colors.blue }
+                            { color: profitLoss > 0 ? Colors.red : Colors.blue }
                         ]}>
-                            {percentage > 0 ? '+' + percentage + '%' : percentage + '%'}
+                            {profitLoss > 0 ? '+' + profitLoss + '%' : profitLoss + '%'}
                         </Text>
                     </View>
-                    {quantity && (
-                        <Text style={styles.quantityText}>보유: {quantity}주</Text>
-                    )}
-                    {profitLoss !== undefined && (
-                        <Text style={[
-                            styles.profitLossText,
-                            { color: profitLoss > 0 ? Colors.red : profitLoss < 0 ? Colors.blue : Colors.black }
-                        ]}>
-                            {profitLoss > 0 ? '+' : ''}{profitLoss.toLocaleString()}원
-                        </Text>
-                    )}
+                    
+                    
                 </View>
             </View>
         </TouchableOpacity>

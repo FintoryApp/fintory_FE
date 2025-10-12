@@ -2,7 +2,7 @@ import api from '../index';
 
 export const getOverseasStock_roc = async () => {
     try {
-        const response = await api.get(`/api/child/stock/rankings/overseas/roc`);
+        const response = await api.get(`/api/child/stock/overseas/rankings/roc`);
         console.log('overseas stock roc api success');
         return response.data;
     } catch (error) {

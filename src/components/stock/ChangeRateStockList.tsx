@@ -7,10 +7,12 @@ interface ChangeRateStockListProps {
     stockName:string;
     stockCode:string;
     closePrice:number;
+    openPrice:number;
     stockImage:string;
 }
 
-export default function ChangeRateStockList({rank,stockName,stockCode,closePrice,stockImage}:ChangeRateStockListProps) {
+export default function ChangeRateStockList({rank,stockName,stockCode,closePrice,openPrice,stockImage}:ChangeRateStockListProps) {
+    const priceChangeRate = (closePrice - openPrice)/openPrice*100;
     return (
         <TouchableOpacity style={styles.container}>
             <Text style={styles.number}>{rank}</Text>
@@ -23,9 +25,9 @@ export default function ChangeRateStockList({rank,stockName,stockCode,closePrice
                     <Text style={styles.stockPrice}>{closePrice.toLocaleString()+"원"}</Text>
                     <Text style={[
                         styles.stockPercentage,
-                        { color: closePrice >= 0 ? Colors.red : Colors.primary }
+                        { color: priceChangeRate >= 0 ? Colors.red : Colors.primary }
                     ]}>
-                        {closePrice >= 0 ? '+' : ''}{closePrice.toFixed(2)}%
+                        {priceChangeRate >= 0 ? '+' : ''}{priceChangeRate.toFixed(2)}%
                     </Text>
                 </View>
             </View>

@@ -5,17 +5,18 @@ import Colors from '../../styles/Color.styles';
 interface OwnedStockListProps {
     stockCode: string;
     stockName: string;
+    currentPrice:number;
     quantity: number;
-    purchaseAmount:number;
+    purchaseamount:number;
     profileImageUrl:string;
     averagePurchasePrice:number;
-    closePrice:number;
+    isKorean: boolean;
 }
 
 
   
-export default function OwnedStockList({stockCode, stockName, quantity, purchaseAmount, profileImageUrl, averagePurchasePrice, closePrice}: OwnedStockListProps) {
-    const profitLoss = (closePrice-averagePurchasePrice)/averagePurchasePrice*100;
+export default function OwnedStockList({stockCode, stockName, quantity, purchaseamount, profileImageUrl, averagePurchasePrice, currentPrice, isKorean}: OwnedStockListProps) {
+    const profitLoss = (currentPrice-averagePurchasePrice)/averagePurchasePrice*100;
     // const isDomesticStock = (stockCode: string): boolean => {
     //     if (!stockCode || stockCode.length === 0) {
     //       return false;
@@ -29,16 +30,28 @@ export default function OwnedStockList({stockCode, stockName, quantity, purchase
     return (
         <TouchableOpacity style={styles.container}>
             <View style={styles.stockContainer}>
-                <Image source={profileImageUrl|| require('../../../assets/icons/red_circle.png')} style={styles.image} />
+            <Image 
+              source={profileImageUrl ? { 
+                uri: profileImageUrl,
+                headers: {
+                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                }
+              } : require('../../../assets/icons/red_circle.png')} 
+              defaultSource={require('../../../assets/icons/red_circle.png')}
+              style={styles.image}
+              resizeMode="contain"
+              onLoad={() => console.log('Image loaded successfully:', profileImageUrl)}
+              onError={(error) => console.log('Image load error:', error.nativeEvent.error, 'URL:', profileImageUrl)}
+            />
                 <View style={styles.stockInfoContainer}>
                     <Text style={styles.stockName}>{stockName}</Text>
                     <View style={styles.priceContainer}>
-                        <Text style={styles.stockPrice}>{purchaseAmount.toLocaleString() + "원"}</Text>
+                        <Text style={styles.stockPrice}>{currentPrice.toLocaleString() + (isKorean ? "원" : "$")}</Text>
                         <Text style={[
                             styles.stockPercentage,
                             { color: profitLoss > 0 ? Colors.red : Colors.blue }
                         ]}>
-                            {profitLoss > 0 ? '+' + profitLoss + '%' : profitLoss + '%'}
+                            {profitLoss > 0 ? '+' + profitLoss.toFixed(2) + '%' : profitLoss.toFixed(2) + '%'}
                         </Text>
                     </View>
                     
@@ -52,7 +65,7 @@ export default function OwnedStockList({stockCode, stockName, quantity, purchase
 const styles = StyleSheet.create({
     container: {
         width: hScale(296),
-        height: vScale(80),
+        height: vScale(61),
         backgroundColor: Colors.white,
         borderRadius: hScale(8),
         borderWidth: 1,
@@ -74,16 +87,19 @@ const styles = StyleSheet.create({
     },
     stockInfoContainer: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        gap:'auto',
     },
     stockName: {
         fontSize: hScale(16),
         fontWeight: 'bold',
         color: Colors.black,
         marginBottom: vScale(4),
+        alignSelf: 'center',
     },
     priceContainer: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         alignItems: 'center',
         marginBottom: vScale(2),
     },

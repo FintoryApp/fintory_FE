@@ -70,7 +70,7 @@ const TopBar = ({ title }: { title: string }) => {
 
             <Text style={styles.title}>{title}</Text>
 
-            <TouchableOpacity style={styles.rightContainer}>
+            <TouchableOpacity style={styles.rightContainer} onPress={() => navigation.navigate('SettingMain' as never)}>
                 <Image source={require('../../../assets/icons/setting.png')} style={styles.rightImage}/>
             </TouchableOpacity>
         </View>

@@ -7,7 +7,6 @@ export const API_CONFIG = {
   // API 엔드포인트
   ENDPOINTS: {
     // 인증 관련
-
     SIGNUP: '/api/child/auth/signup',
     REISSUE_TOKEN: '/api/child/auth/reissue',
     LOGOUT: '/api/child/auth/logout',
@@ -16,8 +15,17 @@ export const API_CONFIG = {
     CHECK_EMAIL: '/api/child/auth/check-email',
     SOCIAL_LOGIN_GOOGLE: '/api/child/auth/social-login/google',
     SOCIAL_LOGIN_KAKAO: '/api/child/auth/social-login/kakao',
+    
+    // 출석 관련
+    CHECK_ATTENDANCE: '/api/child/attendance/check-in',
+    GET_ATTENDANCE: '/api/child/attendance/attendance-logs',
+    
+    // 주식 관련
     KOREAN_STOCK_MARKET_CAP: '/api/child/stock/korean/rankings/market-cap',
     OVERSEAS_STOCK_MARKET_CAP: '/api/child/stock/overseas/rankings/market-cap',
+    
+    // 환율 관련
+    EXCHANGE_RATE: '/api/child/portfolio/exchangeRate',
   },
   
   // 요청 타임아웃 (밀리초)

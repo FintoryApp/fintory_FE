@@ -1,8 +1,8 @@
 import api from '../index';
 
-export const getOwnedStockList = async () => {
+export const getKoreanOwnedStockList = async () => {
     try {
-        const response = await api.get(`/api/child/portfolio/stocks`);
+        const response = await api.get(`/api/child/portfolio/korean`);
         console.log('owned stock api success');
         return response.data;
     } catch (error) {

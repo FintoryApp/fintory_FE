@@ -10,9 +10,7 @@ import HugeButton from '../../components/button/HugeButton';
 import { Colors } from '../../styles/Color.styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { login } from '@react-native-seoul/kakao-login';
-import api from '../../api/index';
-import { API_CONFIG } from '../../api/config';
-import { getCurrentUser } from '../../api/auth';
+import { getCurrentUser, saveTokens, kakaoSocialLogin, googleSocialLogin } from '../../api/auth';
 import { handleAttendanceCheck } from '../../utils/attendance';
 
 export default function FirstScreen() {
@@ -26,15 +24,7 @@ export default function FirstScreen() {
         });
     }, []);
 
-    // JWT 토큰 저장 함수 (공통 저장)
-    const saveTokens = async (accessToken: string, refreshToken: string) => {
-        try {
-            await AsyncStorage.setItem('accessToken', accessToken);
-            await AsyncStorage.setItem('refreshToken', refreshToken);
-        } catch (error) {
-            console.error('Error saving tokens:', error);
-        }
-    };
+    // JWT 토큰 저장 함수는 auth.ts의 saveTokens를 사용
 
     // 카카오 로그인 처리 함수
     const handleKakaoLogin = async () => {
@@ -58,11 +48,11 @@ export default function FirstScreen() {
     // 카카오 토큰을 서버로 전송하는 함수
     const sendKakaoTokenToServer = async (accessToken: string) => {
         try {
-            const { data: responseData } = await api.post(`${API_CONFIG.ENDPOINTS.SOCIAL_LOGIN_KAKAO}`, { accessToken });
-            if (responseData.resultCode === 'SUCCESS' && responseData.data?.accessToken && responseData.data?.refreshToken) {
-                console.log('Kakao login - Received AT:', responseData.data.accessToken);
-                console.log('Kakao login - Received RT:', responseData.data.refreshToken);
-                await saveTokens(responseData.data.accessToken, responseData.data.refreshToken);
+            const result = await kakaoSocialLogin(accessToken);
+            
+            if (result.resultCode === 'SUCCESS' && result.data) {
+                console.log('Kakao login - Received AT:', result.data.accessToken);
+                console.log('Kakao login - Received RT:', result.data.refreshToken);
                 
                 // 저장 확인
                 const savedAT = await AsyncStorage.getItem('accessToken');
@@ -70,18 +60,17 @@ export default function FirstScreen() {
                 console.log('Kakao login - Saved AT:', savedAT);
                 console.log('Kakao login - Saved RT:', savedRT);
                 
+                // 토큰 저장 완료 확인
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
                 // 출석체크 처리
                 await handleSocialLoginAttendance();
             } else {
-                console.error('Invalid response structure');
-                Alert.alert('로그인 오류', '서버 응답이 올바르지 않습니다.');
+                console.error('Kakao login failed:', result.message);
+                Alert.alert('로그인 실패', result.message || '카카오 로그인에 실패했습니다.');
             }
         } catch (error: any) {
             console.error('Kakao login failed - Full error:', error);
-            console.error('Kakao login failed - Status:', error?.response?.status);
-            console.error('Kakao login failed - Data:', error?.response?.data);
-            console.error('Kakao login failed - Message:', error?.message);
-            console.error('Kakao login failed - Code:', error?.code);
             Alert.alert('로그인 실패', '로그인에 실패했습니다. 다시 시도해주세요.');
         }
     };
@@ -89,10 +78,51 @@ export default function FirstScreen() {
     // 소셜 로그인 출석체크 공통 함수
     const handleSocialLoginAttendance = async () => {
         try {
-            // 사용자 정보 가져오기
-            const userResult = await getCurrentUser();
-            if (userResult.resultCode === 'SUCCESS' && userResult.data?.email) {
-                const userEmail = userResult.data.email;
+            // 토큰 확인
+            const accessToken = await AsyncStorage.getItem('accessToken');
+            const refreshToken = await AsyncStorage.getItem('refreshToken');
+            console.log('handleSocialLoginAttendance - Current AT:', accessToken ? 'exists' : 'missing');
+            console.log('handleSocialLoginAttendance - Current RT:', refreshToken ? 'exists' : 'missing');
+            
+            if (!accessToken || !refreshToken) {
+                console.error('handleSocialLoginAttendance - 토큰이 없습니다');
+                Alert.alert('성공', '로그인이 완료되었습니다.\n(토큰 문제로 출석체크를 건너뜁니다)', [
+                    {
+                        text: '확인',
+                        onPress: () =>
+                            (navigation as any).reset({
+                                index: 0,
+                                routes: [{ name: 'Main' }],
+                            }),
+                    },
+                ]);
+                return;
+            }
+            
+            // 사용자 정보 가져오기 (재시도 로직 포함)
+            console.log('handleSocialLoginAttendance - Calling getCurrentUser...');
+            let userResult;
+            let retryCount = 0;
+            const maxRetries = 3;
+            
+            while (retryCount < maxRetries) {
+                userResult = await getCurrentUser();
+                console.log(`handleSocialLoginAttendance - getCurrentUser result (attempt ${retryCount + 1}):`, userResult);
+                
+                if (userResult.resultCode === 'SUCCESS' && userResult.data) {
+                    break;
+                }
+                
+                retryCount++;
+                if (retryCount < maxRetries) {
+                    console.log(`getCurrentUser 실패, ${1000 * retryCount}ms 후 재시도...`);
+                    await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+                }
+            }
+            
+            if (userResult && userResult.resultCode === 'SUCCESS' && userResult.data?.username) {
+                const userEmail = userResult.data.username;
+                console.log('handleSocialLoginAttendance - User email:', userEmail);
                 
                 // 출석체크 처리
                 const attendanceResult = await handleAttendanceCheck(userEmail);
@@ -105,7 +135,8 @@ export default function FirstScreen() {
                         message += `\n${attendanceResult.message}`;
                     }
                 } else {
-                    message += `\n${attendanceResult.message}`;
+                    // 출석체크 실패 시에도 로그인은 성공으로 처리하되, 적절한 안내 메시지 제공
+                    message += `\n(출석체크: ${attendanceResult.message})`;
                 }
                 
                 Alert.alert('성공', message, [
@@ -119,8 +150,14 @@ export default function FirstScreen() {
                     },
                 ]);
             } else {
-                // 사용자 정보를 가져올 수 없는 경우 기본 메시지
-                Alert.alert('성공', '로그인이 완료되었습니다.', [
+                // 사용자 정보를 가져올 수 없는 경우 상세 로깅
+                console.error('handleSocialLoginAttendance - Failed to get user info after retries:', {
+                    resultCode: userResult?.resultCode,
+                    message: userResult?.message,
+                    data: userResult?.data
+                });
+                
+                Alert.alert('성공', '로그인이 완료되었습니다.\n(사용자 정보는 잠시 후 다시 시도해주세요)', [
                     {
                         text: '확인',
                         onPress: () =>
@@ -159,25 +196,36 @@ export default function FirstScreen() {
             
             const idToken = userInfo.data.idToken;  
             
+            if (!idToken) {
+                throw new Error('Google Sign-In failed: No ID token received');
+            }
+            
             console.log('Google Sign-In Success!');
 
             try {
-                const { data: responseData } = await api.post(`${API_CONFIG.ENDPOINTS.SOCIAL_LOGIN_GOOGLE}`, { idToken });
-                if (responseData.resultCode === 'SUCCESS' && responseData.data?.accessToken && responseData.data?.refreshToken) {
-                    await saveTokens(responseData.data.accessToken, responseData.data.refreshToken);
+                const result = await googleSocialLogin(idToken);
+                
+                if (result.resultCode === 'SUCCESS' && result.data) {
+                    console.log('Google login - Received AT:', result.data.accessToken);
+                    console.log('Google login - Received RT:', result.data.refreshToken);
+                    
+                    // 저장 확인
+                    const savedAT = await AsyncStorage.getItem('accessToken');
+                    const savedRT = await AsyncStorage.getItem('refreshToken');
+                    console.log('Google login - Saved AT:', savedAT);
+                    console.log('Google login - Saved RT:', savedRT);
+                    
+                    // 토큰 저장 완료 확인
+                    await new Promise(resolve => setTimeout(resolve, 200));
                     
                     // 출석체크 처리
                     await handleSocialLoginAttendance();
                 } else {
-                    console.error('Invalid response structure');
-                    Alert.alert('로그인 오류', '서버 응답이 올바르지 않습니다.');
+                    console.error('Google login failed:', result.message);
+                    Alert.alert('로그인 실패', result.message || '구글 로그인에 실패했습니다.');
                 }
             } catch (error: any) {
                 console.error('Google login failed - Full error:', error);
-                console.error('Google login failed - Status:', error?.response?.status);
-                console.error('Google login failed - Data:', error?.response?.data);
-                console.error('Google login failed - Message:', error?.message);
-                console.error('Google login failed - Code:', error?.code);
                 Alert.alert('로그인 실패', '로그인에 실패했습니다. 다시 시도해주세요.');
             }
         } catch (error) {  

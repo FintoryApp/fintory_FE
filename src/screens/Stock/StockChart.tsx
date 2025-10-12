@@ -3,26 +3,46 @@ import { hScale, vScale } from '../../styles/Scale.styles';
 import Colors from '../../styles/Color.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import StockChart from '../../components/stock/StockChart';
-import { useStockChart } from '../../hook/useStockChart';
-import { useState } from 'react';
+import { useStockChart } from '../../hooks/useStockChart';
+import { useState, useEffect, useRef } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import HugeButton from '../../components/button/HugeButton';
+import { RouteProp, useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '../../navigation/RootStackParamList';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type StockChartScreenRouteProp = RouteProp<RootStackParamList, 'StockChart'>;
+type StockChartNavigationProp = NativeStackNavigationProp<RootStackParamList, 'StockChart'>;
 
 interface StockChartScreenProps {
-  stockCode:string;
-  stockName:string;
-  stockPrice:number;
+  route: StockChartScreenRouteProp;
 }
 
-export default function StockChartScreen({stockCode}: StockChartScreenProps) {
+export default function StockChartScreen({route}: StockChartScreenProps) {
+  const {stockCode, stockName, closePrice} = route.params;
   const {top} = useSafeAreaInsets();
-
+  const navigation = useNavigation<StockChartNavigationProp>();
   const [stockMarketOpen, setStockMarketOpen] = useState(true);
 
-  //const stockCode='005930';
   const [period, setPeriod] = useState('1일');
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const {data, loading, error} = useStockChart(stockCode,period);
+  const {data, loading, error, fetchData} = useStockChart(stockCode, period);
+
+  // 1분마다 차트 데이터 새로고침
+  useEffect(() => {
+    // 컴포넌트 마운트 시 interval 설정
+    intervalRef.current = setInterval(() => {
+      fetchData();
+    }, 60000); // 1분 = 60000ms
+
+    // 컴포넌트 언마운트 시 interval 정리
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [fetchData]);
 
   if (loading) return <Text>차트 로딩중...</Text>;
   if (error) return <Text>에러: {error}</Text>
@@ -32,7 +52,7 @@ export default function StockChartScreen({stockCode}: StockChartScreenProps) {
 
     <View style={styles.container}>
       <View style={[styles.headerContainer, {marginTop:top}]}>
-        <TouchableOpacity style={styles.headerButton}>
+        <TouchableOpacity style={styles.headerButton} onPress={() => navigation.goBack()}>
             <Image source={require('../../../assets/icons/left.png')}  />
         </TouchableOpacity>
 
@@ -47,8 +67,8 @@ export default function StockChartScreen({stockCode}: StockChartScreenProps) {
         </TouchableOpacity>
       </View>
     
-      <Text style={styles.name}>맥도날드</Text>
-      <Text style={styles.price}>100,000원</Text>
+      <Text style={styles.name}>{stockName}</Text>
+      <Text style={styles.price}>{closePrice.toLocaleString()}원</Text>
       <Text style={styles.dollar}>$291.55</Text>
       <Text style={styles.longText}>현재 <Text style={styles.highlightText}>올라가고</Text> 있는 주식이에요!{'\n'}지난 정규장보다 <Text style={styles.highlightText}>+8,036원 (2.0%)</Text></Text>
     
@@ -75,7 +95,7 @@ export default function StockChartScreen({stockCode}: StockChartScreenProps) {
                     title='구매하기'
                     backgroundColor={Colors.primary}
                     textColor={Colors.white}
-                    onPress={() => {}}
+                    onPress={() => navigation.navigate('BuyStock', {stockCode: stockCode, stockName: stockName, closePrice: closePrice})}
                 />
                 ) : (
                     <HugeButton

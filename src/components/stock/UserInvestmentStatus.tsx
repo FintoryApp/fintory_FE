@@ -3,15 +3,13 @@ import { View, Text, TouchableOpacity, Animated, LayoutAnimation } from 'react-n
 import { styles } from '../../styles/StockMainScreen.styles';
 
 interface UserInvestmentStatusProps {
-    
-    profitLoss: number;
+    totalRate: number;
     totalPrice:number;
-    profileImageUrl:string;
-    averagePurchasePrice:number;
-    closePrice:number;
+    totalPurchase:number;
+    totalMoney:number;
 }
 
-export default function UserInvestmentStatus({}: UserInvestmentStatusProps) {
+export default function UserInvestmentStatus({totalRate, totalPrice, totalPurchase, totalMoney}: UserInvestmentStatusProps) {
   const [isUserInfoExpanded, setIsUserInfoExpanded] = useState(false);
 
   const toggleUserInfo = () => {
@@ -22,23 +20,23 @@ export default function UserInvestmentStatus({}: UserInvestmentStatusProps) {
   return (
     <View style={styles.userInfoContainer}>
       <Text style={styles.topContainerText}>내 투자 현황</Text>
-      <Text style={styles.percentageText}>로딩 중...</Text>
+      <Text style={styles.percentageText}>{totalRate > 0 ? '+' + totalRate.toFixed(2) + '%' : totalRate.toFixed(2) + '%'}</Text>
       {isUserInfoExpanded && (
         <View>
           <View style={styles.totalPriceContainer}>
             <View style={styles.totalPriceTextContainer}>
               <Text style={styles.totalPriceText}>총 평가금액</Text>
-              <Text style={styles.totalPriceValue}>로딩 중...</Text>
+              <Text style={styles.totalPriceValue}>{totalPrice.toLocaleString()+"원"}</Text>
             </View>
           </View>
           <View style={styles.textContainer}>
             <View style={styles.smallBox}>
               <Text style={styles.smallBoxText}>총 매수</Text>
-              <Text style={styles.smallBoxText}>로딩 중...</Text>
+              <Text style={styles.smallBoxText}>{totalPurchase.toLocaleString()+"원"}</Text>
             </View>
             <View style={styles.smallBox}>
               <Text style={styles.smallBoxText}>내 보유 머니</Text>
-              <Text style={styles.smallBoxText}>로딩 중...</Text>
+              <Text style={styles.smallBoxText}>{totalMoney.toLocaleString()+"원"}</Text>
             </View>
           </View>
         </View>

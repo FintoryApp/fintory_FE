@@ -12,14 +12,12 @@ import { getReport } from '../../api/report';
 import { ReportStackParamList } from '../../navigation/RootStackParamList';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { getCurrentUser } from '../../api/auth';
-import { getPortfolio } from '../../api/portfolio';
 
 type ReportNavigationProp = NativeStackNavigationProp<ReportStackParamList, 'ReportMain'>;
-type ReportRouteProp = RouteProp<ReportStackParamList, 'ReportMain'>;
+type DetailReportNavigationProp = NativeStackNavigationProp<ReportStackParamList, 'DetailReport'>;
 export default function ReportScreen() {
-  
+  const detailReportNavigation = useNavigation<DetailReportNavigationProp>();
   const navigation = useNavigation<ReportNavigationProp>();
-  const route = useRoute<ReportRouteProp>();
   const [isCalendarVisible, setCalendarVisible] = useState(false);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
@@ -70,7 +68,7 @@ export default function ReportScreen() {
   
   // 선택된 날짜 포맷팅
 
-  const userName='김나무'
+  const userName=nickname
   const investStyle=[
     {title:'거침 없는 공격형',
       characteristic :'공격형',
@@ -144,7 +142,8 @@ export default function ReportScreen() {
           }}>
             {found?.description}
         </Text>
-        <TouchableOpacity style={styles.styleExplainButton} >
+        <TouchableOpacity style={styles.styleExplainButton} 
+            onPress={() => detailReportNavigation.navigate('DetailReport',{selectedYear:selectedYear,selectedMonth:selectedMonth,report:report})}>
           <Text style={{
             fontSize:hScale(12),
             color:Colors.outline,

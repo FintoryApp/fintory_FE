@@ -30,10 +30,10 @@ export interface OwnedStockInfo {
   stockCode: string;
   stockName: string;
   quantity: number; //구매 수량
-  purchaseAmount:number; //구매 전체 가격
+  purchaseamount:number; //구매 전체 가격
   profileImageUrl:string;
   averagePurchasePrice:number; //평균 구매 가격
-  closePrice:number; //(장마감시) 종가
+  currentPrice:number; //(장마감시) 종가
   isKorean:boolean;
 }
 
@@ -50,4 +50,10 @@ export interface StockCodeResponse {
   marketCap: number;
   profileImageUrl?: string | null;
 }
+
+// 환율 정보
+export interface ExchangeRateInfo {
+  exchangeRate: number;
+}
+
   

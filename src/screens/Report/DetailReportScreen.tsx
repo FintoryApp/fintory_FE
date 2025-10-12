@@ -2,16 +2,15 @@ import React,{useEffect, useMemo, useState} from 'react';
 import { View, Text, StyleSheet,ScrollView, Image, TouchableOpacity, ImageBackground, ActivityIndicator  } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { styles } from '../../styles/DetailReportScreen.styles'; 
-import CustomCalendar from '../../components/ui/Calendar';
 import CircleGraph from '../../components/ui/CircleGrapgh';
 import CharacterContainer from '../../components/CharacterContainer';
 import TopBar from '../../components/ui/TopBar';
 import { hScale,vScale } from '../../styles/Scale.styles';
 import { Colors } from '../../styles/Color.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { getReport } from '../../api/report';
 import { RouteProp } from '@react-navigation/native';
 import { ReportStackParamList } from '../../navigation/RootStackParamList';
+import { getCurrentUser } from '../../api/auth';
 
 type DetailRouteProp = RouteProp<ReportStackParamList, 'DetailReport'>;
 
@@ -20,6 +19,15 @@ export default function DetailReportScreen() {
     const {top} = useSafeAreaInsets();
     const route = useRoute<DetailRouteProp>();
     const {selectedYear,selectedMonth, report} = route.params;
+    const [nickname,setNickname] = useState<string>('');
+
+    useEffect(()=>{
+        const fetchNickname = async () => {
+            const res = await getCurrentUser();
+            setNickname(res.data.nickname);
+        };
+        fetchNickname();
+    },[]);
 
     const pieData = useMemo(
         () => report?.data?.investmentArea?.map((a:any) => a.percentage) ?? [],
@@ -34,13 +42,36 @@ export default function DetailReportScreen() {
     const topStock=useMemo(()=>report?.data?.topStock?.stockName ?? [],[report]);
     const bottomStock=useMemo(()=>report?.data?.bottomStock?.stockName ?? [],[report]);
 
+    // returnRate 값에 따른 색상과 이미지를 반환하는 헬퍼 함수들
+    const getStockDisplayInfo = (returnRate: number) => {
+        const isPositive = returnRate > 0;
+        return {
+            color: isPositive ? Colors.red : Colors.blue,
+            image: isPositive 
+                ? require('../../../assets/icons/upward_red.png')
+                : require('../../../assets/icons/downward_blue.png'),
+            sign: isPositive ? '+' : '',
+            returnRate: Math.abs(returnRate)
+        };
+    };
+
+    const topStockInfo = useMemo(() => 
+        getStockDisplayInfo(report?.data?.topStock?.returnRate ?? 0), 
+        [report?.data?.topStock?.returnRate]
+    );
+    
+    const bottomStockInfo = useMemo(() => 
+        getStockDisplayInfo(report?.data?.bottomStock?.returnRate ?? 0), 
+        [report?.data?.bottomStock?.returnRate]
+    );
+
      
       if (!report) {
         return <Text>데이터가 없습니다.</Text>;
       }
   
 
-    const userName='김나무'
+    const userName=nickname
 
   const investStyle=[
     {title:'거침 없는 공격형',
@@ -136,7 +167,7 @@ export default function DetailReportScreen() {
                 }}>수익/손실 요약</Text>
                 <View style={styles.plusMinusContainer}>
                         <View style={[styles.plusMinusBox]}>
-                            <Image source={require('../../../assets/icons/upward_red.png')} />
+                            <Image source={topStockInfo.image} />
                         <View style={{width:hScale(4)}}/>
                             
                             <View style={styles.ratioConatiner}>
@@ -149,9 +180,9 @@ export default function DetailReportScreen() {
                                     textAlign:'right',
                                     fontSize:hScale(24),
                                     fontWeight:'bold',
-                                    color:Colors.red,
+                                    color:topStockInfo.color,
                                     textAlignVertical:'center',
-                                }}>+{report?.data?.topStock?.returnRate}%</Text>
+                                }}>{topStockInfo.sign}{topStockInfo.returnRate}%</Text>
                                 
                             </View>
                             
@@ -159,7 +190,7 @@ export default function DetailReportScreen() {
                         <View style={{height:vScale(16)}}/>
 
                         <View style={[styles.plusMinusBox]}>
-                        <Image source={require('../../../assets/icons/downward_blue.png')} />
+                        <Image source={bottomStockInfo.image} />
                         <View style={{width:hScale(4)}}/>
                             <View style={styles.ratioConatiner}>
                             <Text style={{
@@ -171,9 +202,9 @@ export default function DetailReportScreen() {
                                     textAlign:'right',
                                     fontSize:hScale(24),
                                     fontWeight:'bold',
-                                    color:Colors.blue,
+                                    color:bottomStockInfo.color,
                                     textAlignVertical:'center',
-                                }}>-{report?.data?.bottomStock?.returnRate}%</Text>
+                                }}>{bottomStockInfo.sign}{bottomStockInfo.returnRate}%</Text>
                             </View>
                         </View>
                 </View>
@@ -186,7 +217,7 @@ export default function DetailReportScreen() {
             <Text style={{
                 fontSize:hScale(16),
                 marginTop:vScale(16),
-            }}>좋은 도전을 이어가면서, 다음엔 다양한 산업군에도 투자해보세요!</Text>
+            }}>{report?.data?.advice}</Text>
         </View>
     </View>
     </View>

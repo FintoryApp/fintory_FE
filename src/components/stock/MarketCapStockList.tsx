@@ -1,6 +1,11 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import { hScale, vScale } from '../../styles/Scale.styles';
 import Colors from '../../styles/Color.styles';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../navigation/RootStackParamList';
+
+type StockChartNavigationProp = NativeStackNavigationProp<RootStackParamList, 'StockChart'>;
 
 interface StockListProps {
     rank:number;
@@ -13,7 +18,7 @@ interface StockListProps {
 }
 
 export default function MarketCapStockList({rank,stockName,stockCode,stockImage,marketCap,currentPrice,isKorean}:StockListProps) {
-    
+    const navigation = useNavigation<StockChartNavigationProp>();
     // 달러의 경우 조/억 단위로 변환하는 함수
     const formatMarketCap = (value: number, isKorean: boolean) => {
         if (isKorean) {
@@ -33,16 +38,31 @@ export default function MarketCapStockList({rank,stockName,stockCode,stockImage,
         }
     };
 
+    const safeCurrentPrice = currentPrice ?? 0;
+    const safeMarketCap = marketCap ?? 0;
+
     return (
-        <TouchableOpacity style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('StockChart',{stockCode:stockCode,stockName:stockName,closePrice:currentPrice})}>
             <Text style={styles.number}>{rank}</Text>
             
             <View style={styles.stockContainer}>
-            <Image source={stockImage||require('../../../assets/icons/red_circle.png')} style={styles.image} />
+            <Image 
+              source={stockImage ? { 
+                uri: stockImage,
+                headers: {
+                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                }
+              } : require('../../../assets/icons/red_circle.png')} 
+              defaultSource={require('../../../assets/icons/red_circle.png')}
+              style={styles.image}
+              resizeMode="contain"
+              onLoad={() => console.log('Image loaded successfully:', stockImage)}
+              onError={(error) => console.log('Image load error:', error.nativeEvent.error, 'URL:', stockImage)}
+            />
             <View style={styles.stockInfoContainer}>
                 <Text style={styles.stockName}>{stockName}</Text>
                 <View style={styles.numContainer}>
-                    <Text style={styles.stockPrice}>{currentPrice.toLocaleString()+(isKorean ? "원" : "달러")}</Text>
+                    <Text style={styles.stockPrice}>{safeCurrentPrice.toLocaleString()+(isKorean ? "원" : "달러")}</Text>
                     {/* {marketCap !== undefined && (
                         <Text style={[
                             styles.stockPercentage,
@@ -51,7 +71,7 @@ export default function MarketCapStockList({rank,stockName,stockCode,stockImage,
                             {marketCap >= 0 ? '+' : ''}{marketCap.toFixed(2)}%
                         </Text>
                     )} */}
-                    <Text style={styles.stockMarketCap}>{"   "+formatMarketCap(marketCap, isKorean)}</Text>
+                    <Text style={styles.stockMarketCap}>{"   "+formatMarketCap(safeMarketCap, isKorean)}</Text>
                 </View>
             </View>
             </View>
@@ -88,6 +108,7 @@ const styles=StyleSheet.create({
         height: vScale(32),
         borderRadius: hScale(16),
         marginRight: hScale(8),
+        
     },
     stockInfoContainer:{
         height: vScale(42),

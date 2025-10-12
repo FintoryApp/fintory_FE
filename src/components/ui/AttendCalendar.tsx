@@ -14,7 +14,6 @@ import {
 import { hScale, vScale } from '../../styles/Scale.styles';
 import { Colors } from '../../styles/Color.styles';
 import { getAttendance } from '../../api/getAttendance.ts';
-import { getCurrentStreakDays } from '../../utils/attendance';
 
 interface AttendCalendarProps {
   month?: number;
@@ -33,28 +32,11 @@ export default function AttendCalendar({
 }: AttendCalendarProps) 
 {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [streakDays, setStreakDays] = useState(streak);
   const [attendanceData, setAttendanceData] = useState<{ [key: number]: boolean }>({});
   const daysInMonth = new Date(year, month, 0).getDate();
 
-  // 연속 출석일수 가져오기
-  useEffect(() => {
-    const loadStreakDays = async () => {
-      try {
-        const currentStreakDays = await getCurrentStreakDays();
-        setStreakDays(currentStreakDays);
-      } catch (error) {
-        console.error('연속 출석일수 가져오기 실패:', error);
-        // 에러 발생 시 props로 받은 값 사용
-        setStreakDays(streak);
-      }
-    };
-    
-    loadStreakDays();
-  }, [streak, refreshTrigger]);
-
   // 출석 데이터 가져오기 (연속 출석일수는 로그인 시에만 처리)
-  useEffect(() => {
+  useEffect(() => { 
     const fetchAttendanceData = async () => {
       try {
         const attendanceResponse = await getAttendance();
@@ -132,7 +114,7 @@ export default function AttendCalendar({
             />
             <View style={styles.titleContainer}>
             <Text style={styles.title}>{month}월달 출석 현황</Text>
-            <Text style={styles.subtitle}>연속 출석 {streakDays}일 째</Text>
+            <Text style={styles.subtitle}>연속 출석 {streak}일 째</Text>
             </View>
           </View>
           

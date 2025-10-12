@@ -5,6 +5,9 @@
         <domain includeSubdomains="true">kauth.kakao.com</domain>
         <domain includeSubdomains="true">kapi.kakao.com</domain>
         <domain includeSubdomains="true">fintory.xyz</domain>
+        <domain includeSubdomains="true">upload.wikimedia.org</domain>
+        <domain includeSubdomains="true">commons.wikimedia.org</domain>
+        <domain includeSubdomains="true">wikimedia.org</domain>
     </domain-config>
     <base-config cleartextTrafficPermitted="true">
         <trust-anchors>

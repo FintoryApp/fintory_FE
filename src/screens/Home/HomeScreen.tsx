@@ -19,7 +19,7 @@ const HomeScreen = () => {
         />
 
         <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.headerButton}>
+          <TouchableOpacity style={styles.headerButton} onPress={() => navigation.navigate('SettingMain' as never)}>
           <Image source={require('../../../assets/icons/setting.png')} style={styles.iconImage} />
           </TouchableOpacity>
 

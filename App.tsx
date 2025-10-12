@@ -27,6 +27,7 @@ import StockMainScreen from './src/screens/Stock/StockMainScreen';
 import BuyStockScreen from './src/screens/Stock/BuyStockScreen';
 import SellStockScreen from './src/screens/Stock/SellStockScreen';
 import WantPriceScreen from './src/screens/Stock/WantPriceScreen';
+import StockChartScreen from './src/screens/Stock/StockChart';
 
 //study관련 화면
 import EconomyStudyScreen from './src/screens/Study/EconomyStudyScreen';
@@ -50,6 +51,9 @@ import FindPasswordScreen from './src/screens/Login/FindPasswordScreen';
 import ChangePasswordScreen from './src/screens/Login/ChangePasswordScreen';
 import FindIdScreen from './src/screens/Login/FindIdScreen';
 import SignInScreen from './src/screens/Login/SignInScreen';
+
+//설정 관련 화면
+import SettingMain from './src/screens/settings/settingMain';
 
 //UI
 import BottomTabBar from './src/components/BottomTabBar';
@@ -95,8 +99,9 @@ function ReportStack() {
 function StockStack() {
   return (
     <StockStackNav.Navigator screenOptions={{ headerShown: false }}>
-      {/* <RootStack.Screen name="BuyStock" component={BuyStockScreen}/> */}
       <StockStackNav.Screen name="StockMain" component={StockMainScreen} />
+      
+      
       
     </StockStackNav.Navigator>
   );
@@ -169,7 +174,9 @@ function RootNavigation(  ) {
         <RootStack.Screen name="FindPassword" component={FindPasswordScreen} />
         <RootStack.Screen name="ChangePassword" component={ChangePasswordScreen} />
         <RootStack.Screen name="FindId" component={FindIdScreen} />
-        
+        <RootStack.Screen name="SettingMain" component={SettingMain} />
+        <RootStack.Screen name="StockChart" component={StockChartScreen} />
+        <RootStack.Screen name="BuyStock" component={BuyStockScreen}/>
         </RootStack.Navigator>
       </NavigationContainer>
     </>

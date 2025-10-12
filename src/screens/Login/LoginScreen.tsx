@@ -44,8 +44,16 @@ export default function LoginScreen() {
         } else {
           message += `\n${attendanceResult.message}`;
         }
+        // 연속 출석일수 정보 추가
+        if (attendanceResult.streakDays > 0) {
+          message += `\n현재 연속 출석일: ${attendanceResult.streakDays}일`;
+        }
       } else {
         message += `\n${attendanceResult.message}`;
+        // 출석체크 실패해도 연속 출석일수는 표시
+        if (attendanceResult.streakDays > 0) {
+          message += `\n현재 연속 출석일: ${attendanceResult.streakDays}일`;
+        }
       }
 
       Alert.alert('성공', message, [

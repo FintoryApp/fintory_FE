@@ -28,6 +28,10 @@ const WITHOUT_AT_PATHS: string[] = [
   '/api/child/stock/korean/rankings/market-cap',
   '/api/child/stock/overseas/rankings/market-cap',
   '/api/child/stock/korean/stockPriceHistory',
+  '/api/child/stock/korean/rankings/roc',
+  '/api/child/stock/rankings/overseas/roc',
+  '/api/child/stock/overseas/rankings/market-cap',
+  //'/api/child/portfolio/stocks',
 
 ];
 

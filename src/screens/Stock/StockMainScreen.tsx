@@ -41,8 +41,10 @@ export default function StockMainScreen() {
   
   // 초기 데이터 로딩: 화면이 처음 렌더링될 때 한 번만 실행
   useEffect(() => {
+    console.log('useEffect 시작 - API 호출 준비');
     (async () => {
       try {
+        console.log('API 호출 시작');
         const [koreanMarketCapRes, overseasMarketCapRes, ownedRes, koreanRocRes, overseasRocRes] = await Promise.all([
           getKoreanStock_marketCap(),
           getOverseasStock_marketCap(),
@@ -51,11 +53,22 @@ export default function StockMainScreen() {
           getOverseasStock_roc()
         ]);
         
+        console.log('API 응답 받음:', {
+          koreanMarketCap: koreanMarketCapRes,
+          overseasMarketCap: overseasMarketCapRes,
+          owned: ownedRes,
+          koreanRoc: koreanRocRes,
+          overseasRoc: overseasRocRes
+        });
+        
         setKoreanMarketCapList(koreanMarketCapRes.data);
         setOverseasMarketCapList(overseasMarketCapRes.data);
         setHoldings(ownedRes.data);
         setKoreanRocList(koreanRocRes.data);
         setOverseasRocList(overseasRocRes.data);
+        
+        console.log('State 설정 완료');
+        
         // 모든 종목 코드 통합
         const allCodes = [
           ...koreanMarketCapRes.data.map((stock: any) => stock.stockCode),
@@ -70,6 +83,11 @@ export default function StockMainScreen() {
         // setIsInitialized(true);
       } catch (error) {
         console.error('Error fetching initial data:', error);
+        console.error('Error details:', {
+          message: (error as any).message,
+          status: (error as any).response?.status,
+          data: (error as any).response?.data
+        });
       }
     })();
   }, []);
@@ -94,16 +112,6 @@ export default function StockMainScreen() {
   //   }
   // };
 
-  // 등락률 선택 시 API 데이터 그대로, 시가총액 선택 시에만 정렬
-  const getSortedStocks = (stocks: (MarketCapStockInfo | RocStockInfo)[], sortType: '등락률' | '시가총액') => {
-    if (sortType === '등락률') {
-      // 등락률 선택 시 API에서 받은 순서 그대로 (이미 rank로 정렬됨)
-      return stocks;
-    } else {
-      // 시가총액 선택 시 기존 정렬 로직 사용
-      return stocks;
-    }
-  };
   
   const {top} = useSafeAreaInsets();
   const handleSearch = (text: string) => {};
@@ -153,23 +161,35 @@ export default function StockMainScreen() {
 
   // 국내 + 등락률 선택 시 koreanRocList 사용, 그 외에는 기존 로직 사용
   const getFilteredStocks = (): (MarketCapStockInfo | RocStockInfo)[] => {
+    console.log('getFilteredStocks 호출:', { isKorean, selectedButton });
+    console.log('현재 데이터 상태:', {
+      koreanRocListLength: koreanRocList.length,
+      koreanMarketCapListLength: koreanMarketCapList.length,
+      overseasRocListLength: overseasRocList.length,
+      overseasMarketCapListLength: overseasMarketCapList.length
+    });
+    
     if (isKorean && selectedButton === '등락률') {
       // 국내 + 등락률
+      console.log('국내 + 등락률 선택, koreanRocList 반환:', koreanRocList);
       return koreanRocList;
     } else if (isKorean && selectedButton === '시가총액') {
       // 국내 + 시가총액
+      console.log('국내 + 시가총액 선택, koreanMarketCapList 반환:', koreanMarketCapList);
       return koreanMarketCapList;
     } else if (!isKorean && selectedButton === '등락률') {
       // 해외 + 등락률
+      console.log('해외 + 등락률 선택, overseasRocList 반환:', overseasRocList);
       return overseasRocList;
     } else {
       // 해외 + 시가총액
+      console.log('해외 + 시가총액 선택, overseasMarketCapList 반환:', overseasMarketCapList);
       return overseasMarketCapList;
     }
   };
   
   const filteredStocks = getFilteredStocks();
-  const sortedStocks = getSortedStocks(filteredStocks, selectedButton);
+  console.log('filteredStocks 결과:', filteredStocks);
 
   const StockListToRender = selectedButton === '시가총액' ? MarketCapStockList : ChangeRateStockList;
 
@@ -325,8 +345,8 @@ export default function StockMainScreen() {
           />
 
           <View style={styles.stockListContainer}>
-            {sortedStocks.length > 0 ? (
-              sortedStocks.map((stock, index) => (
+            {filteredStocks.length > 0 ? (
+              filteredStocks.map((stock, index) => (
                 selectedButton === '시가총액' ? (
                   <MarketCapStockList
                     key={stock.stockCode}

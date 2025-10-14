@@ -15,6 +15,27 @@ export const useUserData = (): UserData & UserDataActions => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasError, setHasError] = useState<boolean>(false);
 
+  // 로컬 저장소에서 사용자 데이터 로드
+  const loadUserDataFromStorage = async () => {
+    try {
+      const [savedNickname, savedEmail, savedPoint, savedStreak] = await Promise.all([
+        AsyncStorage.getItem(MY_PAGE_CONSTANTS.STORAGE_KEYS.NICKNAME),
+        AsyncStorage.getItem(MY_PAGE_CONSTANTS.STORAGE_KEYS.EMAIL),
+        AsyncStorage.getItem(MY_PAGE_CONSTANTS.STORAGE_KEYS.TOTAL_POINT),
+        AsyncStorage.getItem(MY_PAGE_CONSTANTS.STORAGE_KEYS.STREAK_DAYS)
+      ]);
+
+      if (savedNickname) setNickname(savedNickname);
+      if (savedEmail) setEmail(savedEmail);
+      if (savedPoint) setTotalPoint(parseInt(savedPoint, 10));
+      if (savedStreak) setStreakDays(parseInt(savedStreak, 10));
+
+      console.log('📱 [USER_DATA] 로컬 저장소에서 사용자 데이터 로드 완료');
+    } catch (error) {
+      console.error('📱 [USER_DATA] 로컬 저장소에서 데이터 로드 실패:', error);
+    }
+  };
+
   // 포인트 로드 재시도 함수
   const loadPointWithRetry = async (maxRetries: number = 3): Promise<any> => {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -78,8 +99,18 @@ export const useUserData = (): UserData & UserDataActions => {
       
       // 사용자 정보 처리
       if (userResult.resultCode === 'SUCCESS' && userResult.data) {
-        setNickname(userResult.data.nickname || '');
-        setEmail(userResult.data.username || '');
+        const userNickname = userResult.data.nickname || '';
+        const userEmail = userResult.data.username || '';
+        
+        setNickname(userNickname);
+        setEmail(userEmail);
+        
+        // 사용자 정보를 로컬 저장소에 저장
+        await Promise.all([
+          AsyncStorage.setItem(MY_PAGE_CONSTANTS.STORAGE_KEYS.NICKNAME, userNickname),
+          AsyncStorage.setItem(MY_PAGE_CONSTANTS.STORAGE_KEYS.EMAIL, userEmail)
+        ]);
+        
         console.log(MY_PAGE_CONSTANTS.LOG_MESSAGES.USER_DATA_LOAD_SUCCESS, userResult.data);
       } else {
         console.warn(MY_PAGE_CONSTANTS.LOG_MESSAGES.USER_DATA_LOAD_FAIL, userResult.message);
@@ -87,9 +118,11 @@ export const useUserData = (): UserData & UserDataActions => {
       
       // 포인트 정보 처리
       if (pointResult.data !== undefined) {
+        console.log('📱 [USER_DATA] 포인트 업데이트:', pointResult.data);
         setTotalPoint(pointResult.data);
         console.log(MY_PAGE_CONSTANTS.LOG_MESSAGES.POINT_LOAD_SUCCESS, pointResult.data);
         await savePointToStorage(pointResult.data);
+        console.log('📱 [USER_DATA] 포인트 로컬 저장소에 저장 완료:', pointResult.data);
       } else {
         console.log(MY_PAGE_CONSTANTS.LOG_MESSAGES.POINT_DATA_NOT_FOUND);
         setTotalPoint(MY_PAGE_CONSTANTS.DEFAULT_VALUES.TOTAL_POINT);
@@ -165,11 +198,24 @@ export const useUserData = (): UserData & UserDataActions => {
   };
 
   const refreshUserData = async () => {
+    console.log('📱 [USER_DATA] refreshUserData 호출됨 - API 새로고침 시작');
+    setIsLoading(true);
+    setHasError(false);
     await loadUserData();
+    console.log('📱 [USER_DATA] refreshUserData 완료 - API 새로고침 완료');
   };
 
   useEffect(() => {
-    loadUserData();
+    const initializeUserData = async () => {
+      // 1. 먼저 로컬 저장소에서 데이터 로드 (빠른 표시)
+      await loadUserDataFromStorage();
+      setIsLoading(false);
+      
+      // 2. 그 다음 API에서 최신 데이터 가져오기
+      await loadUserData();
+    };
+    
+    initializeUserData();
   }, []);
 
   return {

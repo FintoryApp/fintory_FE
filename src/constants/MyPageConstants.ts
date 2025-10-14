@@ -2,6 +2,8 @@
 export const MY_PAGE_CONSTANTS = {
   // AsyncStorage 키
   STORAGE_KEYS: {
+    NICKNAME: 'userNickname',
+    EMAIL: 'userEmail',
     TOTAL_POINT: 'totalPoint',
     STREAK_DAYS: 'streakDays',
   },

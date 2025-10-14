@@ -2,7 +2,7 @@ import api from '../index';
 
 export const overseasStockChart = async (code: string) => {
     try {
-        const response = await api.get(`/api/child/stock/overseas/stockPriceHistory/${code}`);
+        const response = await api.get(`/api/child/stock/overseas/price-history/${code}`);
         return response.data;
     } catch (error) {
         console.error('Error fetching overseas stock chart:', error);   

@@ -7,6 +7,23 @@ export const styles = StyleSheet.create({
         backgroundColor: Colors.surface,
         width: '100%',
     },
+    
+    connectionErrorContainer: {
+        backgroundColor: Colors.red,
+        paddingHorizontal: hScale(16),
+        paddingVertical: vScale(12),
+        marginHorizontal: hScale(16),
+        marginTop: vScale(8),
+        borderRadius: hScale(8),
+        alignItems: 'center',
+    },
+    
+    connectionErrorText: {
+        color: Colors.white,
+        fontSize: hScale(14),
+        fontWeight: '600',
+        textAlign: 'center',
+    },
     userInfoContainer:{
         width: hScale(328),
         backgroundColor: Colors.white,

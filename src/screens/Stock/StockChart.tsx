@@ -24,7 +24,6 @@ export default function StockChartScreen({route}: StockChartScreenProps) {
   const {stockCode, stockName, closePrice} = route.params;
   const {top} = useSafeAreaInsets();
   const navigation = useNavigation<StockChartNavigationProp>();
-  const [stockMarketOpen, setStockMarketOpen] = useState(true);
 
   const [period, setPeriod] = useState('1일');
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -37,7 +36,16 @@ export default function StockChartScreen({route}: StockChartScreenProps) {
     : useKoreanStockChart(stockCode, period);
   
   // 웹소켓 훅 사용 (해당 주식만 구독)
-  const { prices, isConnected } = useStockWebSocket([{stockCode}], []);
+  const { prices, isConnected, marketStatus, connectionError } = useStockWebSocket(
+    isOverseasStock ? [] : [{stockCode}], 
+    isOverseasStock ? [{stockCode}] : [],
+    !isOverseasStock // 국내 주식이면 true, 해외 주식이면 false
+  );
+
+  // 장 상태에 따라 주식 시장 열림 여부 결정
+  const isMarketOpen = isOverseasStock 
+    ? (marketStatus === 'overseas' || marketStatus === 'both')
+    : (marketStatus === 'korean' || marketStatus === 'both');
 
   // 1분마다 차트 데이터 새로고침
   useEffect(() => {
@@ -76,38 +84,45 @@ export default function StockChartScreen({route}: StockChartScreenProps) {
             </View>
         </TouchableOpacity>
       </View>
+      
+      {/* 웹소켓 연결 오류 메시지 */}
+      {connectionError && (
+        <View style={styles.connectionErrorContainer}>
+          <Text style={styles.connectionErrorText}>{connectionError}</Text>
+        </View>
+      )}
     
       <Text style={styles.name}>{stockName}</Text>
       <Text style={styles.price}>
-        {(isConnected && prices[stockCode]?.currentPrice) 
+        {(isConnected && isMarketOpen && prices[stockCode]?.currentPrice) 
           ? prices[stockCode].currentPrice.toLocaleString() 
           : closePrice.toLocaleString()
-        }원
+        }{isOverseasStock ? '$' : '원'}
       </Text>
       <Text style={styles.dollar}>$291.55</Text>
       <Text style={styles.longText}>
         현재 <Text style={[
           styles.highlightText,
-          { color: isConnected && prices[stockCode]?.priceChange 
+          { color: (isConnected && isMarketOpen && prices[stockCode]?.priceChange) 
             ? (prices[stockCode].priceChange > 0 ? Colors.red : Colors.primary)
             : Colors.red
           }
         ]}>
-          {isConnected && prices[stockCode]?.priceChange 
+          {(isConnected && isMarketOpen && prices[stockCode]?.priceChange) 
             ? (prices[stockCode].priceChange > 0 ? '올라가고' : '내려가고')
             : '올라가고'
           }
         </Text> 있는 주식이에요!{'\n'}
         실시간 기준 <Text style={[
           styles.highlightText,
-          { color: isConnected && prices[stockCode]?.priceChange 
+          { color: (isConnected && isMarketOpen && prices[stockCode]?.priceChange) 
             ? (prices[stockCode].priceChange > 0 ? Colors.red : Colors.primary)
             : Colors.red
           }
         ]}>
-          {isConnected && prices[stockCode]?.priceChange 
-            ? `${prices[stockCode].priceChange > 0 ? '+' : ''}${prices[stockCode].priceChange.toLocaleString()}원 (${prices[stockCode].priceChangeRate > 0 ? '+' : ''}${prices[stockCode].priceChangeRate}%)`
-            : '+8,036원 (2.0%)'
+          {(isConnected && isMarketOpen && prices[stockCode]?.priceChange) 
+            ? `${prices[stockCode].priceChange > 0 ? '+' : ''}${prices[stockCode].priceChange.toLocaleString()}${isOverseasStock ? '$' : '원'} (${prices[stockCode].priceChangeRate > 0 ? '+' : ''}${prices[stockCode].priceChangeRate}%)`
+            : isOverseasStock ? '+$8.03 (2.0%)' : '+8,036원 (2.0%)'
           }
         </Text>
       </Text>
@@ -130,7 +145,7 @@ export default function StockChartScreen({route}: StockChartScreenProps) {
                     height: vScale(176)}}
                 > 
                 <View style={{top: vScale(84)}}>
-                    {stockMarketOpen ? (
+                    {isMarketOpen ? (
                 <HugeButton
                     title='구매하기'
                     backgroundColor={Colors.primary}
@@ -138,7 +153,7 @@ export default function StockChartScreen({route}: StockChartScreenProps) {
                     onPress={() => navigation.navigate('BuyStock', {
                       stockCode: stockCode, 
                       stockName: stockName, 
-                      closePrice: (isConnected && prices[stockCode]?.currentPrice) 
+                      closePrice: (isConnected && isMarketOpen && prices[stockCode]?.currentPrice) 
                         ? prices[stockCode].currentPrice 
                         : closePrice
                     })}
@@ -248,6 +263,23 @@ const styles = StyleSheet.create({
 
     highlightText: {
         color: Colors.red, // 또는 원하는 색상으로 변경
+    },
+
+    connectionErrorContainer: {
+        backgroundColor: Colors.red,
+        paddingHorizontal: hScale(16),
+        paddingVertical: vScale(12),
+        marginHorizontal: hScale(16),
+        marginTop: vScale(8),
+        borderRadius: hScale(8),
+        alignItems: 'center',
+    },
+    
+    connectionErrorText: {
+        color: Colors.white,
+        fontSize: hScale(14),
+        fontWeight: '600',
+        textAlign: 'center',
     },
 
 });

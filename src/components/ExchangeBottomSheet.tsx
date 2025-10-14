@@ -18,6 +18,7 @@ interface ExchangeBottomSheetProps {
   onClose: () => void;
   totalPoint: number;
   onExchange: (amount: number) => void;
+  onRefreshUserData?: () => Promise<void>;
 }
 
 const ExchangeBottomSheet: React.FC<ExchangeBottomSheetProps> = ({
@@ -25,6 +26,7 @@ const ExchangeBottomSheet: React.FC<ExchangeBottomSheetProps> = ({
   onClose,
   totalPoint,
   onExchange,
+  onRefreshUserData,
 }) => {
   const [exchangeAmount, setExchangeAmount] = useState<string>('');
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
@@ -86,6 +88,14 @@ const ExchangeBottomSheet: React.FC<ExchangeBottomSheetProps> = ({
               if (response.resultCode === 'SUCCESS') {
                 Alert.alert('성공', '포인트가 성공적으로 환전되었습니다.');
                 onExchange(amount);
+                
+                // 사용자 데이터 즉시 새로고침
+                if (onRefreshUserData) {
+                  console.log('📱 [EXCHANGE] 환전 성공 - 사용자 데이터 새로고침 시작');
+                  await onRefreshUserData();
+                  console.log('📱 [EXCHANGE] 환전 성공 - 사용자 데이터 새로고침 완료');
+                }
+                
                 onClose();
               } else {
                 Alert.alert('오류', response.message || '환전에 실패했습니다.');

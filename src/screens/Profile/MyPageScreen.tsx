@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, ScrollView, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import TopBar from '../../components/ui/TopBar';
 import Profile from '../../components/Profile';
@@ -33,12 +34,34 @@ export default function MyPageScreen() {
     } = useUserData();
     
     const [calendarRefreshTrigger, setCalendarRefreshTrigger] = useState<number>(0);
+    const [pointRefresh,setPointRefresh] = useState<number>(0);
     
     // 데이터 새로고침 시 달력도 함께 새로고침
     const handleRefresh = async () => {
         await refreshUserData();
         setCalendarRefreshTrigger(prev => prev + 1);
     };
+    useEffect(() => {
+        const fetchTotalPoint = async () => {
+            const res = await getTotalPoint();
+            setPointRefresh(res.data);
+        };
+        fetchTotalPoint();
+    }, []);
+
+    // 화면 포커스 시 포인트 새로고침
+    useFocusEffect(
+        useCallback(() => {
+            const refreshPoint = async () => {
+                console.log('📱 [MY_PAGE] MyPageScreen 포커스 - 포인트 새로고침');
+                const res = await getTotalPoint();
+                setPointRefresh(res.data);
+                console.log('📱 [MY_PAGE] 포인트 새로고침 완료:', res.data);
+            };
+            refreshPoint();
+        }, [])
+    );
+
     return (
         <View style={styles.container}>
             <TopBar title='마이페이지' />
@@ -52,7 +75,7 @@ export default function MyPageScreen() {
                 <View style={styles.contentContainer}>
                     <VirtualMoneyCard onPress={() => navigation.navigate('VirtualAccount')} />
                     <PointCard 
-                        totalPoint={totalPoint ?? 0} 
+                        totalPoint={pointRefresh ?? 0} 
                         onPress={() => pointNavigation.navigate('Point')}
                         isLoading={isLoading}
                         hasError={hasError}

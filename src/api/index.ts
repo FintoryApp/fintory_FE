@@ -76,8 +76,8 @@ api.interceptors.response.use(
         // 재발급 요청 (axios 기본 인스턴스로 호출해 순환 방지)
         const reissueRes = await axios.post(
           `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.REISSUE_TOKEN}`,
-          undefined,
-          { headers: { RefreshToken: refreshToken } }
+          { refreshToken: refreshToken },
+          { headers: { 'Content-Type': 'application/json' } }
         );
 
         if (reissueRes?.status >= 200 && reissueRes?.status < 300) {

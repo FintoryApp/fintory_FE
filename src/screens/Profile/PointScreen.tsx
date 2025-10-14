@@ -12,6 +12,7 @@ import { getTotalPoint } from '../../api/totalPoint';
 import { getPointList } from '../../api/pointList';
 import BottomSheet from '../../components/ui/BottomSheet';
 import ExchangeBottomSheet from '../../components/ExchangeBottomSheet';
+import { useUserData } from '../../hooks/useUserData';
 
 // API 응답 타입 정의
 interface PointTransaction {
@@ -24,9 +25,11 @@ interface PointTransaction {
 
 export default function PointScreen() {
     const {top} = useSafeAreaInsets();
-    const [totalPoint, setTotalPoint] = useState<number>(0);
     const [pointList, setPointList] = useState<PointTransaction[]>([]);
     const [isBottomSheetVisible, setIsBottomSheetVisible] = useState<boolean>(false);
+    
+    // useUserData 훅 사용
+    const { totalPoint, refreshUserData } = useUserData();
 
     // 날짜 포맷팅 함수
     const formatDate = (dateString: string): string => {
@@ -61,34 +64,6 @@ export default function PointScreen() {
         return { title: '', category: `` };
     };
     useEffect(() => {
-        const loadTotalPoint = async () => {
-            try {
-                // 먼저 AsyncStorage에서 가져오기 (빠른 로딩)
-                const savedTotalPoint = await AsyncStorage.getItem('totalPoint');
-                if (savedTotalPoint) {
-                    setTotalPoint(parseInt(savedTotalPoint, 10));
-                }
-                
-                // 그 다음 API에서 최신 데이터 가져오기
-                try {
-                    const pointResult = await getTotalPoint();
-                    if (pointResult.data !== undefined) {
-                        setTotalPoint(pointResult.data);
-                        // 최신 데이터를 AsyncStorage에 저장
-                        await AsyncStorage.setItem('totalPoint', pointResult.data.toString());
-                    }
-                } catch (apiError) {
-                    console.error('포인트 API 호출 실패:', apiError);
-                    // API 실패 시 AsyncStorage 값 유지
-                }
-            } catch (error) {
-                console.error('포인트 로드 실패:', error);
-            }
-        };
-        loadTotalPoint();
-    }, []);
-
-    useEffect(() => {
         const loadPointList = async () => {
             const pointList = await getPointList();
             setPointList(pointList.data.transactions);
@@ -98,13 +73,6 @@ export default function PointScreen() {
 
     const handleExchange = async (amount: number) => {
         try {
-            // 환전 성공 시 포인트 차감
-            const newTotalPoint = totalPoint - amount;
-            setTotalPoint(newTotalPoint);
-            
-            // AsyncStorage 업데이트
-            await AsyncStorage.setItem('totalPoint', newTotalPoint.toString());
-            
             // 포인트 내역 새로고침
             const pointList = await getPointList();
             setPointList(pointList.data.transactions);
@@ -158,6 +126,7 @@ export default function PointScreen() {
             totalPoint={totalPoint}
             onExchange={handleExchange}
             onClose={closeBottomSheet}
+            onRefreshUserData={refreshUserData}
         />
     </View>
   );

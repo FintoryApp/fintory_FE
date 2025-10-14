@@ -1,6 +1,7 @@
 import React,{useState, useEffect,useRef, useCallback} from 'react';
 import { LayoutAnimation, View, Text, StyleSheet,ScrollView, TouchableOpacity, Animated, Image, RefreshControl  } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 import { styles } from '../../styles/StockMainScreen.styles';
 import { hScale, vScale } from '../../styles/Scale.styles';
 import Colors from '../../styles/Color.styles';
@@ -32,6 +33,9 @@ import { MarketCapStockInfo, RocStockInfo, OwnedStockInfo } from '../../api/type
 // hook
 import { useStockWebSocket } from '../../hooks/useWebsocket';
 
+// webSocket service 직접 import
+import webSocketService from '../../api/webSocketService';
+
 //utils
 import { 
   saveRealtimeData, 
@@ -62,6 +66,9 @@ export default function StockMainScreen() {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [localRealtimeData, setLocalRealtimeData] = useState<RealtimeStockData>({});
   const [marketStatus, setMarketStatus] = useState<string>('unknown'); // 장 상태 저장
+  const [marketCapSnapshotRanking, setMarketCapSnapshotRanking] = useState<{[key: string]: number}>({}); // 시가총액 스냅샷 순위
+  const [changeRateSnapshotRanking, setChangeRateSnapshotRanking] = useState<{[key: string]: number}>({}); // 등락률 스냅샷 순위
+  const [showConnectionError, setShowConnectionError] = useState<boolean>(false); // 웹소켓 연결 오류 표시 여부
   // ref들
 const rateBufferRef = useRef<{[k:string]: number}>({});
 const flushTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -100,13 +107,26 @@ useEffect(() => {
   }
 }, [wsMarketStatus]);
 
+// 웹소켓 연결 오류 처리
+useEffect(() => {
+  if (connectionError) {
+    setShowConnectionError(true);
+    // 5초 후 자동으로 오류 메시지 숨기기
+    const timer = setTimeout(() => {
+      setShowConnectionError(false);
+    }, 5000);
+    
+    return () => clearTimeout(timer);
+  } else {
+    setShowConnectionError(false);
+  }
+}, [connectionError]);
+
 // 장이 마감된 경우 live-price API로 종가 데이터 가져오기 (현재 선택된 탭만)
 useEffect(() => {
   const fetchLivePricesForClosedMarket = async () => {
     // 웹소켓이 연결되지 않았거나 장이 마감된 경우에만 API 호출
     if (!isConnected && marketStatus === 'no') {
-      console.log(`${isKorean ? '국내' : '해외'} 장 마감 상태 - live-price API 호출 시작`);
-      
       try {
         // 현재 선택된 탭에 따라 해당 주식들만 가져오기
         const stocksToFetch = isKorean 
@@ -127,7 +147,6 @@ useEffect(() => {
               timestamp: Date.now()
             };
           } catch (error) {
-            console.error(`${isKorean ? '국내' : '해외'} 주식 ${stock.stockCode} live-price API 호출 실패:`, error);
             return null;
           }
         });
@@ -155,9 +174,10 @@ useEffect(() => {
         });
         setPriceChangeRates(prev => ({ ...prev, ...rates }));
 
-        console.log(`${isKorean ? '국내' : '해외'} 장 마감 상태 - live-price API 호출 완료:`, Object.keys(apiData).length, '개');
+        const timestamp = new Date().toLocaleString('ko-KR');
+        console.log(`📸 [SNAPSHOT] ${isKorean ? '국내' : '해외'} 장 마감 스냅샷 생성 - ${Object.keys(apiData).length}개 주식, ${timestamp}`);
       } catch (error) {
-        console.error(`${isKorean ? '국내' : '해외'} 장 마감 상태 live-price API 호출 중 오류:`, error);
+        console.error('장 마감 상태 live-price API 호출 중 오류:', error);
       }
     }
   };
@@ -182,7 +202,7 @@ const handlePriceChangeRateCalculated = useCallback((stockCode: string, rate: nu
 
 
 useEffect(() => {
-  // prices를 RealtimeStockData 형태로 변환
+  // prices를 RealtimeStockData 형태로 변환하고 실시간으로 화면에 반영
   if (prices && typeof prices === 'object') {
     const convertedData: RealtimeStockData = {};
     Object.entries(prices).forEach(([code, data]) => {
@@ -195,6 +215,19 @@ useEffect(() => {
       };
     });
     livePricesRef.current = convertedData;
+    
+    // 🔥 실시간으로 화면에 반영 (등락률과 현재가만)
+    setLocalRealtimeData(prevData => ({
+      ...prevData, // 기존 스냅샷 데이터 유지
+      ...convertedData // 웹소켓 실시간 데이터로 덮어쓰기
+    }));
+    
+    // 등락률도 실시간으로 업데이트
+    const rates: {[k: string]: number} = {};
+    Object.entries(convertedData).forEach(([code, data]) => {
+      rates[code] = data.priceChangeRate;
+    });
+    setPriceChangeRates(prev => ({ ...prev, ...rates }));
   }
 }, [prices]);
 
@@ -211,6 +244,9 @@ useEffect(()=>{
           rates[stockCode] = data.priceChangeRate;
         });
         setPriceChangeRates(prev => ({ ...prev, ...rates }));
+        
+        const timestamp = new Date().toLocaleString('ko-KR');
+        console.log(`📸 [SNAPSHOT] ${isKorean ? '국내' : '해외'} 초기 스냅샷 로드 - ${Object.keys(snapshot).length}개 주식, ${timestamp}`);
       }
 
     } catch {}
@@ -218,19 +254,95 @@ useEffect(()=>{
   loadInitialData();
 },[isKorean]);
 
-//라이브를 스냅샷으로 저장
-const commitSnapshot = useCallback(async () => {
-  const allLiveData: RealtimeStockData = { ...livePricesRef.current };
-  if (Object.keys(allLiveData).length === 0) {
-    // 라이브가 아직 없으면 스냅샷 갱신 생략 (선택)
-    return;
-  }
+// 시가총액 스냅샷 순위 저장
+useEffect(() => {
+  const saveMarketCapSnapshotRanking = () => {
+    let stocks: MarketCapStockInfo[] = [];
+    
+    if (isKorean) {
+      stocks = koreanMarketCapList;
+    } else {
+      stocks = overseasMarketCapList;
+    }
 
-  // 국내/해외 데이터 분리
+    // 시가총액 기준으로 내림차순 정렬 (이미 API에서 정렬되어 오지만 확실히 하기 위해)
+    stocks = [...stocks].sort((a, b) => b.marketCap - a.marketCap);
+
+    const ranking: {[key: string]: number} = {};
+    stocks.forEach((stock, index) => {
+      ranking[stock.stockCode] = index + 1; // 1부터 시작하는 순위
+    });
+    
+    setMarketCapSnapshotRanking(ranking);
+    console.log('📊 [SNAPSHOT] 시가총액 스냅샷 순위 저장 완료:', Object.keys(ranking).length, '개');
+  };
+  
+  const hasStockData = (isKorean ? koreanMarketCapList.length > 0 : overseasMarketCapList.length > 0);
+  
+  if (hasStockData && Object.keys(marketCapSnapshotRanking).length === 0) {
+    saveMarketCapSnapshotRanking();
+  }
+}, [koreanMarketCapList, overseasMarketCapList, isKorean, marketCapSnapshotRanking]);
+
+// 등락률 스냅샷 순위 저장 (웹소켓 데이터가 충분히 쌓인 후)
+useEffect(() => {
+  const saveChangeRateSnapshotRanking = () => {
+    let stocks: RocStockInfo[] = [];
+    
+    if (isKorean) {
+      stocks = koreanRocList;
+    } else {
+      stocks = overseasRocList;
+    }
+
+    // 웹소켓 priceChangeRate 기준으로 내림차순 정렬
+    stocks = [...stocks].sort((a, b) => {
+      const aPriceChangeRate = priceChangeRates[a.stockCode] || 0;
+      const bPriceChangeRate = priceChangeRates[b.stockCode] || 0;
+      return bPriceChangeRate - aPriceChangeRate;
+    });
+
+    const ranking: {[key: string]: number} = {};
+    stocks.forEach((stock, index) => {
+      ranking[stock.stockCode] = index + 1; // 1부터 시작하는 순위
+    });
+    
+    setChangeRateSnapshotRanking(ranking);
+    console.log('📊 [SNAPSHOT] 등락률 스냅샷 순위 저장 완료:', Object.keys(ranking).length, '개');
+  };
+  
+  const hasEnoughData = Object.keys(priceChangeRates).length > 0;
+  const hasStockData = (isKorean ? koreanRocList.length > 0 : overseasRocList.length > 0);
+  
+  if (hasStockData && hasEnoughData && Object.keys(changeRateSnapshotRanking).length === 0) {
+    saveChangeRateSnapshotRanking();
+  }
+}, [koreanRocList, overseasRocList, isKorean, priceChangeRates, changeRateSnapshotRanking]);
+
+//라이브를 스냅샷으로 저장하고 화면에 반영
+const commitSnapshot = useCallback(async () => {
+  // 🔥 핵심: 웹소켓 실시간 데이터를 localRealtimeData에 병합하여 화면에 반영
+  const webSocketData = { ...livePricesRef.current };
+  const mergedData: RealtimeStockData = {
+    ...localRealtimeData, // 기존 스냅샷 데이터
+    ...webSocketData // 웹소켓 실시간 데이터로 덮어쓰기
+  };
+  
+  // 화면에 병합된 데이터 반영
+  setLocalRealtimeData(mergedData);
+  
+  // 등락률도 업데이트
+  const rates: {[k: string]: number} = {};
+  Object.entries(mergedData).forEach(([code, data]) => {
+    rates[code] = data.priceChangeRate;
+  });
+  setPriceChangeRates(prev => ({ ...prev, ...rates }));
+
+  // 국내/해외 데이터 분리하여 로컬스토리지에 저장
   const koreanData: RealtimeStockData = {};
   const overseasData: RealtimeStockData = {};
   
-  Object.entries(allLiveData).forEach(([code, data]) => {
+  Object.entries(mergedData).forEach(([code, data]) => {
     if (krCodeSet.has(code)) {
       koreanData[code] = data;
     } else if (ovCodeSet.has(code)) {
@@ -238,38 +350,34 @@ const commitSnapshot = useCallback(async () => {
     }
   });
 
-  // 1) 로컬스토리지 저장 (국내/해외 각각)
+  // 로컬스토리지 저장 (국내/해외 각각)
   await saveRealtimeData(koreanData, true);
   await saveRealtimeData(overseasData, false);
 
-  // 2) 현재 선택된 시장의 데이터로 화면 스냅샷 교체
-  const currentMarketData = isKorean ? koreanData : overseasData;
-  setLocalRealtimeData(currentMarketData);
+  // 스냅샷 순위 초기화 (새로고침 시 순위 재계산을 위해)
+  setMarketCapSnapshotRanking({});
+  setChangeRateSnapshotRanking({});
 
-  // 3) 등락률 동기화 (현재 시장만)
-  const rates: {[k: string]: number} = {};
-  Object.entries(currentMarketData).forEach(([code, d]) => {
-    rates[code] = d.priceChangeRate;
-  });
-  setPriceChangeRates(prev => ({ ...prev, ...rates }));
-}, [isKorean, krCodeSet, ovCodeSet]);
+  const timestamp = new Date().toLocaleString('ko-KR');
+  console.log(`📸 [SNAPSHOT] 새로고침 스냅샷 생성 - 국내 ${Object.keys(koreanData).length}개, 해외 ${Object.keys(overseasData).length}개, ${timestamp}`);
+}, [localRealtimeData, krCodeSet, ovCodeSet]);
 
 // Pull-to-refresh 핸들러
 const handleRefresh = useCallback(async () => {
   setIsRefreshing(true);
   try {
-    console.log('=== 새로고침 시작 ===');
+    const startTime = Date.now();
     
     // 1. 현재 라이브 데이터를 스냅샷으로 저장
     await commitSnapshot();
     
-    // 2. 기본 주식 데이터 재로드 (시가총액, 등락률 리스트)
-    console.log('기본 주식 데이터 재로드 시작...');
-    
-    const koreanMarketCapRes = await safeCall('korean market-cap refresh', getKoreanStock_marketCap, { data: [] });
-    const overseasMarketCapRes = await safeCall('overseas market-cap refresh', getOverseasStock_marketCap, { data: [] });
-    const koreanRocRes = await safeCall('korean roc refresh', getKoreanStock_roc, { data: [] });
-    const overseasRocRes = await safeCall('overseas roc refresh', getOverseasStock_roc, { data: [] });
+    // 2. 기본 주식 데이터 재로드 (시가총액, 등락률 리스트) - 병렬 처리
+    const [koreanMarketCapRes, overseasMarketCapRes, koreanRocRes, overseasRocRes] = await Promise.all([
+      safeCall('korean market-cap refresh', getKoreanStock_marketCap, { data: [] }),
+      safeCall('overseas market-cap refresh', getOverseasStock_marketCap, { data: [] }),
+      safeCall('korean roc refresh', getKoreanStock_roc, { data: [] }),
+      safeCall('overseas roc refresh', getOverseasStock_roc, { data: [] })
+    ]);
     
     // 상태 업데이트
     setKoreanMarketCapList(koreanMarketCapRes.data ?? []);
@@ -277,40 +385,116 @@ const handleRefresh = useCallback(async () => {
     setKoreanRocList(koreanRocRes.data ?? []);
     setOverseasRocList(overseasRocRes.data ?? []);
     
-    // 3. 보유 주식 데이터도 재로드
-    try {
-      const koreanRes = await getKoreanOwnedStockList();
-      const overseasRes = await getOverseasOwnedStockList();
-      setKoreanHoldings(koreanRes.data.ownedStockDetails ?? []);
-      setOverseasHoldings(overseasRes.data.ownedStockDetails ?? []);
-    } catch (error) {
-      console.error('보유 주식 데이터 재로드 실패:', error);
+    // 3. 보유 주식 데이터도 재로드 - 병렬 처리
+    const [koreanRes, overseasRes, exchangeRes, totalMoneyRes] = await Promise.allSettled([
+      getKoreanOwnedStockList(),
+      getOverseasOwnedStockList(),
+      getExchangeRate(),
+      getTotalMoney()
+    ]);
+    
+    // 보유 주식 데이터 업데이트
+    if (koreanRes.status === 'fulfilled') {
+      setKoreanHoldings(koreanRes.value.data.ownedStockDetails ?? []);
+    }
+    if (overseasRes.status === 'fulfilled') {
+      setOverseasHoldings(overseasRes.value.data.ownedStockDetails ?? []);
     }
     
-    // 4. 환율 및 총 자산 재로드
-    try {
-      const exchangeRes = await getExchangeRate();
-      setExchangeRate(exchangeRes.data.exchangeRate);
-      
-      const totalMoneyRes = await getTotalMoney();
-      setTotalMoney(totalMoneyRes.data);
-    } catch (error) {
-      console.error('환율/총자산 데이터 재로드 실패:', error);
+    // 환율 및 총 자산 업데이트
+    if (exchangeRes.status === 'fulfilled') {
+      setExchangeRate(exchangeRes.value.data.exchangeRate);
+    }
+    if (totalMoneyRes.status === 'fulfilled') {
+      setTotalMoney(totalMoneyRes.value.data);
     }
     
-    // 5. 웹소켓 재연결 트리거
+    // 4. 웹소켓 재연결 트리거
     triggerReconnect();
     
-    console.log('=== 새로고침 완료 ===');
+    // 5. 새로고침 후 순위 재계산 (등락률 기준)
+    setTimeout(() => {
+      const recalculateRanking = () => {
+        let stocks: (MarketCapStockInfo | RocStockInfo)[] = [];
+        
+        if (isKorean && selectedButton === '등락률') {
+          stocks = koreanRocRes.data ?? [];
+        } else if (isKorean && selectedButton === '시가총액') {
+          stocks = koreanMarketCapRes.data ?? [];
+        } else if (!isKorean && selectedButton === '등락률') {
+          stocks = overseasRocRes.data ?? [];
+        } else {
+          stocks = overseasMarketCapRes.data ?? [];
+        }
+
+        // 등락률 선택 시 웹소켓 priceChangeRate 기준으로 내림차순 정렬
+        if (selectedButton === '등락률') {
+          stocks = [...stocks].sort((a, b) => {
+            const aPriceChangeRate = priceChangeRates[a.stockCode] || 0;
+            const bPriceChangeRate = priceChangeRates[b.stockCode] || 0;
+            return bPriceChangeRate - aPriceChangeRate;
+          });
+        }
+
+        const ranking: {[key: string]: number} = {};
+        stocks.forEach((stock, index) => {
+          ranking[stock.stockCode] = index + 1;
+        });
+        
+        // 선택된 정렬 기준에 따라 적절한 스냅샷 순위 업데이트
+        if (selectedButton === '시가총액') {
+          setMarketCapSnapshotRanking(ranking);
+        } else {
+          setChangeRateSnapshotRanking(ranking);
+        }
+        console.log(`📸 [RANKING] 새로고침 후 ${selectedButton} 순위 재계산 - ${Object.keys(ranking).length}개 주식`);
+      };
+      
+      recalculateRanking();
+    }, 100); // 약간의 지연을 두어 상태 업데이트 완료 후 실행
+    
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+    console.log(`🔄 [REFRESH] 새로고침 완료 - ${duration}ms`);
   } catch (error) {
     console.error('새로고침 중 오류:', error);
   } finally {
     setIsRefreshing(false);
   }
-}, [commitSnapshot, triggerReconnect]);
+  }, [commitSnapshot, triggerReconnect]);
 
+  // 화면 포커스 관리 - 화면 진입 시 웹소켓 재연결, 나갈 때 disconnect
+  useFocusEffect(
+    useCallback(() => {
+      // 화면에 포커스가 있을 때 - 웹소켓 재연결
+      console.log('📱 [STOCK_MAIN] StockMainScreen 포커스 - 웹소켓 재연결');
 
+      setIsKorean(true);
+      setSelectedButton('시가총액');
+      setSearchQuery('');
+      triggerReconnect(); // 웹소켓 재연결 트리거
+      
+      return () => {
+        // 화면에서 포커스를 잃을 때
+        console.log('📱 [STOCK_MAIN] StockMainScreen 포커스 해제 - 웹소켓 연결 해제');
+        // 직접 웹소켓 disconnect 호출
+        console.log('📡 [STOCK_MAIN] 직접 웹소켓 disconnect 호출');
+        webSocketService.disconnect();
+      };
+    }, []) // 의존성 배열을 빈 배열로 변경
+  );
 
+  // 컴포넌트 언마운트 시 정리 작업
+  useEffect(() => {
+    return () => {
+      // 타이머 정리
+      if (flushTimerRef.current) {
+        clearTimeout(flushTimerRef.current);
+        flushTimerRef.current = null;
+      }
+      console.log('📱 [STOCK_MAIN] StockMainScreen 언마운트 - 정리 작업 완료');
+    };
+  }, []);
 
   async function safeCall<T>(label: string, call: () => Promise<T>, fallbackValue: T) {
     try {
@@ -403,60 +587,37 @@ const handleRefresh = useCallback(async () => {
 
   // 국내 + 등락률 선택 시 koreanRocList 사용, 그 외에는 기존 로직 사용
   const getFilteredStocks = (): (MarketCapStockInfo | RocStockInfo)[] => {
-    // console.log('getFilteredStocks 호출:', { isKorean, selectedButton });
-    // console.log('현재 데이터 상태:', {
-    //   koreanRocListLength: koreanRocList.length,
-    //   koreanMarketCapListLength: koreanMarketCapList.length,
-    //   overseasRocListLength: overseasRocList.length,
-    //   overseasMarketCapListLength: overseasMarketCapList.length
-    // });
-    
     let stocks: (MarketCapStockInfo | RocStockInfo)[] = [];
     
     if (isKorean && selectedButton === '등락률') {
-      // 국내 + 등락률
-      //console.log('국내 + 등락률 선택, koreanRocList 반환:', koreanRocList);
       stocks = koreanRocList;
     } else if (isKorean && selectedButton === '시가총액') {
-      // 국내 + 시가총액
-      // console.log('국내 + 시가총액 선택, koreanMarketCapList 반환:', koreanMarketCapList);
       stocks = koreanMarketCapList;
     } else if (!isKorean && selectedButton === '등락률') {
-      // 해외 + 등락률
-      // console.log('해외 + 등락률 선택, overseasRocList 반환:', overseasRocList);
       stocks = overseasRocList;
     } else {
-      // 해외 + 시가총액
-      // console.log('해외 + 시가총액 선택, overseasMarketCapList 반환:', overseasMarketCapList);
       stocks = overseasMarketCapList;
     }
 
-    // 등락률 선택 시 priceChangeRate 기준으로 내림차순 정렬
-    if (selectedButton === '등락률') {
-      // console.log('🔄 [SORT] 등락률 정렬 시작:', {
-      //   isKorean,
-      //   stocksCount: stocks.length,
-      //   priceChangeRatesCount: Object.keys(priceChangeRates).length,
-      //   priceChangeRatesKeys: Object.keys(priceChangeRates)
-      // });
-      
+    // 🔥 선택된 정렬 기준에 따라 적절한 스냅샷 순위 사용
+    const currentSnapshotRanking = selectedButton === '시가총액' ? marketCapSnapshotRanking : changeRateSnapshotRanking;
+    
+    if (Object.keys(currentSnapshotRanking).length > 0) {
       stocks = [...stocks].sort((a, b) => {
-        const aPriceChangeRate = priceChangeRates[a.stockCode] || 0;
-        const bPriceChangeRate = priceChangeRates[b.stockCode] || 0;
-        
-        // 디버깅 로그 (처음 5개만)
-        // if (stocks.indexOf(a) < 5) {
-        //   console.log(`🔄 [SORT] ${a.stockCode}(${a.stockName}): ${aPriceChangeRate}%`);
-        // }
-        
-        return bPriceChangeRate - aPriceChangeRate;
+        const aRank = currentSnapshotRanking[a.stockCode] || 999;
+        const bRank = currentSnapshotRanking[b.stockCode] || 999;
+        return aRank - bRank; // 순위 오름차순 정렬
       });
-      
-      // console.log('🔄 [SORT] 등락률 정렬 완료:', stocks.slice(0, 3).map(s => ({
-      //   stockCode: s.stockCode,
-      //   stockName: s.stockName,
-      //   rate: priceChangeRates[s.stockCode] || 0
-      // })));
+    } else {
+      // 스냅샷이 없으면 기본 정렬
+      if (selectedButton === '등락률') {
+        stocks = [...stocks].sort((a, b) => {
+          const aPriceChangeRate = priceChangeRates[a.stockCode] || 0;
+          const bPriceChangeRate = priceChangeRates[b.stockCode] || 0;
+          return bPriceChangeRate - aPriceChangeRate;
+        });
+      }
+      // 시가총액은 이미 API에서 정렬되어 옴
     }
 
     // 검색어가 있으면 필터링 적용
@@ -477,12 +638,13 @@ const handleRefresh = useCallback(async () => {
       isKorean,
       selectedButton,
       searchQuery,
-      priceChangeRates, // priceChangeRates가 변경될 때만 재정렬
+      marketCapSnapshotRanking, // 시가총액 스냅샷 순위가 변경될 때만 재정렬
+      changeRateSnapshotRanking, // 등락률 스냅샷 순위가 변경될 때만 재정렬
       koreanRocList,
       overseasRocList,
       koreanMarketCapList,
       overseasMarketCapList,
-      // prices 제거: priceChangeRates를 통해 간접적으로 반영됨
+      // priceChangeRates 제거: 실시간으로 변동되지만 순위는 고정
     ]
   );
 
@@ -605,6 +767,14 @@ const handleRefresh = useCallback(async () => {
   return (
     <View style={styles.wholeContainer}>
       <TopBar title="모의 주식" />
+      
+      {/* 웹소켓 연결 오류 메시지 */}
+      {showConnectionError && connectionError && (
+        <View style={styles.connectionErrorContainer}>
+          <Text style={styles.connectionErrorText}>{connectionError}</Text>
+        </View>
+      )}
+      
       <ScrollView
         contentContainerStyle={{
           paddingBottom: vScale(30),
@@ -738,13 +908,17 @@ const handleRefresh = useCallback(async () => {
             {isLoading ? (
               <Text style={styles.stockInfoText}>주식 데이터를 불러오는 중...</Text>
             ) : filteredStocks.length > 0 ? (
-              filteredStocks.map((stock, index) => (
-                selectedButton === '시가총액' ? (
+              filteredStocks.map((stock, index) => {
+                // 🔥 선택된 정렬 기준에 따라 적절한 스냅샷 순위 사용
+                const currentSnapshotRanking = selectedButton === '시가총액' ? marketCapSnapshotRanking : changeRateSnapshotRanking;
+                const snapshotRank = currentSnapshotRanking[stock.stockCode] || (index + 1);
+                
+                return selectedButton === '시가총액' ? (
                   <MarketCapStockList
                     key={index + 1}
                     stockName={stock.stockName}
                     stockCode={stock.stockCode}
-                    rank={index + 1}
+                    rank={snapshotRank}
                     stockImage={stock.profileImageUrl || ''}
                     marketCap={(stock as MarketCapStockInfo).marketCap}
                     currentPrice={(stock as MarketCapStockInfo).currentPrice}
@@ -760,7 +934,7 @@ const handleRefresh = useCallback(async () => {
                     key={index + 1}
                     stockName={stock.stockName}
                     stockCode={stock.stockCode}
-                    rank={index + 1}
+                    rank={snapshotRank}
                     closePrice={(stock as RocStockInfo).closePrice}
                     openPrice={(stock as RocStockInfo).openPrice}
                     // openPrice={100000}
@@ -779,8 +953,8 @@ const handleRefresh = useCallback(async () => {
                     isChangeRateSelected={selectedButton === '등락률'}
                     marketStatus={marketStatus}
                   />
-                )
-              ))
+                );
+              })
             ) : searchQuery.trim() ? (
               <Text style={styles.stockInfoText}>'{searchQuery}'에 대한 검색 결과가 없습니다.</Text>
             ) : (

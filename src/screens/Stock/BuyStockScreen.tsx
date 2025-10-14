@@ -9,6 +9,7 @@ import { trading } from '../../api/stock/trading';
 import { useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
+
 export default function BuyStockScreen(props: any) {
     const {top} = useSafeAreaInsets();
     const [quantity, setQuantity] = useState('');
@@ -20,6 +21,9 @@ export default function BuyStockScreen(props: any) {
     const closePrice = props.route.params.closePrice;
     const currentPrice = props.route.params.currentPrice || closePrice;
     const stockImageUrl = props.route.params.stockImageUrl || '';
+    
+    // stockCode가 알파벳으로 시작하면 해외주식, 숫자로 시작하면 국내주식
+    const isOverseasStock = /^[A-Za-z]/.test(stockCode);
     const handleBuyStock = async () => {
         if (parseFloat(quantity) <= 0) return;
         
@@ -89,7 +93,7 @@ export default function BuyStockScreen(props: any) {
                 <Text style={{...styles.quantityText,fontSize:hScale(24)}}>주</Text>
                 
             </View> 
-            <Text style={styles.totalPrice}>총 금액 {((currentPrice * parseFloat(quantity)).toLocaleString())} 원</Text>
+            <Text style={styles.totalPrice}>총 금액 {((currentPrice * parseFloat(quantity)).toLocaleString())}{isOverseasStock ? '$' : ' 원'}</Text>
             </View>
         )
     }
@@ -119,7 +123,7 @@ export default function BuyStockScreen(props: any) {
                     style={styles.stockInfoImage} 
                     resizeMode='contain' 
                 />
-                    <Text style={styles.stockInfoText}>현재 거래가 {'\n'}<Text style={styles.stockInfoTextValue}>1종목 = {currentPrice.toLocaleString()} 원</Text></Text>
+                    <Text style={styles.stockInfoText}>현재 거래가 {'\n'}<Text style={styles.stockInfoTextValue}>1종목 = {currentPrice.toLocaleString()}{isOverseasStock ? '$' : ' 원'}</Text></Text>
                 
             </View>
             {parseFloat(quantity) > 0 ? renderPurchase() :            <TextInput 

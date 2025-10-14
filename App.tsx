@@ -142,7 +142,7 @@ function MainTabs(){
     >
       <Tab.Screen name="Home" component={HomeStack}/>
       <Tab.Screen name="Stock" component={StockStack}/>
-      <Tab.Screen name="Prize" component={PrizeScreen}/>
+      
       <Tab.Screen name="EconomyStudy" component={EconomyStudyStack}/>
       <Tab.Screen name="Profile" component={ProfileStack}/>
     </Tab.Navigator>

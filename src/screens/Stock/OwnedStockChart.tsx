@@ -12,6 +12,7 @@ import HugeButton from '../../components/button/HugeButton';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/RootStackParamList';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import MiddleButton from '../../components/button/MiddleButton';
 
 type OwnedStockChartScreenRouteProp = RouteProp<RootStackParamList, 'OwnedStockChart'>;
 type OwnedStockChartNavigationProp = NativeStackNavigationProp<RootStackParamList, 'OwnedStockChart'>;
@@ -146,22 +147,40 @@ export default function OwnedStockChartScreen({route}: OwnedStockChartScreenProp
                 > 
                 <View style={{top: vScale(84)}}>
                     {isMarketOpen ? (
-                <HugeButton
-                    title='구매하기'
-                    backgroundColor={Colors.primary}
-                    textColor={Colors.white}
-                    onPress={() => navigation.navigate('BuyStock', {
-                      stockCode: stockCode, 
-                      stockName: stockName, 
-                      closePrice: (isConnected && isMarketOpen && prices[stockCode]?.currentPrice) 
-                        ? prices[stockCode].currentPrice 
-                        : closePrice,
-                      currentPrice: (isConnected && isMarketOpen && prices[stockCode]?.currentPrice) 
-                        ? prices[stockCode].currentPrice 
-                        : closePrice,
-                      stockImageUrl: route.params.stockImageUrl || ''
-                    })}
-                />
+                      <View style={{flexDirection: 'row', gap: hScale(10)}}>
+                      <MiddleButton
+                          title='구매하기'
+                          onPress={() => navigation.navigate('BuyStock', {
+                            stockCode: stockCode, 
+                            stockName: stockName, 
+                            closePrice: (isConnected && isMarketOpen && prices[stockCode]?.currentPrice) 
+                              ? prices[stockCode].currentPrice 
+                              : closePrice,
+                            currentPrice: (isConnected && isMarketOpen && prices[stockCode]?.currentPrice) 
+                              ? prices[stockCode].currentPrice 
+                              : closePrice,
+                            stockImageUrl: route.params.stockImageUrl || ''
+                          })}
+                      />
+                      <MiddleButton
+                          title='판매하기'
+                          buttonColor={Colors.secondary}
+                          textColor={Colors.white}
+                          onPress={() => navigation.navigate('SellStock', {
+                            stockCode: stockCode, 
+                            stockName: stockName, 
+                            closePrice: (isConnected && isMarketOpen && prices[stockCode]?.currentPrice) 
+                              ? prices[stockCode].currentPrice 
+                              : closePrice,
+                            currentPrice: (isConnected && isMarketOpen && prices[stockCode]?.currentPrice) 
+                              ? prices[stockCode].currentPrice 
+                              : closePrice,
+                            stockImageUrl: route.params.stockImageUrl || ''
+                          })}
+                      />
+                  </View>
+                      
+                
                 ) : (
                     <HugeButton
                         title='아직 장 시장 전이에요'

@@ -80,8 +80,7 @@ export default function MyPageScreen() {
                         isLoading={isLoading}
                         hasError={hasError}
                     />
-                    <InvestmentSummaryCard />
-                    <ChallengeCard />
+                   
                     <AttendCalendar refreshTrigger={calendarRefreshTrigger} streak={streakDays} />
                 </View>
             </ScrollView>

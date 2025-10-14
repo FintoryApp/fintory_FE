@@ -39,7 +39,8 @@ export default function ChangeRateStockList({rank,stockName,stockCode,closePrice
     // 웹소켓에서 받은 실시간 등락률 우선 사용, 없으면 계산
     const priceChangeRateLive = shouldUseWebSocket ? (realtimePriceChangeRate ?? (safeOpenPrice !== 0 ? (safeLivePrice - safeOpenPrice)/safeOpenPrice*100 : 0)) : 0;
     
-    const priceChangeRate = safeOpenPrice !== 0 ? (safeClosePrice - safeOpenPrice)/safeOpenPrice*100 : 0;
+    const priceChangeRate = safeOpenPrice !== 0 ? (safeLivePrice - safeOpenPrice)/safeOpenPrice*100 : 0;
+    
     
     
     
@@ -53,7 +54,7 @@ export default function ChangeRateStockList({rank,stockName,stockCode,closePrice
     
     // 보유 주식인지 확인
     const isOwned = ownedStockCodes?.includes(stockCode) || false;
-    const chartScreen = isOwned ? 'NotOwnedStockChart' : 'OwnedStockChart';
+    const chartScreen = isOwned ? 'OwnedStockChart' : 'NotOwnedStockChart';
     
     return (
         <TouchableOpacity style={styles.container} onPress={() => navigation.navigate(chartScreen,{stockCode:stockCode,stockName:stockName,closePrice:safeClosePrice,stockImageUrl:stockImage})}>
@@ -76,15 +77,18 @@ export default function ChangeRateStockList({rank,stockName,stockCode,closePrice
             <View style={styles.stockInfoContainer}>
                 <Text style={styles.stockName}>{stockName}</Text>
                 <View style={styles.numContainer}>
-                    <Text style={styles.stockPrice}>
+                    <Text style={[
+                        styles.stockPrice,
+                        { color: shouldUseWebSocket ? (priceChangeRateLive >= 0 ? Colors.red : Colors.blue) : (priceChangeRate >= 0 ? Colors.red : Colors.blue) }
+                    ]}>
                         {shouldUseWebSocket ? 
-                            safeLivePrice.toLocaleString() + (isKorean ? "원" : "달러") : 
-                            safeClosePrice.toLocaleString() + (isKorean ? "원" : "달러")
+                            safeLivePrice.toLocaleString() + (isKorean ? "원" : " $") : 
+                            safeClosePrice.toLocaleString() + (isKorean ? "원" : " $")
                         }
                     </Text>
                     <Text style={[
                         styles.stockPercentage,
-                        { color: shouldUseWebSocket ? (priceChangeRateLive >= 0 ? Colors.red : Colors.primary) : (priceChangeRate >= 0 ? Colors.red : Colors.primary) }
+                        { color: shouldUseWebSocket ? (priceChangeRateLive >= 0 ? Colors.red : Colors.blue) : (priceChangeRate >= 0 ? Colors.red : Colors.blue) }
                     ]}>
                         {shouldUseWebSocket ? 
                             (priceChangeRateLive >= 0 ? '+' : '') + priceChangeRateLive.toFixed(2) + '%' : 
@@ -148,6 +152,7 @@ const styles=StyleSheet.create({
     },
     stockPercentage:{
         fontSize: hScale(12),
-        fontWeight: 'bold',
+        fontWeight: '900',
+        marginLeft: hScale(10),
     },
 })

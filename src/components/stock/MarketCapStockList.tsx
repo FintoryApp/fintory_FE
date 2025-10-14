@@ -59,7 +59,7 @@ export default function MarketCapStockList({rank,stockName,stockCode,stockImage,
 
     // 보유 주식인지 확인
     const isOwned = ownedStockCodes?.includes(stockCode) || false;
-    const chartScreen = isOwned ? 'NotOwnedStockChart' : 'OwnedStockChart';
+    const chartScreen = isOwned ? 'OwnedStockChart' : 'NotOwnedStockChart';
 
     return (
         <TouchableOpacity style={styles.container} onPress={() => navigation.navigate(chartScreen,{stockCode:stockCode,stockName:stockName,closePrice:currentPrice,stockImageUrl:stockImage})}>

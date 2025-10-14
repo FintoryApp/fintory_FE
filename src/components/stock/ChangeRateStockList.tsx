@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import { hScale, vScale } from '../../styles/Scale.styles';
 import Colors from '../../styles/Color.styles';
@@ -15,24 +15,40 @@ interface ChangeRateStockListProps {
     stockImage:string;
     isKorean:boolean;
     onPriceChangeRateCalculated?: (rate: number) => void;
+    isWebSocketConnected?: boolean;
+    realtimePrice?: number;
+    realtimePriceChangeRate?: number;
+    isChangeRateSelected?: boolean;
+    marketStatus?: string;
 }
 
 type StockChartNavigationProp = NativeStackNavigationProp<RootStackParamList, 'StockChart'>;
 
-export default function ChangeRateStockList({rank,stockName,stockCode,closePrice,openPrice,stockImage,onPriceChangeRateCalculated,isKorean}:ChangeRateStockListProps) {
+export default function ChangeRateStockList({rank,stockName,stockCode,closePrice,openPrice,stockImage,onPriceChangeRateCalculated,isKorean,isWebSocketConnected,realtimePrice,realtimePriceChangeRate,isChangeRateSelected,marketStatus}:ChangeRateStockListProps) {
     const navigation = useNavigation<StockChartNavigationProp>();
-    
+    // 개별 API 호출 제거 - StockMainScreen에서 웹소켓으로 관리
     // closePrice와 openPrice가 유효한지 확인
     const safeClosePrice = closePrice ?? 0;
     const safeOpenPrice = openPrice ?? 0;
+    // 등락률 버튼이 선택되었을 때만 웹소켓 데이터 사용
+    const shouldUseWebSocket = isChangeRateSelected && isWebSocketConnected;
+    
+    // 웹소켓에서 받은 실시간 가격 우선 사용, 없으면 closePrice 사용
+    const safeLivePrice = shouldUseWebSocket ? (realtimePrice ?? safeClosePrice) : safeClosePrice;
+    // 웹소켓에서 받은 실시간 등락률 우선 사용, 없으면 계산
+    const priceChangeRateLive = shouldUseWebSocket ? (realtimePriceChangeRate ?? (safeOpenPrice !== 0 ? (safeLivePrice - safeOpenPrice)/safeOpenPrice*100 : 0)) : 0;
+    
     const priceChangeRate = safeOpenPrice !== 0 ? (safeClosePrice - safeOpenPrice)/safeOpenPrice*100 : 0;
     
+    
+    
+
     // priceChangeRate가 계산되면 부모 컴포넌트에 전달
     React.useEffect(() => {
         if (onPriceChangeRateCalculated) {
-            onPriceChangeRateCalculated(priceChangeRate);
+            shouldUseWebSocket ? onPriceChangeRateCalculated(priceChangeRateLive) : onPriceChangeRateCalculated(priceChangeRate);
         }
-    }, [priceChangeRate]);
+    }, [priceChangeRate, priceChangeRateLive, shouldUseWebSocket, onPriceChangeRateCalculated]);
     return (
         <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('StockChart',{stockCode:stockCode,stockName:stockName,closePrice:safeClosePrice})}>
             <Text style={styles.number}>{rank}</Text>
@@ -48,18 +64,26 @@ export default function ChangeRateStockList({rank,stockName,stockCode,closePrice
               defaultSource={require('../../../assets/icons/red_circle.png')}
               style={styles.image}
               resizeMode="contain"
-              onLoad={() => console.log('Image loaded successfully:', stockImage)}
-              onError={(error) => console.log('Image load error:', error.nativeEvent.error, 'URL:', stockImage)}
+              onLoad={() => {}}
+              onError={(error) => {}}
             />
             <View style={styles.stockInfoContainer}>
                 <Text style={styles.stockName}>{stockName}</Text>
                 <View style={styles.numContainer}>
-                    <Text style={styles.stockPrice}>{safeClosePrice.toLocaleString()+(isKorean ? "원" : "달러")}</Text>
+                    <Text style={styles.stockPrice}>
+                        {shouldUseWebSocket ? 
+                            safeLivePrice.toLocaleString() + (isKorean ? "원" : "달러") : 
+                            safeClosePrice.toLocaleString() + (isKorean ? "원" : "달러")
+                        }
+                    </Text>
                     <Text style={[
                         styles.stockPercentage,
-                        { color: priceChangeRate >= 0 ? Colors.red : Colors.primary }
+                        { color: shouldUseWebSocket ? (priceChangeRateLive >= 0 ? Colors.red : Colors.primary) : (priceChangeRate >= 0 ? Colors.red : Colors.primary) }
                     ]}>
-                        {priceChangeRate >= 0 ? '+' : ''}{priceChangeRate.toFixed(2)}%
+                        {shouldUseWebSocket ? 
+                            (priceChangeRateLive >= 0 ? '+' : '') + priceChangeRateLive.toFixed(2) + '%' : 
+                            (priceChangeRate >= 0 ? '+' : '') + priceChangeRate.toFixed(2) + '%'
+                        }
                     </Text>
                 </View>
             </View>

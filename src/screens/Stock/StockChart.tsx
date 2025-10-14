@@ -3,7 +3,9 @@ import { hScale, vScale } from '../../styles/Scale.styles';
 import Colors from '../../styles/Color.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import StockChart from '../../components/stock/StockChart';
-import { useStockChart } from '../../hooks/useStockChart';
+import { useKoreanStockChart } from '../../hooks/useKoreanStockChart';
+import { useOverseasStockChart } from '../../hooks/useOverseasStockChart';
+import { useStockWebSocket } from '../../hooks/useWebsocket';
 import { useState, useEffect, useRef } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import HugeButton from '../../components/button/HugeButton';
@@ -27,7 +29,15 @@ export default function StockChartScreen({route}: StockChartScreenProps) {
   const [period, setPeriod] = useState('1일');
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const {data, loading, error, fetchData} = useStockChart(stockCode, period);
+  // stockCode가 알파벳으로 시작하면 해외주식, 숫자로 시작하면 국내주식
+  const isOverseasStock = /^[A-Za-z]/.test(stockCode);
+  
+  const {data, loading, error, fetchData} = isOverseasStock 
+    ? useOverseasStockChart(stockCode, period)
+    : useKoreanStockChart(stockCode, period);
+  
+  // 웹소켓 훅 사용 (해당 주식만 구독)
+  const { prices, isConnected } = useStockWebSocket([{stockCode}], []);
 
   // 1분마다 차트 데이터 새로고침
   useEffect(() => {
@@ -45,7 +55,7 @@ export default function StockChartScreen({route}: StockChartScreenProps) {
   }, [fetchData]);
 
   if (loading) return <Text>차트 로딩중...</Text>;
-  if (error) return <Text>에러: {error}</Text>
+  if (error) return <Text>에러: {error?.message || String(error)}</Text>
 
   return (
     
@@ -68,9 +78,39 @@ export default function StockChartScreen({route}: StockChartScreenProps) {
       </View>
     
       <Text style={styles.name}>{stockName}</Text>
-      <Text style={styles.price}>{closePrice.toLocaleString()}원</Text>
+      <Text style={styles.price}>
+        {(isConnected && prices[stockCode]?.currentPrice) 
+          ? prices[stockCode].currentPrice.toLocaleString() 
+          : closePrice.toLocaleString()
+        }원
+      </Text>
       <Text style={styles.dollar}>$291.55</Text>
-      <Text style={styles.longText}>현재 <Text style={styles.highlightText}>올라가고</Text> 있는 주식이에요!{'\n'}지난 정규장보다 <Text style={styles.highlightText}>+8,036원 (2.0%)</Text></Text>
+      <Text style={styles.longText}>
+        현재 <Text style={[
+          styles.highlightText,
+          { color: isConnected && prices[stockCode]?.priceChange 
+            ? (prices[stockCode].priceChange > 0 ? Colors.red : Colors.primary)
+            : Colors.red
+          }
+        ]}>
+          {isConnected && prices[stockCode]?.priceChange 
+            ? (prices[stockCode].priceChange > 0 ? '올라가고' : '내려가고')
+            : '올라가고'
+          }
+        </Text> 있는 주식이에요!{'\n'}
+        실시간 기준 <Text style={[
+          styles.highlightText,
+          { color: isConnected && prices[stockCode]?.priceChange 
+            ? (prices[stockCode].priceChange > 0 ? Colors.red : Colors.primary)
+            : Colors.red
+          }
+        ]}>
+          {isConnected && prices[stockCode]?.priceChange 
+            ? `${prices[stockCode].priceChange > 0 ? '+' : ''}${prices[stockCode].priceChange.toLocaleString()}원 (${prices[stockCode].priceChangeRate > 0 ? '+' : ''}${prices[stockCode].priceChangeRate}%)`
+            : '+8,036원 (2.0%)'
+          }
+        </Text>
+      </Text>
     
 
      {/* 주식 차트 컴포넌트*/}
@@ -95,7 +135,13 @@ export default function StockChartScreen({route}: StockChartScreenProps) {
                     title='구매하기'
                     backgroundColor={Colors.primary}
                     textColor={Colors.white}
-                    onPress={() => navigation.navigate('BuyStock', {stockCode: stockCode, stockName: stockName, closePrice: closePrice})}
+                    onPress={() => navigation.navigate('BuyStock', {
+                      stockCode: stockCode, 
+                      stockName: stockName, 
+                      closePrice: (isConnected && prices[stockCode]?.currentPrice) 
+                        ? prices[stockCode].currentPrice 
+                        : closePrice
+                    })}
                 />
                 ) : (
                     <HugeButton

@@ -34,6 +34,12 @@ export default function LoginScreen() {
         return;
       }
 
+      // 로그인 성공 시 accessToken 로그 출력
+      console.log('=== 로그인 성공 ===');
+      console.log('AccessToken:', result.data.accessToken);
+      console.log('RefreshToken:', result.data.refreshToken);
+      console.log('==================');
+
       // 2) 로그인 성공 후 출석체크 처리
       const attendanceResult = await handleAttendanceCheck(email);
       

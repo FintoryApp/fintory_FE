@@ -41,6 +41,8 @@ export interface OwnedStockInfo {
 export interface StockPriceData {
   code: string;
   currentPrice: number;
+  priceChange: number;
+  priceChangeRate: number;
 }
 
 // 기존 호환성을 위한 타입 (deprecated)

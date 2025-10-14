@@ -4,11 +4,11 @@ import { View, Image, TouchableOpacity, StyleSheet, PixelRatio,Dimensions } from
 import { hScale, vScale } from '../styles/Scale.styles';
 import { Colors } from '../styles/Color.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-const HomeIcon = require('../../assets/icons/home.png');
-const ProfileIcon = require('../../assets/icons/profile.png');
-const StockIcon = require('../../assets/icons/stock.png');
-const PrizeIcon = require('../../assets/icons/prize.png');
-const QuizIcon = require('../../assets/icons/study.png');
+const HomeIcon = require('../../assets/icons/홈.png');
+const ProfileIcon = require('../../assets/icons/계정.png');
+const StockIcon = require('../../assets/icons/차트.png');
+const PrizeIcon = require('../../assets/icons/상.png');
+const QuizIcon = require('../../assets/icons/퀴즈.png');
 
 
 
@@ -57,7 +57,7 @@ const BottomTabBar = ({ state, descriptors, navigation }:any) => {
           >
             <Image 
               source={iconSource}
-              style={{ tintColor }}
+              style={[styles.icon, { tintColor }]}
             />
           </TouchableOpacity>
         );
@@ -86,6 +86,11 @@ const styles = StyleSheet.create({
     width:hScale(44),
     height:hScale(44),
     
+  },
+  icon: {
+    width: hScale(24),
+    height: hScale(24),
+    resizeMode: 'contain',
   },
 });
 

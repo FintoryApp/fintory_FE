@@ -1,9 +1,12 @@
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import { hScale, vScale } from '../../styles/Scale.styles';
 import Colors from '../../styles/Color.styles';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/RootStackParamList';
+import { getKoreanStock_marketCap } from '../../api/stock/getKoreanStockMarketCapList';
+import { getOverseasStock_marketCap } from '../../api/stock/getOverseasStockMarketCapList';
 
 type StockChartNavigationProp = NativeStackNavigationProp<RootStackParamList, 'StockChart'>;
 
@@ -15,10 +18,16 @@ interface StockListProps {
     currentPrice:number;
     stockImage:string;
     isKorean:boolean;
+    isWebSocketConnected?: boolean;
+    realtimePrice?: number;
+    realtimePriceChangeRate?: number;
+    isMarketCapSelected?: boolean;
+    marketStatus?: string;
 }
 
-export default function MarketCapStockList({rank,stockName,stockCode,stockImage,marketCap,currentPrice,isKorean}:StockListProps) {
+export default function MarketCapStockList({rank,stockName,stockCode,stockImage,marketCap,currentPrice,isKorean,isWebSocketConnected,realtimePrice,realtimePriceChangeRate,isMarketCapSelected,marketStatus}:StockListProps) {
     const navigation = useNavigation<StockChartNavigationProp>();
+    // 개별 API 호출 제거 - StockMainScreen에서 웹소켓으로 관리
     // 달러의 경우 조/억 단위로 변환하는 함수
     const formatMarketCap = (value: number, isKorean: boolean) => {
         if (isKorean) {
@@ -40,6 +49,12 @@ export default function MarketCapStockList({rank,stockName,stockCode,stockImage,
 
     const safeCurrentPrice = currentPrice ?? 0;
     const safeMarketCap = marketCap ?? 0;
+    
+    // 시가총액 버튼이 선택되었을 때만 웹소켓 데이터 사용
+    const shouldUseWebSocket = isMarketCapSelected && isWebSocketConnected;
+    
+    // 웹소켓에서 받은 실시간 가격 우선 사용, 없으면 currentPrice 사용
+    const displayPrice = shouldUseWebSocket ? (realtimePrice ?? safeCurrentPrice) : safeCurrentPrice;
 
     return (
         <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('StockChart',{stockCode:stockCode,stockName:stockName,closePrice:currentPrice})}>
@@ -56,13 +71,15 @@ export default function MarketCapStockList({rank,stockName,stockCode,stockImage,
               defaultSource={require('../../../assets/icons/red_circle.png')}
               style={styles.image}
               resizeMode="contain"
-              onLoad={() => console.log('Image loaded successfully:', stockImage)}
-              onError={(error) => console.log('Image load error:', error.nativeEvent.error, 'URL:', stockImage)}
+              onLoad={() => {}}
+              onError={(error) => {}}
             />
             <View style={styles.stockInfoContainer}>
                 <Text style={styles.stockName}>{stockName}</Text>
                 <View style={styles.numContainer}>
-                    <Text style={styles.stockPrice}>{safeCurrentPrice.toLocaleString()+(isKorean ? "원" : "달러")}</Text>
+                    <Text style={styles.stockPrice}>
+                        {displayPrice.toLocaleString() + (isKorean ? "원" : "달러")}
+                    </Text>
                     {/* {marketCap !== undefined && (
                         <Text style={[
                             styles.stockPercentage,

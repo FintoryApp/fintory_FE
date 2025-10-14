@@ -6,36 +6,75 @@ import { hScale, vScale } from '../../styles/Scale.styles';
 import HugeButton from '../../components/button/HugeButton';
 import BuyStockModal from '../../components/stock/BuyStockModal';
 import { trading } from '../../api/stock/trading';
+import { useNavigation } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
-export default function SellStockScreen() {
+export default function SellStockScreen(props: any) {
     const {top} = useSafeAreaInsets();
     const [quantity, setQuantity] = useState('');
-    const price = 367890;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
-    const handleSellStock = async () => {
-        if (parseInt(quantity) <= 0) return;
+    const navigation = useNavigation<BottomTabNavigationProp<any>>();
+    const stockCode = props.route.params.stockCode;
+    const stockName = props.route.params.stockName;
+    const closePrice = props.route.params.closePrice;
+    const currentPrice = props.route.params.currentPrice || closePrice;
+    const stockImageUrl = props.route.params.stockImageUrl || '';
+    const handleBuyStock = async () => {
+        if (parseFloat(quantity) <= 0) return;
         
         setIsLoading(true);
         try {
-            const sellData = {
-                stockCode: "005930", // 삼성전자 코드 (실제로는 props나 상태에서 가져와야 함)
-                quantity: parseInt(quantity),
-                price: price,
+            const buyData = {
+                stockCode: stockCode,
+                quantity: parseFloat(quantity),
+                price: currentPrice,
                 transactionType: "SELL"
             };
             
-            const response = await trading(sellData);
+            console.log('판매 요청 데이터:', buyData);
+            console.log('API URL:', 'https://fintory.xyz/api/child/trading');
+            
+            const response = await trading(buyData);
             console.log('판매 성공:', response);
             setIsModalVisible(true);
-        } catch (error) {
-            console.error('판매 실패:', error);
-            Alert.alert('판매 실패', '주식 판매 중 오류가 발생했습니다. 다시 시도해주세요.');
+        } catch (error: any) {
+            console.error('구매 실패:', error);
+            
+            let errorMessage = '주식 판매 중 오류가 발생했습니다. 다시 시도해주세요.';
+            
+            if (error.response) {
+                const status = error.response.status;
+                const data = error.response.data;
+                
+                switch (status) {
+                    case 401:
+                        errorMessage = '로그인이 필요합니다. 다시 로그인해주세요.';
+                        break;
+                    case 403:
+                        errorMessage = '권한이 없습니다. 관리자에게 문의하세요.';
+                        break;
+                    case 404:
+                        errorMessage = 'API 엔드포인트를 찾을 수 없습니다.';
+                        break;
+                    case 500:
+                        errorMessage = '서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+                        break;
+                    case 502:
+                        errorMessage = '서버에 연결할 수 없습니다. 네트워크를 확인해주세요.';
+                        break;
+                    default:
+                        errorMessage = data?.message || `오류가 발생했습니다. (${status})`;
+                }
+            } else if (error.request) {
+                errorMessage = '네트워크 연결을 확인해주세요.';
+            }
+            
+            Alert.alert('판매 실패', errorMessage);
         } finally {
             setIsLoading(false);
         }
-    }
+    };
     const renderPurchase = () => {
         return (
             <View style={styles.quantityContainer}>
@@ -50,7 +89,7 @@ export default function SellStockScreen() {
                 <Text style={{...styles.quantityText,fontSize:hScale(24)}}>주</Text>
                 
             </View> 
-            <Text style={styles.totalPrice}>총 금액 {((price * parseInt(quantity)).toLocaleString())} 원</Text>
+            <Text style={styles.totalPrice}>총 금액 {((currentPrice * parseFloat(quantity)).toLocaleString())} 원</Text>
             </View>
         )
     }
@@ -58,23 +97,44 @@ export default function SellStockScreen() {
         <View style={{flex: 1, width: '100%', height: '100%', backgroundColor: Colors.surface}}>
             <View style={[styles.headerContainer,{marginTop:top}]}>
     
-                <TouchableOpacity style={styles.headerButton}>
+                <TouchableOpacity style={styles.headerButton} onPress={() => navigation.goBack()}>
                     <Image source={require('../../../assets/icons/left.png')} style={styles.headerButtonImage} />
                 </TouchableOpacity>
             </View>
 
             
             <View style={styles.stockInfoContainer}>
-                <Image source={require('../../../assets/icons/red_circle.png')} style={styles.stockInfoImage} resizeMode='contain' />
-                <Text style={styles.stockInfoText}>현재 거래가 {'\n'}<Text style={styles.stockInfoTextValue}>1종목 = {price.toLocaleString()} 원</Text></Text>
+                
+                
+                    {/* <Text style={styles.stockNameText}>{stockName}</Text>
+                    <Text style={styles.stockCodeText}>({stockCode})</Text> */}
+                    <Image 
+                    source={stockImageUrl ? { 
+                        uri: stockImageUrl,
+                        headers: {
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                        }
+                    } : require('../../../assets/icons/red_circle.png')} 
+                    defaultSource={require('../../../assets/icons/red_circle.png')}
+                    style={styles.stockInfoImage} 
+                    resizeMode='contain' 
+                />
+                    <Text style={styles.stockInfoText}>현재 거래가 {'\n'}<Text style={styles.stockInfoTextValue}>1종목 = {currentPrice.toLocaleString()} 원</Text></Text>
+                
             </View>
-            {parseInt(quantity) > 0 ? renderPurchase() :<TextInput 
+            {parseFloat(quantity) > 0 ? renderPurchase() :            <TextInput 
             style={styles.input} 
             placeholder='몇 주를 판매할까요?'
             placeholderTextColor={Colors.middleGray}
-            keyboardType='numeric'
+            keyboardType='decimal-pad'
             value={quantity}
-            onChangeText={setQuantity}
+            onChangeText={(text) => {
+                // Allow only numbers and one decimal point
+                const regex = /^\d*\.?\d*$/;
+                if (regex.test(text)) {
+                    setQuantity(text);
+                }
+            }}
             />}
             
 
@@ -115,8 +175,12 @@ export default function SellStockScreen() {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.keypadRow}>
-                        <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity + '00')}>
-                            <Text style={styles.keypadText}>00</Text>
+                        <TouchableOpacity style={styles.keypadButton} onPress={() => {
+                            if (!quantity.includes('.')) {
+                                setQuantity(quantity + '.');
+                            }
+                        }}>
+                            <Text style={styles.keypadText}>.</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity + '0')}>
                             <Text style={styles.keypadText}>0</Text>
@@ -130,11 +194,11 @@ export default function SellStockScreen() {
                 </View>
                 <View style={{marginLeft: hScale(16)}}>
                     <HugeButton
-                    title='판매하기'
-                    onPress={() => {if(parseInt(quantity) > 0)  setIsModalVisible(true)}}
+                    title={isLoading ? '판매 중...' : '판매하기'}
+                    onPress={handleBuyStock}
                     backgroundColor={Colors.primary}
                     textColor={Colors.white}
-                    pressable={parseInt(quantity) > 0 ? true : false}
+                    pressable={parseFloat(quantity) > 0 && !isLoading}
                 />
                 </View>
             </View>
@@ -168,10 +232,10 @@ const styles = StyleSheet.create({
         tintColor: Colors.black,
     },
     stockInfoContainer: {
-        width: hScale(160),
-        height: vScale(48),
+        width: hScale(320),
+        height: vScale(80),
         marginLeft: hScale(16),
-        justifyContent: 'center',
+        //justifyContent: 'center',
         flexDirection: 'row',
     },
     stockInfoImage: {
@@ -183,12 +247,28 @@ const styles = StyleSheet.create({
     stockInfoText: {
         fontSize: hScale(12),
         color: Colors.black,
-        textAlignVertical: 'center',
+        //textAlignVertical: 'center',
+        marginTop: vScale(8),
     },
     stockInfoTextValue: {
         fontSize: hScale(12),
         fontWeight: 'bold',
         color: Colors.black,
+    },
+    stockInfoTextContainer: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    stockNameText: {
+        fontSize: hScale(16),
+        fontWeight: 'bold',
+        color: Colors.black,
+        marginBottom: vScale(2),
+    },
+    stockCodeText: {
+        fontSize: hScale(12),
+        color: Colors.middleGray,
+        marginBottom: vScale(4),
     },
     input: {
         width: hScale(343), // 화면 너비에서 좌우 마진을 뺀 값

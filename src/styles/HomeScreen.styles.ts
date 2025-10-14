@@ -41,7 +41,45 @@ export const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
     },
-  
+
+    userInfoContainer:{
+      width: hScale(168),
+      height: vScale(52),
+      top:vScale(60),
+      left: hScale(16),
+      position: 'absolute',
+      flexDirection: 'row',
+      gap: hScale(8),
+      alignItems: 'center',
+    },
+
+    userInfoImage:{
+      width: hScale(52),
+      height: vScale(52),
+      borderRadius: 999999,
+      borderWidth: 2,
+      borderColor: Colors.outline,
+    },
+    userInfoTextContainer:{
+      flexDirection: 'column',
+      //gap: hScale(8),
+    },
+    userInfoText:{
+      fontSize: hScale(16),
+      fontWeight: 'bold',
+      color: Colors.black,
+    },
+    userPointText:{
+      fontSize: hScale(12),
+      fontWeight: 'bold',
+      color: Colors.black,
+    },
+    userCharacterImage:{
+      width: hScale(220),
+      height: vScale(220),
+      top:vScale(150),
+      right:hScale(16),
+    },
     content:{
       width: hScale(360),
       height: vScale(360),
@@ -53,6 +91,7 @@ export const styles = StyleSheet.create({
       paddingTop:vScale(40),
       flexDirection: 'row',
       justifyContent: 'space-between',
+      
     },
     investStartButton:{
       width: hScale(156),

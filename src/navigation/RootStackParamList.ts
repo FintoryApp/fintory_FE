@@ -36,11 +36,12 @@ export type RootStackParamList = {
   ChangePassword: undefined;
   FindId: undefined;
   Study: undefined;
-  BuyStock: {stockCode: string; stockName: string; closePrice: number;};
+  BuyStock: {stockCode: string; stockName: string; closePrice: number; currentPrice?: number; stockImageUrl?: string;};
   WantPrice: undefined;
-  SellStock: undefined;
+  SellStock: {stockCode: string; stockName: string; closePrice: number; currentPrice?: number; stockImageUrl?: string;};
   SettingMain: undefined;
-  StockChart: {stockCode: string; stockName: string; closePrice: number;};
+  NotOwnedStockChart: {stockCode: string; stockName: string; closePrice: number; stockImageUrl?: string;};
+  OwnedStockChart: {stockCode: string; stockName: string; closePrice: number; stockImageUrl?: string;};
 
 };
 

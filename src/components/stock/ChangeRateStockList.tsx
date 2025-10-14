@@ -20,11 +20,12 @@ interface ChangeRateStockListProps {
     realtimePriceChangeRate?: number;
     isChangeRateSelected?: boolean;
     marketStatus?: string;
+    ownedStockCodes?: string[]; // 보유 주식 코드 목록
 }
 
-type StockChartNavigationProp = NativeStackNavigationProp<RootStackParamList, 'StockChart'>;
+type StockChartNavigationProp = NativeStackNavigationProp<RootStackParamList, 'NotOwnedStockChart' | 'OwnedStockChart'>;
 
-export default function ChangeRateStockList({rank,stockName,stockCode,closePrice,openPrice,stockImage,onPriceChangeRateCalculated,isKorean,isWebSocketConnected,realtimePrice,realtimePriceChangeRate,isChangeRateSelected,marketStatus}:ChangeRateStockListProps) {
+export default function ChangeRateStockList({rank,stockName,stockCode,closePrice,openPrice,stockImage,onPriceChangeRateCalculated,isKorean,isWebSocketConnected,realtimePrice,realtimePriceChangeRate,isChangeRateSelected,marketStatus,ownedStockCodes}:ChangeRateStockListProps) {
     const navigation = useNavigation<StockChartNavigationProp>();
     // 개별 API 호출 제거 - StockMainScreen에서 웹소켓으로 관리
     // closePrice와 openPrice가 유효한지 확인
@@ -49,8 +50,13 @@ export default function ChangeRateStockList({rank,stockName,stockCode,closePrice
             shouldUseWebSocket ? onPriceChangeRateCalculated(priceChangeRateLive) : onPriceChangeRateCalculated(priceChangeRate);
         }
     }, [priceChangeRate, priceChangeRateLive, shouldUseWebSocket, onPriceChangeRateCalculated]);
+    
+    // 보유 주식인지 확인
+    const isOwned = ownedStockCodes?.includes(stockCode) || false;
+    const chartScreen = isOwned ? 'NotOwnedStockChart' : 'OwnedStockChart';
+    
     return (
-        <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('StockChart',{stockCode:stockCode,stockName:stockName,closePrice:safeClosePrice})}>
+        <TouchableOpacity style={styles.container} onPress={() => navigation.navigate(chartScreen,{stockCode:stockCode,stockName:stockName,closePrice:safeClosePrice,stockImageUrl:stockImage})}>
             <Text style={styles.number}>{rank}</Text>
             
             <View style={styles.stockContainer}>

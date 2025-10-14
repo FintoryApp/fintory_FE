@@ -11,12 +11,17 @@ interface OwnedStockListProps {
     profileImageUrl:string;
     averagePurchasePrice:number;
     isKorean: boolean;
+    realtimePrice?: number;
+    isWebSocketConnected?: boolean;
+    onPress?: () => void;
 }
 
 
   
-export default function OwnedStockList({stockCode, stockName, quantity, purchaseamount, profileImageUrl, averagePurchasePrice, currentPrice, isKorean}: OwnedStockListProps) {
-    const profitLoss = (currentPrice-averagePurchasePrice)/averagePurchasePrice*100;
+export default function OwnedStockList({stockCode, stockName, quantity, purchaseamount, profileImageUrl, averagePurchasePrice, currentPrice, isKorean, realtimePrice, isWebSocketConnected, onPress}: OwnedStockListProps) {
+    // 웹소켓이 연결되어 있고 실시간 가격이 있으면 실시간 가격 사용, 아니면 API 종가 사용
+    const displayPrice = (isWebSocketConnected && realtimePrice) ? realtimePrice : currentPrice;
+    const profitLoss = (displayPrice-averagePurchasePrice)/averagePurchasePrice*100;
     // const isDomesticStock = (stockCode: string): boolean => {
     //     if (!stockCode || stockCode.length === 0) {
     //       return false;
@@ -28,7 +33,7 @@ export default function OwnedStockList({stockCode, stockName, quantity, purchase
       
     //  const isDomestic = isDomesticStock(stockCode);
     return (
-        <TouchableOpacity style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={onPress}>
             <View style={styles.stockContainer}>
             <Image 
               source={profileImageUrl ? { 
@@ -45,8 +50,9 @@ export default function OwnedStockList({stockCode, stockName, quantity, purchase
             />
                 <View style={styles.stockInfoContainer}>
                     <Text style={styles.stockName}>{stockName}</Text>
+                    <Text style={styles.stockQuantity}>{quantity}주</Text>
                     <View style={styles.priceContainer}>
-                        <Text style={styles.stockPrice}>{currentPrice.toLocaleString() + (isKorean ? "원" : "$")}</Text>
+                        <Text style={styles.stockPrice}>{displayPrice.toLocaleString() + (isKorean ? "원" : "$")}</Text>
                         <Text style={[
                             styles.stockPercentage,
                             { color: profitLoss > 0 ? Colors.red : Colors.blue }
@@ -111,6 +117,12 @@ const styles = StyleSheet.create({
     stockPercentage: {
         fontSize: hScale(12),
         fontWeight: 'bold',
+    },
+    stockQuantity: {
+        fontSize: hScale(12),
+        color: Colors.outline,
+        marginBottom: vScale(2),
+        alignSelf: 'center',
     },
     quantityText: {
         fontSize: hScale(11),

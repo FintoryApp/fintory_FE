@@ -13,17 +13,17 @@ import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/RootStackParamList';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-type StockChartScreenRouteProp = RouteProp<RootStackParamList, 'StockChart'>;
-type StockChartNavigationProp = NativeStackNavigationProp<RootStackParamList, 'StockChart'>;
+type OwnedStockChartScreenRouteProp = RouteProp<RootStackParamList, 'OwnedStockChart'>;
+type OwnedStockChartNavigationProp = NativeStackNavigationProp<RootStackParamList, 'OwnedStockChart'>;
 
-interface StockChartScreenProps {
-  route: StockChartScreenRouteProp;
+interface OwnedStockChartScreenProps {
+  route: OwnedStockChartScreenRouteProp;
 }
 
-export default function StockChartScreen({route}: StockChartScreenProps) {
+export default function OwnedStockChartScreen({route}: OwnedStockChartScreenProps) {
   const {stockCode, stockName, closePrice} = route.params;
   const {top} = useSafeAreaInsets();
-  const navigation = useNavigation<StockChartNavigationProp>();
+  const navigation = useNavigation<OwnedStockChartNavigationProp>();
 
   const [period, setPeriod] = useState('1일');
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -155,7 +155,11 @@ export default function StockChartScreen({route}: StockChartScreenProps) {
                       stockName: stockName, 
                       closePrice: (isConnected && isMarketOpen && prices[stockCode]?.currentPrice) 
                         ? prices[stockCode].currentPrice 
-                        : closePrice
+                        : closePrice,
+                      currentPrice: (isConnected && isMarketOpen && prices[stockCode]?.currentPrice) 
+                        ? prices[stockCode].currentPrice 
+                        : closePrice,
+                      stockImageUrl: route.params.stockImageUrl || ''
                     })}
                 />
                 ) : (

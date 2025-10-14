@@ -27,7 +27,8 @@ import StockMainScreen from './src/screens/Stock/StockMainScreen';
 import BuyStockScreen from './src/screens/Stock/BuyStockScreen';
 import SellStockScreen from './src/screens/Stock/SellStockScreen';
 import WantPriceScreen from './src/screens/Stock/WantPriceScreen';
-import StockChartScreen from './src/screens/Stock/StockChart';
+import OwnedStockChartScreen from './src/screens/Stock/OwnedStockChart';
+import NotOwnedStockChartScreen from './src/screens/Stock/NotOwnedStockChart';
 
 //study관련 화면
 import EconomyStudyScreen from './src/screens/Study/EconomyStudyScreen';
@@ -97,8 +98,12 @@ function ReportStack() {
 }
 
 function StockStack() {
+  console.log('🔍 [DEBUG] StockStack 렌더링');
   return (
-    <StockStackNav.Navigator screenOptions={{ headerShown: false }}>
+    <StockStackNav.Navigator 
+      screenOptions={{ headerShown: false }}
+      initialRouteName="StockMain"
+    >
       <StockStackNav.Screen name="StockMain" component={StockMainScreen} />
       
       
@@ -175,7 +180,8 @@ function RootNavigation(  ) {
         <RootStack.Screen name="ChangePassword" component={ChangePasswordScreen} />
         <RootStack.Screen name="FindId" component={FindIdScreen} />
         <RootStack.Screen name="SettingMain" component={SettingMain} />
-        <RootStack.Screen name="StockChart" component={StockChartScreen} />
+        <RootStack.Screen name="OwnedStockChart" component={OwnedStockChartScreen} />
+        <RootStack.Screen name="NotOwnedStockChart" component={NotOwnedStockChartScreen} />
         <RootStack.Screen name="BuyStock" component={BuyStockScreen}/>
         </RootStack.Navigator>
       </NavigationContainer>

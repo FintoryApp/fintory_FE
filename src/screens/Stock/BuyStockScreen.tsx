@@ -6,23 +6,29 @@ import { hScale, vScale } from '../../styles/Scale.styles';
 import HugeButton from '../../components/button/HugeButton';
 import BuyStockModal from '../../components/stock/BuyStockModal';
 import { trading } from '../../api/stock/trading';
+import { useNavigation } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
-export default function BuyStockScreen() {
+export default function BuyStockScreen(props: any) {
     const {top} = useSafeAreaInsets();
     const [quantity, setQuantity] = useState('');
-    const price = 100;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    
+    const navigation = useNavigation<BottomTabNavigationProp<any>>();
+    const stockCode = props.route.params.stockCode;
+    const stockName = props.route.params.stockName;
+    const closePrice = props.route.params.closePrice;
+    const currentPrice = props.route.params.currentPrice || closePrice;
+    const stockImageUrl = props.route.params.stockImageUrl || '';
     const handleBuyStock = async () => {
-        if (parseInt(quantity) <= 0) return;
+        if (parseFloat(quantity) <= 0) return;
         
         setIsLoading(true);
         try {
             const buyData = {
-                stockCode: "000660", // 삼성전자 코드 (실제로는 props나 상태에서 가져와야 함)
-                quantity: parseInt(quantity),
-                price: price,
+                stockCode: stockCode,
+                quantity: parseFloat(quantity),
+                price: currentPrice,
                 transactionType: "BUY"
             };
             
@@ -83,7 +89,7 @@ export default function BuyStockScreen() {
                 <Text style={{...styles.quantityText,fontSize:hScale(24)}}>주</Text>
                 
             </View> 
-            <Text style={styles.totalPrice}>총 금액 {((price * parseInt(quantity)).toLocaleString())} 원</Text>
+            <Text style={styles.totalPrice}>총 금액 {((currentPrice * parseFloat(quantity)).toLocaleString())} 원</Text>
             </View>
         )
     }
@@ -91,23 +97,44 @@ export default function BuyStockScreen() {
         <View style={{flex: 1, width: '100%', height: '100%', backgroundColor: Colors.surface}}>
             <View style={[styles.headerContainer,{marginTop:top}]}>
     
-                <TouchableOpacity style={styles.headerButton}>
+                <TouchableOpacity style={styles.headerButton} onPress={() => navigation.goBack()}>
                     <Image source={require('../../../assets/icons/left.png')} style={styles.headerButtonImage} />
                 </TouchableOpacity>
             </View>
 
             
             <View style={styles.stockInfoContainer}>
-                <Image source={require('../../../assets/icons/red_circle.png')} style={styles.stockInfoImage} resizeMode='contain' />
-                <Text style={styles.stockInfoText}>현재 거래가 {'\n'}<Text style={styles.stockInfoTextValue}>1종목 = {price.toLocaleString()} 원</Text></Text>
+                
+                
+                    {/* <Text style={styles.stockNameText}>{stockName}</Text>
+                    <Text style={styles.stockCodeText}>({stockCode})</Text> */}
+                    <Image 
+                    source={stockImageUrl ? { 
+                        uri: stockImageUrl,
+                        headers: {
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                        }
+                    } : require('../../../assets/icons/red_circle.png')} 
+                    defaultSource={require('../../../assets/icons/red_circle.png')}
+                    style={styles.stockInfoImage} 
+                    resizeMode='contain' 
+                />
+                    <Text style={styles.stockInfoText}>현재 거래가 {'\n'}<Text style={styles.stockInfoTextValue}>1종목 = {currentPrice.toLocaleString()} 원</Text></Text>
+                
             </View>
-            {parseInt(quantity) > 0 ? renderPurchase() :<TextInput 
+            {parseFloat(quantity) > 0 ? renderPurchase() :            <TextInput 
             style={styles.input} 
             placeholder='몇 주를 구매할까요?'
             placeholderTextColor={Colors.middleGray}
-            keyboardType='numeric'
+            keyboardType='decimal-pad'
             value={quantity}
-            onChangeText={setQuantity}
+            onChangeText={(text) => {
+                // Allow only numbers and one decimal point
+                const regex = /^\d*\.?\d*$/;
+                if (regex.test(text)) {
+                    setQuantity(text);
+                }
+            }}
             />}
             
 
@@ -148,8 +175,12 @@ export default function BuyStockScreen() {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.keypadRow}>
-                        <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity + '00')}>
-                            <Text style={styles.keypadText}>00</Text>
+                        <TouchableOpacity style={styles.keypadButton} onPress={() => {
+                            if (!quantity.includes('.')) {
+                                setQuantity(quantity + '.');
+                            }
+                        }}>
+                            <Text style={styles.keypadText}>.</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity + '0')}>
                             <Text style={styles.keypadText}>0</Text>
@@ -167,7 +198,7 @@ export default function BuyStockScreen() {
                     onPress={handleBuyStock}
                     backgroundColor={Colors.primary}
                     textColor={Colors.white}
-                    pressable={parseInt(quantity) > 0 && !isLoading}
+                    pressable={parseFloat(quantity) > 0 && !isLoading}
                 />
                 </View>
             </View>
@@ -201,10 +232,10 @@ const styles = StyleSheet.create({
         tintColor: Colors.black,
     },
     stockInfoContainer: {
-        width: hScale(160),
-        height: vScale(48),
+        width: hScale(320),
+        height: vScale(80),
         marginLeft: hScale(16),
-        justifyContent: 'center',
+        //justifyContent: 'center',
         flexDirection: 'row',
     },
     stockInfoImage: {
@@ -216,12 +247,28 @@ const styles = StyleSheet.create({
     stockInfoText: {
         fontSize: hScale(12),
         color: Colors.black,
-        textAlignVertical: 'center',
+        //textAlignVertical: 'center',
+        marginTop: vScale(8),
     },
     stockInfoTextValue: {
         fontSize: hScale(12),
         fontWeight: 'bold',
         color: Colors.black,
+    },
+    stockInfoTextContainer: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    stockNameText: {
+        fontSize: hScale(16),
+        fontWeight: 'bold',
+        color: Colors.black,
+        marginBottom: vScale(2),
+    },
+    stockCodeText: {
+        fontSize: hScale(12),
+        color: Colors.middleGray,
+        marginBottom: vScale(4),
     },
     input: {
         width: hScale(343), // 화면 너비에서 좌우 마진을 뺀 값

@@ -8,7 +8,7 @@ import { RootStackParamList } from '../../navigation/RootStackParamList';
 import { getKoreanStock_marketCap } from '../../api/stock/getKoreanStockMarketCapList';
 import { getOverseasStock_marketCap } from '../../api/stock/getOverseasStockMarketCapList';
 
-type StockChartNavigationProp = NativeStackNavigationProp<RootStackParamList, 'StockChart'>;
+type StockChartNavigationProp = NativeStackNavigationProp<RootStackParamList, 'NotOwnedStockChart' | 'OwnedStockChart'>;
 
 interface StockListProps {
     rank:number;
@@ -23,9 +23,10 @@ interface StockListProps {
     realtimePriceChangeRate?: number;
     isMarketCapSelected?: boolean;
     marketStatus?: string;
+    ownedStockCodes?: string[]; // 보유 주식 코드 목록
 }
 
-export default function MarketCapStockList({rank,stockName,stockCode,stockImage,marketCap,currentPrice,isKorean,isWebSocketConnected,realtimePrice,realtimePriceChangeRate,isMarketCapSelected,marketStatus}:StockListProps) {
+export default function MarketCapStockList({rank,stockName,stockCode,stockImage,marketCap,currentPrice,isKorean,isWebSocketConnected,realtimePrice,realtimePriceChangeRate,isMarketCapSelected,marketStatus,ownedStockCodes}:StockListProps) {
     const navigation = useNavigation<StockChartNavigationProp>();
     // 개별 API 호출 제거 - StockMainScreen에서 웹소켓으로 관리
     // 달러의 경우 조/억 단위로 변환하는 함수
@@ -56,8 +57,12 @@ export default function MarketCapStockList({rank,stockName,stockCode,stockImage,
     // 웹소켓에서 받은 실시간 가격 우선 사용, 없으면 currentPrice 사용
     const displayPrice = shouldUseWebSocket ? (realtimePrice ?? safeCurrentPrice) : safeCurrentPrice;
 
+    // 보유 주식인지 확인
+    const isOwned = ownedStockCodes?.includes(stockCode) || false;
+    const chartScreen = isOwned ? 'NotOwnedStockChart' : 'OwnedStockChart';
+
     return (
-        <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('StockChart',{stockCode:stockCode,stockName:stockName,closePrice:currentPrice})}>
+        <TouchableOpacity style={styles.container} onPress={() => navigation.navigate(chartScreen,{stockCode:stockCode,stockName:stockName,closePrice:currentPrice,stockImageUrl:stockImage})}>
             <Text style={styles.number}>{rank}</Text>
             
             <View style={styles.stockContainer}>

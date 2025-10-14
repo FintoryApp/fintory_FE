@@ -1,7 +1,7 @@
 import React,{useState, useEffect,useRef, useCallback} from 'react';
 import { LayoutAnimation, View, Text, StyleSheet,ScrollView, TouchableOpacity, Animated, Image, RefreshControl  } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { styles } from '../../styles/StockMainScreen.styles';
 import { hScale, vScale } from '../../styles/Scale.styles';
 import Colors from '../../styles/Color.styles';
@@ -44,9 +44,14 @@ import {
   isDataStale,
   RealtimeStockData 
 } from '../../utils/localStorage';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../navigation/RootStackParamList';
 
+type StockMainScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function StockMainScreen() {
+  console.log('🔍 [DEBUG] StockMainScreen 컴포넌트 렌더링 시작');
+  const navigation = useNavigation<StockMainScreenNavigationProp>();
   const {top} = useSafeAreaInsets();
   const [koreanMarketCapList, setKoreanMarketCapList] = useState<MarketCapStockInfo[]>([]);
   const [overseasMarketCapList, setOverseasMarketCapList] = useState<MarketCapStockInfo[]>([]);
@@ -68,7 +73,6 @@ export default function StockMainScreen() {
   const [marketStatus, setMarketStatus] = useState<string>('unknown'); // 장 상태 저장
   const [marketCapSnapshotRanking, setMarketCapSnapshotRanking] = useState<{[key: string]: number}>({}); // 시가총액 스냅샷 순위
   const [changeRateSnapshotRanking, setChangeRateSnapshotRanking] = useState<{[key: string]: number}>({}); // 등락률 스냅샷 순위
-  const [showConnectionError, setShowConnectionError] = useState<boolean>(false); // 웹소켓 연결 오류 표시 여부
   // ref들
 const rateBufferRef = useRef<{[k:string]: number}>({});
 const flushTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -107,20 +111,6 @@ useEffect(() => {
   }
 }, [wsMarketStatus]);
 
-// 웹소켓 연결 오류 처리
-useEffect(() => {
-  if (connectionError) {
-    setShowConnectionError(true);
-    // 5초 후 자동으로 오류 메시지 숨기기
-    const timer = setTimeout(() => {
-      setShowConnectionError(false);
-    }, 5000);
-    
-    return () => clearTimeout(timer);
-  } else {
-    setShowConnectionError(false);
-  }
-}, [connectionError]);
 
 // 장이 마감된 경우 live-price API로 종가 데이터 가져오기 (현재 선택된 탭만)
 useEffect(() => {
@@ -128,16 +118,18 @@ useEffect(() => {
     // 웹소켓이 연결되지 않았거나 장이 마감된 경우에만 API 호출
     if (!isConnected && marketStatus === 'no') {
       try {
-        // 현재 선택된 탭에 따라 해당 주식들만 가져오기
+        // 현재 선택된 탭에 따라 해당 주식들만 가져오기 + 보유 주식은 항상 포함
         const stocksToFetch = isKorean 
-          ? [...koreanMarketCapList, ...koreanRocList]
-          : [...overseasMarketCapList, ...overseasRocList];
+          ? [...koreanMarketCapList, ...koreanRocList, ...koreanHoldings, ...overseasHoldings]
+          : [...overseasMarketCapList, ...overseasRocList, ...koreanHoldings, ...overseasHoldings];
 
         const promises = stocksToFetch.map(async (stock) => {
           try {
-            const response = isKorean 
-              ? await getKoreanStock_livePrice(stock.stockCode)
-              : await getOverseasStock_livePrice(stock.stockCode);
+            // 보유 주식인지 확인 (stockCode로 구분: 숫자로 시작하면 국내, 알파벳으로 시작하면 해외)
+            const isOverseasStock = /^[A-Za-z]/.test(stock.stockCode);
+            const response = isOverseasStock 
+              ? await getOverseasStock_livePrice(stock.stockCode)
+              : await getKoreanStock_livePrice(stock.stockCode);
             
             return {
               code: stock.stockCode,
@@ -183,7 +175,7 @@ useEffect(() => {
   };
 
   fetchLivePricesForClosedMarket();
-}, [isConnected, marketStatus, koreanMarketCapList, koreanRocList, overseasMarketCapList, overseasRocList, isKorean]);
+}, [isConnected, marketStatus, koreanMarketCapList, koreanRocList, overseasMarketCapList, overseasRocList, koreanHoldings, overseasHoldings, isKorean]);
 
 
 const handlePriceChangeRateCalculated = useCallback((stockCode: string, rate: number) => {
@@ -393,12 +385,40 @@ const handleRefresh = useCallback(async () => {
       getTotalMoney()
     ]);
     
-    // 보유 주식 데이터 업데이트
+    // 보유 주식 데이터 업데이트 (live-price API로 currentPrice 업데이트)
     if (koreanRes.status === 'fulfilled') {
-      setKoreanHoldings(koreanRes.value.data.ownedStockDetails ?? []);
+      const koreanHoldingsData = koreanRes.value.data.ownedStockDetails ?? [];
+      const updatedKoreanHoldings = await Promise.all(
+        koreanHoldingsData.map(async (holding: any) => {
+          try {
+            const response = await getKoreanStock_livePrice(holding.stockCode);
+            return {
+              ...holding,
+              currentPrice: response.data.currentPrice
+            };
+          } catch (error) {
+            return holding;
+          }
+        })
+      );
+      setKoreanHoldings(updatedKoreanHoldings);
     }
     if (overseasRes.status === 'fulfilled') {
-      setOverseasHoldings(overseasRes.value.data.ownedStockDetails ?? []);
+      const overseasHoldingsData = overseasRes.value.data.ownedStockDetails ?? [];
+      const updatedOverseasHoldings = await Promise.all(
+        overseasHoldingsData.map(async (holding: any) => {
+          try {
+            const response = await getOverseasStock_livePrice(holding.stockCode);
+            return {
+              ...holding,
+              currentPrice: response.data.currentPrice
+            };
+          } catch (error) {
+            return holding;
+          }
+        })
+      );
+      setOverseasHoldings(updatedOverseasHoldings);
     }
     
     // 환율 및 총 자산 업데이트
@@ -515,6 +535,7 @@ const handleRefresh = useCallback(async () => {
   }
   
   useEffect(() => {
+    console.log('🔍 [DEBUG] 첫 번째 useEffect 실행 (주식 데이터 로딩)');
     let mounted = true;
     (async () => {
       try {
@@ -551,10 +572,55 @@ const handleRefresh = useCallback(async () => {
   useEffect(()=>{
     (async()=>{
       try {
-      const koreanRes = await getKoreanOwnedStockList();
-      const overseasRes = await getOverseasOwnedStockList();
-        setKoreanHoldings(koreanRes.data.ownedStockDetails ?? []);
-        setOverseasHoldings(overseasRes.data.ownedStockDetails ?? []);
+        console.log('🔍 [DEBUG] 보유 주식 API 호출 시작');
+        const koreanRes = await getKoreanOwnedStockList();
+        const overseasRes = await getOverseasOwnedStockList();
+        
+        console.log('🔍 [DEBUG] 보유 주식 API 응답:', {
+          koreanRes: koreanRes.data,
+          overseasRes: overseasRes.data
+        });
+        
+        let koreanHoldingsData = koreanRes.data.ownedStockDetails ?? [];
+        let overseasHoldingsData = overseasRes.data.ownedStockDetails ?? [];
+        
+        // 보유 주식의 currentPrice를 live-price API로 업데이트
+        const updateHoldingsWithLivePrice = async (holdings: any[], isKorean: boolean) => {
+          console.log(`🔍 [DEBUG] ${isKorean ? '국내' : '해외'} 보유 주식 live-price API 호출 시작:`, holdings.length, '개');
+          const updatedHoldings = await Promise.all(
+            holdings.map(async (holding) => {
+              try {
+                console.log(`🔍 [DEBUG] ${isKorean ? '국내' : '해외'} 주식 live-price API 호출:`, holding.stockCode, holding.stockName);
+                const response = isKorean 
+                  ? await getKoreanStock_livePrice(holding.stockCode)
+                  : await getOverseasStock_livePrice(holding.stockCode);
+                
+                console.log(`✅ [DEBUG] ${isKorean ? '국내' : '해외'} 주식 live-price API 성공:`, {
+                  stockCode: holding.stockCode,
+                  originalPrice: holding.currentPrice,
+                  newPrice: response.data.currentPrice
+                });
+                
+                return {
+                  ...holding,
+                  currentPrice: response.data.currentPrice
+                };
+              } catch (error) {
+                console.log(`❌ [DEBUG] ${isKorean ? '국내' : '해외'} 주식 live-price API 실패:`, holding.stockCode, error);
+                // API 호출 실패 시 원래 currentPrice 유지
+                return holding;
+              }
+            })
+          );
+          return updatedHoldings;
+        };
+        
+        // 국내/해외 보유 주식의 currentPrice 업데이트
+        koreanHoldingsData = await updateHoldingsWithLivePrice(koreanHoldingsData, true);
+        overseasHoldingsData = await updateHoldingsWithLivePrice(overseasHoldingsData, false);
+        
+        setKoreanHoldings(koreanHoldingsData);
+        setOverseasHoldings(overseasHoldingsData);
       } catch (error) {
         // console.error('Error fetching holdings:', error);
       }
@@ -654,6 +720,17 @@ const handleRefresh = useCallback(async () => {
   const overseasHoldingsWithFlag = overseasHoldings.map(holding => ({ ...holding, isKorean: false }));
   const allHoldings = [...koreanHoldingsWithFlag, ...overseasHoldingsWithFlag];
   
+  console.log('🔍 [DEBUG] 보유 주식 데이터 상태:', {
+    koreanHoldings: koreanHoldings.length,
+    overseasHoldings: overseasHoldings.length,
+    allHoldings: allHoldings.length,
+    koreanHoldingsData: koreanHoldings,
+    overseasHoldingsData: overseasHoldings
+  });
+  
+  // 보유 주식 코드 목록 생성
+  const ownedStockCodes = allHoldings.map(holding => holding.stockCode);
+  
   // filteredHoldingsToRender를 const로 저장하여 여러 곳에서 재사용
   const filteredHoldingsToRender = allHoldings.map((holding, index) => {
     const stockCode = holding.stockCode;
@@ -681,6 +758,14 @@ const handleRefresh = useCallback(async () => {
   // 보유 주식 표시 개수 제한 (최대 2개)
   const holdingsToDisplay = showAllHoldings ? filteredHoldingsToRender : filteredHoldingsToRender.slice(0, 2);
   const hasMoreHoldings = filteredHoldingsToRender.length > 2;
+  
+  console.log('🔍 [DEBUG] 보유 주식 렌더링 상태:', {
+    filteredHoldingsToRender: filteredHoldingsToRender.length,
+    holdingsToDisplay: holdingsToDisplay.length,
+    showAllHoldings,
+    hasMoreHoldings,
+    isLoading
+  });
 
   useEffect(() => {
     const exchangeRate = async () => {
@@ -713,30 +798,23 @@ const handleRefresh = useCallback(async () => {
     totalMoney();
   }, []);
 
-  const totalPrice = filteredHoldingsToRender.reduce((acc, holding) => {
-    // console.log('=== totalPrice 계산 ===');
-    // console.log('현재 acc:', acc);
-    // console.log('holding 정보:', {
-    //   stockName: holding.stockName,
-    //   isKorean: holding.isKorean,
-    //   currentPrice: holding.currentPrice,
-    //   quantity: holding.quantity,
-    //   exchangeRate: exchangeRate
-    // });
-    
-    let newAcc;
-    if (holding.isKorean) {
-      newAcc = acc + holding.currentPrice * holding.quantity;
-      // console.log('국내주식 계산:', acc, '+ (', holding.currentPrice, '*', holding.quantity, ') =', newAcc);
-    } else {
-      newAcc = acc + holding.currentPrice * holding.quantity * exchangeRate;
-      // console.log('해외주식 계산:', acc, '+ (', holding.currentPrice, '*', holding.quantity, '*', exchangeRate, ') =', newAcc);
-    }
-    
-    // console.log('새로운 acc:', newAcc);
-    // console.log('====================');
-    return newAcc;
-  }, 0);
+  const totalPrice = React.useMemo(() => {
+    return filteredHoldingsToRender.reduce((acc, holding) => {
+      // 웹소켓이 연결되어 있고 실시간 가격이 있으면 실시간 가격 사용, 아니면 API 종가 사용
+      const displayPrice = (isConnected && localRealtimeData[holding.stockCode]?.currentPrice) 
+        ? localRealtimeData[holding.stockCode].currentPrice 
+        : holding.currentPrice;
+      
+      let newAcc;
+      if (holding.isKorean) {
+        newAcc = acc + displayPrice * holding.quantity;
+      } else {
+        newAcc = acc + displayPrice * holding.quantity * exchangeRate;
+      }
+      
+      return newAcc;
+    }, 0);
+  }, [filteredHoldingsToRender, isConnected, localRealtimeData, exchangeRate]);
   
   const totalPurchase = filteredHoldingsToRender.reduce((acc, holding) => {
     // console.log('=== totalPurchase 계산 ===');
@@ -764,16 +842,19 @@ const handleRefresh = useCallback(async () => {
   
   const totalRate = totalPurchase > 0 ? (totalPrice - totalPurchase) / totalPurchase * 100 : 0;
 
+  console.log('🔍 [DEBUG] StockMainScreen 렌더링 직전 상태:', {
+    isLoading,
+    koreanHoldings: koreanHoldings.length,
+    overseasHoldings: overseasHoldings.length,
+    filteredHoldingsToRender: filteredHoldingsToRender.length,
+    holdingsToDisplay: holdingsToDisplay.length
+  });
+
   return (
     <View style={styles.wholeContainer}>
       <TopBar title="모의 주식" />
       
-      {/* 웹소켓 연결 오류 메시지 */}
-      {showConnectionError && connectionError && (
-        <View style={styles.connectionErrorContainer}>
-          <Text style={styles.connectionErrorText}>{connectionError}</Text>
-        </View>
-      )}
+      
       
       <ScrollView
         contentContainerStyle={{
@@ -810,19 +891,32 @@ const handleRefresh = useCallback(async () => {
             {isLoading ? (
               <Text style={styles.stockInfoText}>로딩 중...</Text>
             ) : filteredHoldingsToRender.length > 0 ? (
-              holdingsToDisplay.map((holding) => (
-                <OwnedStockList
-                  key={holding.index + 1}
-                  stockCode={holding.stockCode}
-                  stockName={holding.stockName}
-                  quantity={holding.quantity}
-                  purchaseamount={holding.purchaseamount}
-                  profileImageUrl={holding.profileImageUrl}
-                  averagePurchasePrice={holding.averagePurchasePrice}
-                  currentPrice={holding.currentPrice}
-                  isKorean={holding.isKorean}
-                />
-              ))
+              holdingsToDisplay.map((holding) => {
+                console.log('🔍 [DEBUG] Holding 정보:', {
+                  stockCode: holding.stockCode,
+                  stockName: holding.stockName,
+                  currentPrice: holding.currentPrice,
+                  realtimePrice: localRealtimeData[holding.stockCode]?.currentPrice,
+                  isKorean: holding.isKorean,
+                  isWebSocketConnected: isConnected
+                });
+                return (
+                  <OwnedStockList
+                    key={holding.index + 1}
+                    stockCode={holding.stockCode}
+                    stockName={holding.stockName}
+                    quantity={holding.quantity}
+                    purchaseamount={holding.purchaseamount}
+                    profileImageUrl={holding.profileImageUrl}
+                    averagePurchasePrice={holding.averagePurchasePrice}
+                    currentPrice={holding.currentPrice}
+                    isKorean={holding.isKorean}
+                    realtimePrice={localRealtimeData[holding.stockCode]?.currentPrice}
+                    isWebSocketConnected={isConnected}
+                    onPress={() => navigation.navigate('OwnedStockChart', {stockCode: holding.stockCode, stockName: holding.stockName, closePrice: holding.currentPrice, stockImageUrl: holding.profileImageUrl || ''})}
+                  />
+                );
+              })
             ) : (
               <Text style={styles.stockInfoText}>보유 주식이 없습니다.</Text>
             )}
@@ -928,6 +1022,7 @@ const handleRefresh = useCallback(async () => {
                     realtimePriceChangeRate={localRealtimeData[stock.stockCode]?.priceChangeRate}
                     isMarketCapSelected={selectedButton === '시가총액'}
                     marketStatus={marketStatus}
+                    ownedStockCodes={ownedStockCodes}
                   />
                 ) : (
                   <ChangeRateStockList
@@ -952,6 +1047,7 @@ const handleRefresh = useCallback(async () => {
                     }
                     isChangeRateSelected={selectedButton === '등락률'}
                     marketStatus={marketStatus}
+                    ownedStockCodes={ownedStockCodes}
                   />
                 );
               })

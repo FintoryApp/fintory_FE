@@ -75,7 +75,17 @@ export default function OwnedStockChartScreen({route}: OwnedStockChartScreenProp
             <Image source={require('../../../assets/icons/left.png')}  />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.greenButton}>
+        <TouchableOpacity style={styles.greenButton} onPress={() => navigation.navigate('WantPrice', {
+                            stockCode: stockCode, 
+                            stockName: stockName, 
+                            closePrice: (isConnected && isMarketOpen && prices[stockCode]?.currentPrice) 
+                              ? prices[stockCode].currentPrice 
+                              : closePrice,
+                            currentPrice: (isConnected && isMarketOpen && prices[stockCode]?.currentPrice) 
+                              ? prices[stockCode].currentPrice 
+                              : closePrice,
+                            stockImageUrl: route.params.stockImageUrl || ''
+                          })}>
             <View style={{
                 flexDirection: 'row', 
                 alignItems: 'center',

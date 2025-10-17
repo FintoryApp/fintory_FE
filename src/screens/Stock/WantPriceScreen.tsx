@@ -5,20 +5,40 @@ import { Colors } from '../../styles/Color.styles';
 import { hScale, vScale } from '../../styles/Scale.styles';
 import HugeButton from '../../components/button/HugeButton';
 import BuyStockModal from '../../components/stock/BuyStockModal';
+import { RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../navigation/RootStackParamList';
+import { createPriceAlerts } from '../../api/wantPrice/createPriceAlerts';
+import { watchPriceAlert } from '../../api/wantPrice/watchPriceAlert';
+import { deletePriceAlert } from '../../api/wantPrice/deletePriceAlert';
 
-
-export default function BuyStockScreen() {
+export default function WantPriceScreen(props: any) {
     const {top} = useSafeAreaInsets();
-    const [quantity, setQuantity] = useState('');
-    const price = 367890;
+    const [targetPrice, setTargetPrice] = useState('');
+    const stockCode = props.route.params.stockCode;
+    const stockName = props.route.params.stockName;
+    const closePrice = props.route.params.closePrice;
+    const currentPrice = props.route.params.currentPrice || closePrice;
+    const stockImageUrl = props.route.params.stockImageUrl || '';
+    
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [SeeMore, setSeeMore] = useState(false);
-    const [wantPriceList, setWantPriceList] = useState([
-        {price: 80000},
-        {price: 450000},
-        {price: 200000},
-        {price: 100000},
-    ]);
+    const [wantPriceList, setWantPriceList] = useState<any[]>([]);
+
+    const handleCreatePriceAlert = async () => {
+        await createPriceAlerts({stockCode, targetPrice: parseInt(targetPrice)});
+    }
+
+    const handleWatchPriceAlert = async () => {
+        const watchPriceAlertResponse = await watchPriceAlert(stockCode);
+        setWantPriceList(watchPriceAlertResponse.data);
+    }
+
+    const handleDeletePriceAlert = async (id: number) => {
+        const deletePriceAlertResponse = await deletePriceAlert(id);
+        if (deletePriceAlertResponse.resultCode === 'SUCCESS') {
+            setWantPriceList(wantPriceList.filter((item) => item.id !== id));
+        }
+    }
     return (
         <View style={{flex: 1, width: '100%', height: '100%', backgroundColor: Colors.surface}}>
             <View style={[styles.headerContainer,{marginTop:top}]}>
@@ -27,7 +47,12 @@ export default function BuyStockScreen() {
                     <Image source={require('../../../assets/icons/left.png')} style={styles.headerButtonImage} />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.headerRightContainer} onPress={() => setSeeMore(!SeeMore)}>
+                <TouchableOpacity style={styles.headerRightContainer} onPress={() => {
+                    setSeeMore(!SeeMore);
+                    if (!SeeMore) {
+                        handleWatchPriceAlert();
+                    }
+                }}>
                 <Text style={styles.headerText}>내가 지정한 감시가</Text>
                 <Image source={ SeeMore ? require('../../../assets/icons/arrow_drop_up.png') : require('../../../assets/icons/arrow_drop_down.png')} style={styles.headerButtonImage} />
 
@@ -35,12 +60,13 @@ export default function BuyStockScreen() {
             </View>
 
             {/* 드롭다운 메뉴 */}
-            {SeeMore && (
+            {SeeMore && wantPriceList.length > 0 && (
                 <View style={styles.dropdownContainer}>
                     {wantPriceList.map((item, index) => (
                         <View style={[styles.dropdownItemContainer, {borderBottomWidth: index === wantPriceList.length - 1 ? 0 : 1, borderBottomColor: Colors.outlineVariant}]} key={index}>
-                        <Text style={styles.dropdownItem} key={index}>{item.price.toLocaleString()}원</Text>
-                        <TouchableOpacity style={styles.dropdownItemButton} onPress={() => setWantPriceList(wantPriceList.filter((_, i) => i !== index))}>
+                        <Text style={styles.dropdownItem} key={index}>{item.targetPrice.toLocaleString()}원</Text>
+                        {/* <Text style={styles.dropdownItem}>{item.id}</Text> */}
+                        <TouchableOpacity style={styles.dropdownItemButton} onPress={() => handleDeletePriceAlert(item.id)}>
                             <Image source={require('../../../assets/icons/delete.png')} style={styles.dropdownItemButtonImage} />
                         </TouchableOpacity>
                         </View>
@@ -51,8 +77,8 @@ export default function BuyStockScreen() {
 
             
             <View style={styles.stockInfoContainer}>
-                <Image source={require('../../../assets/icons/red_circle.png')} style={styles.stockInfoImage} resizeMode='contain' />
-                <Text style={styles.stockInfoText}>현재 거래가 {'\n'}<Text style={styles.stockInfoTextValue}>1종목 = {price.toLocaleString()} 원</Text></Text>
+                <Image source={stockImageUrl ? { uri: stockImageUrl } : require('../../../assets/icons/red_circle.png')} style={styles.stockInfoImage} resizeMode='contain' />
+                <Text style={styles.stockInfoText}>현재 거래가 {'\n'}<Text style={styles.stockInfoTextValue}>1종목 = {currentPrice.toLocaleString()} 원</Text></Text>
             </View>
             <Text style={styles.notiText}>내가 설정한 가격이 되면 알림으로 알려드려요!</Text>
             <TextInput 
@@ -60,8 +86,8 @@ export default function BuyStockScreen() {
             placeholder='감시가 설정하기'
             placeholderTextColor={Colors.middleGray}
             keyboardType='numeric'
-            value={quantity}
-            onChangeText={setQuantity}
+            value={targetPrice}
+            onChangeText={setTargetPrice}
             />
             
 
@@ -69,46 +95,46 @@ export default function BuyStockScreen() {
                 {/* 커스텀 키패드 */}
                 <View style={styles.keypadContainer}>
                     <View style={styles.keypadRow}>
-                        <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity + '1')}>
+                        <TouchableOpacity style={styles.keypadButton} onPress={() => setTargetPrice(targetPrice + '1')}>
                             <Text style={styles.keypadText}>1</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity + '2')}>
+                        <TouchableOpacity style={styles.keypadButton} onPress={() => setTargetPrice(targetPrice + '2')}>
                             <Text style={styles.keypadText}>2</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity + '3')}>
+                        <TouchableOpacity style={styles.keypadButton} onPress={() => setTargetPrice(targetPrice + '3')}>
                             <Text style={styles.keypadText}>3</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.keypadRow}>
-                        <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity + '4')}>
+                        <TouchableOpacity style={styles.keypadButton} onPress={() => setTargetPrice(targetPrice + '4')}>
                             <Text style={styles.keypadText}>4</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity + '5')}>
+                        <TouchableOpacity style={styles.keypadButton} onPress={() => setTargetPrice(targetPrice + '5')}>
                             <Text style={styles.keypadText}>5</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity + '6')}>
+                        <TouchableOpacity style={styles.keypadButton} onPress={() => setTargetPrice(targetPrice + '6')}>
                             <Text style={styles.keypadText}>6</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.keypadRow}>
-                        <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity + '7')}>
+                        <TouchableOpacity style={styles.keypadButton} onPress={() => setTargetPrice(targetPrice + '7')}>
                             <Text style={styles.keypadText}>7</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity + '8')}>
+                        <TouchableOpacity style={styles.keypadButton} onPress={() => setTargetPrice(targetPrice + '8')}>
                             <Text style={styles.keypadText}>8</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity + '9')}>
+                        <TouchableOpacity style={styles.keypadButton} onPress={() => setTargetPrice(targetPrice + '9')}>
                             <Text style={styles.keypadText}>9</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.keypadRow}>
-                        <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity + '00')}>
+                        <TouchableOpacity style={styles.keypadButton} onPress={() => setTargetPrice(targetPrice + '00')}>
                             <Text style={styles.keypadText}>00</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity + '0')}>
+                        <TouchableOpacity style={styles.keypadButton} onPress={() => setTargetPrice(targetPrice + '0')}>
                             <Text style={styles.keypadText}>0</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.keypadButton} onPress={() => setQuantity(quantity.slice(0, -1))}>
+                        <TouchableOpacity style={styles.keypadButton} onPress={() => setTargetPrice(targetPrice.slice(0, -1))}>
 
                                 <Image source={require('../../../assets/icons/backspace.png')} style={styles.deleteIcon} />
                         
@@ -118,10 +144,10 @@ export default function BuyStockScreen() {
                 <View style={{marginLeft: hScale(16)}}>
                     <HugeButton
                     title='감시가 지정하기'
-                    onPress={() => {if(parseInt(quantity) > 0)  setIsModalVisible(true)}}
+                    onPress={() => {handleCreatePriceAlert(); setIsModalVisible(true);setTargetPrice('');}}
                     backgroundColor={Colors.primary}
                     textColor={Colors.white}
-                    pressable={parseInt(quantity) > 0 ? true : false}
+                    pressable={targetPrice.length > 0 ? true : false}
                 />
                 </View>
             </View>

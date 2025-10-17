@@ -37,7 +37,7 @@ export type RootStackParamList = {
   FindId: undefined;
   Study: undefined;
   BuyStock: {stockCode: string; stockName: string; closePrice: number; currentPrice?: number; stockImageUrl?: string;};
-  WantPrice: undefined;
+  WantPrice: {stockCode: string; stockName: string; closePrice: number; currentPrice?: number; stockImageUrl?: string;};
   SellStock: {stockCode: string; stockName: string; closePrice: number; currentPrice?: number; stockImageUrl?: string;};
   SettingMain: undefined;
   NotOwnedStockChart: {stockCode: string; stockName: string; closePrice: number; stockImageUrl?: string;};

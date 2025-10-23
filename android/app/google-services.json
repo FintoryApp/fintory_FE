@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "956062864323",
+    "project_id": "fintory-c400d",
+    "storage_bucket": "fintory-c400d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956062864323:android:595fc9c50f8486bede2376",
+        "android_client_info": {
+          "package_name": "com.fintory_fe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtCraTqVGLDdrpFpVC2Y3-DQy96-Ovzjs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

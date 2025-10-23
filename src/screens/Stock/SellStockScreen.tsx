@@ -1,4 +1,4 @@
-import React ,{ useState } from 'react';
+import React ,{ useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../../styles/Color.styles';
@@ -8,6 +8,8 @@ import BuyStockModal from '../../components/stock/BuyStockModal';
 import { trading } from '../../api/stock/trading';
 import { useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { getKoreanOwnedStockList } from '../../api/stock/koreanOwnedStock';
+import { getOverseasOwnedStockList } from '../../api/stock/overseasOwnedStock';
 
 export default function SellStockScreen(props: any) {
     const {top} = useSafeAreaInsets();
@@ -20,6 +22,36 @@ export default function SellStockScreen(props: any) {
     const closePrice = props.route.params.closePrice;
     const currentPrice = props.route.params.currentPrice || closePrice;
     const stockImageUrl = props.route.params.stockImageUrl || '';
+    const [nowQuantity, setNowQuantity] = useState(0);
+    
+    // 국내/해외 주식 구분 함수
+    const isKoreanStock = (code: string) => {
+        // 한국 주식 코드는 6자리 숫자로 구성
+        return /^\d{6}$/.test(code);
+    };
+    
+    useEffect(() => {
+        const fetchNowQuantity = async () => {
+            try {
+                let res;
+                if (isKoreanStock(stockCode)) {
+                    // 국내 주식 API 호출
+                    res = await getKoreanOwnedStockList();
+                } else {
+                    // 해외 주식 API 호출
+                    res = await getOverseasOwnedStockList();
+                }
+                
+                // quantity 값을 사용해서 nowQuantity 설정
+                const foundStock = res.data.ownedStockDetails.find((stock: any) => stock.stockCode === stockCode);
+                setNowQuantity(foundStock?.quantity || 0);
+            } catch (error) {
+                console.error('Error fetching owned stock quantity:', error);
+                setNowQuantity(0);
+            }
+        };
+        fetchNowQuantity();
+    }, [stockCode]);
     const handleBuyStock = async () => {
         if (parseFloat(quantity) <= 0) return;
         
@@ -136,6 +168,10 @@ export default function SellStockScreen(props: any) {
                 }
             }}
             />}
+
+            <View style={styles.nowQuantityContainer}>
+                <Text style={styles.nowQuantityText}>현재 보유 수량 <Text style={styles.nowQuantityTextValue}>{nowQuantity} 주</Text></Text>
+            </View>
             
 
             <View style={styles.quantityDisplay}>
@@ -371,6 +407,24 @@ const styles = StyleSheet.create({
     checkIcon: {
         width: hScale(20),
         height: vScale(20),
+    },
+    nowQuantityContainer: {
+        width: hScale(328),
+        height: vScale(32),
+        marginLeft: hScale(16),
+        marginRight: hScale(16),
+        top: vScale(280),
+        position: 'absolute',
+        
+    },
+    nowQuantityText: {
+        fontSize: hScale(12),
+        color: Colors.outline,
+    },
+    nowQuantityTextValue: {
+        fontSize: hScale(12),
+        fontWeight: 'bold',
+        color: Colors.outline,
     },
 
 });

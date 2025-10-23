@@ -79,7 +79,7 @@ const Tab = createBottomTabNavigator();
 function HomeStack() {
   return (
     <HomeStackNav.Navigator screenOptions={{ headerShown: false }}>
-      <HomeStackNav.Screen name="Home" component={HomeScreen} />
+      <HomeStackNav.Screen name="HomeMain" component={HomeScreen} />
       <HomeStackNav.Screen name="Report" component={ReportStack}/>
     </HomeStackNav.Navigator>
   );
@@ -170,7 +170,8 @@ function RootNavigation(  ) {
         
         <RootStack.Screen name="WantPrice" component={WantPriceScreen}/>
         <RootStack.Screen name="SellStock" component={SellStockScreen}/>
-        <RootStack.Screen name="Study" component={EconomyStudyStack}/>
+        <RootStack.Screen name="StudyStack" component={EconomyStudyStack}/>
+        <RootStack.Screen name="NoReport" component={NoReportScreen}/>
         
         <RootStack.Screen name="Main" component={MainTabs} />
         

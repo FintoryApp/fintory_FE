@@ -53,7 +53,13 @@ useEffect(() => {
     try {
       const res = await getReport(`${year}-${month}`);
       setReport(res.data);
-      setInvestmentStyle(res.data.investmentStyle.investmentStyle || '중립형'); // 기본값 설정
+      
+      // res.data가 null이거나 undefined인 경우 체크
+      if (res.data && res.data.investmentStyle && res.data.investmentStyle.investmentStyle) {
+        setInvestmentStyle(res.data.investmentStyle.investmentStyle);
+      } else {
+        setInvestmentStyle('중립형'); // 데이터가 없을 때 기본값
+      }
     } catch (error) {
       console.error('Error fetching report:', error);
       setInvestmentStyle('중립형'); // 에러 시 기본값
@@ -102,11 +108,17 @@ useEffect(() => {
         </LinearGradient>
       </TouchableOpacity>
       <View style={styles.smallButtonContainer}>
-      <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate('Report')}>
+      <TouchableOpacity style={styles.smallButton} onPress={() => {
+        if (report) {
+          navigation.navigate('Report');
+        } else {
+          navigation.navigate('NoReport');
+        }
+      }}>
         <Text style={styles.smallButtonText}>AI 투자 리포트</Text>
         <Image source={require('../../../assets/icons/aiReport.png')} style={styles.aiReportImage} />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate('EconomyStudy')}>
+      <TouchableOpacity style={styles.smallButton} onPress={() => navigation.navigate('StudyStack')}>
         <Text style={styles.smallButtonText}>경제 용어 & 뉴스</Text>
         <Image source={require('../../../assets/icons/chart.png')} style={styles.aiReportImage} />
       </TouchableOpacity>

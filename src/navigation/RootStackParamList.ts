@@ -35,7 +35,8 @@ export type RootStackParamList = {
   FindPassword: undefined;
   ChangePassword: undefined;
   FindId: undefined;
-  Study: undefined;
+  StudyStack: undefined;
+  NoReport: undefined;
   BuyStock: {stockCode: string; stockName: string; closePrice: number; currentPrice?: number; stockImageUrl?: string;};
   WantPrice: {stockCode: string; stockName: string; closePrice: number; currentPrice?: number; stockImageUrl?: string;};
   SellStock: {stockCode: string; stockName: string; closePrice: number; currentPrice?: number; stockImageUrl?: string;};
@@ -57,7 +58,7 @@ export type StockStackParamList = {
 };
 
 export type HomeStackParamList = {
-  Home: undefined;
+  HomeMain: undefined;
   Report: undefined;
 };
 

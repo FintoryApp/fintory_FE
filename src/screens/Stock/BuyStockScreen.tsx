@@ -1,4 +1,4 @@
-import React ,{ useState } from 'react';
+import React ,{ useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../../styles/Color.styles';
@@ -8,6 +8,7 @@ import BuyStockModal from '../../components/stock/BuyStockModal';
 import { trading } from '../../api/stock/trading';
 import { useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { getTotalMoney } from '../../api/totalMoney';
 
 
 export default function BuyStockScreen(props: any) {
@@ -21,8 +22,15 @@ export default function BuyStockScreen(props: any) {
     const closePrice = props.route.params.closePrice;
     const currentPrice = props.route.params.currentPrice || closePrice;
     const stockImageUrl = props.route.params.stockImageUrl || '';
-    
-    // stockCode가 알파벳으로 시작하면 해외주식, 숫자로 시작하면 국내주식
+    const [nowMoney, setNowMoney] = useState(0);
+    useEffect(() => {
+        const fetchNowMoney = async () => {
+            const res = await getTotalMoney();
+            setNowMoney(res.data);
+        };
+        fetchNowMoney();
+    }, []);
+    // stockCode가 알파벳const nowMoney = props.route.params.nowMoney;으로 시작하면 해외주식, 숫자로 시작하면 국내주식
     const isOverseasStock = /^[A-Za-z]/.test(stockCode);
     const handleBuyStock = async () => {
         if (parseFloat(quantity) <= 0) return;
@@ -140,6 +148,10 @@ export default function BuyStockScreen(props: any) {
                 }
             }}
             />}
+
+            <View style={styles.nowMoneyContainer}>
+                <Text style={styles.nowMoneyText}>현재 보유 머니 <Text style={styles.nowMoneyTextValue}>{nowMoney.toLocaleString()} 원</Text></Text>
+            </View>
             
 
             <View style={styles.quantityDisplay}>
@@ -241,6 +253,23 @@ const styles = StyleSheet.create({
         marginLeft: hScale(16),
         //justifyContent: 'center',
         flexDirection: 'row',
+    },
+    nowMoneyContainer: {
+        width: hScale(328),
+        height: vScale(32),
+        marginLeft: hScale(16),
+        //justifyContent: 'center',
+        flexDirection: 'row',
+        borderRadius: 999,
+    },
+    nowMoneyText: {
+        fontSize: hScale(12),
+        color: Colors.outline,
+    },
+    nowMoneyTextValue: {
+        fontSize: hScale(12),
+        fontWeight: 'bold',
+        color: Colors.outline,
     },
     stockInfoImage: {
         width: hScale(48),

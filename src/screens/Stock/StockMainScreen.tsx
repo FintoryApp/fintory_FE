@@ -386,39 +386,52 @@ const handleRefresh = useCallback(async () => {
     ]);
     
     // 보유 주식 데이터 업데이트 (live-price API로 currentPrice 업데이트)
-    if (koreanRes.status === 'fulfilled') {
+    if (koreanRes.status === 'fulfilled' && koreanRes.value.data) {
       const koreanHoldingsData = koreanRes.value.data.ownedStockDetails ?? [];
-      const updatedKoreanHoldings = await Promise.all(
-        koreanHoldingsData.map(async (holding: any) => {
-          try {
-            const response = await getKoreanStock_livePrice(holding.stockCode);
-            return {
-              ...holding,
-              currentPrice: response.data.currentPrice
-            };
-          } catch (error) {
-            return holding;
-          }
-        })
-      );
-      setKoreanHoldings(updatedKoreanHoldings);
+      if (koreanHoldingsData.length > 0) {
+        const updatedKoreanHoldings = await Promise.all(
+          koreanHoldingsData.map(async (holding: any) => {
+            try {
+              const response = await getKoreanStock_livePrice(holding.stockCode);
+              return {
+                ...holding,
+                currentPrice: response.data.currentPrice
+              };
+            } catch (error) {
+              return holding;
+            }
+          })
+        );
+        setKoreanHoldings(updatedKoreanHoldings);
+      } else {
+        setKoreanHoldings([]);
+      }
+    } else {
+      setKoreanHoldings([]);
     }
-    if (overseasRes.status === 'fulfilled') {
+    
+    if (overseasRes.status === 'fulfilled' && overseasRes.value.data) {
       const overseasHoldingsData = overseasRes.value.data.ownedStockDetails ?? [];
-      const updatedOverseasHoldings = await Promise.all(
-        overseasHoldingsData.map(async (holding: any) => {
-          try {
-            const response = await getOverseasStock_livePrice(holding.stockCode);
-            return {
-              ...holding,
-              currentPrice: response.data.currentPrice
-            };
-          } catch (error) {
-            return holding;
-          }
-        })
-      );
-      setOverseasHoldings(updatedOverseasHoldings);
+      if (overseasHoldingsData.length > 0) {
+        const updatedOverseasHoldings = await Promise.all(
+          overseasHoldingsData.map(async (holding: any) => {
+            try {
+              const response = await getOverseasStock_livePrice(holding.stockCode);
+              return {
+                ...holding,
+                currentPrice: response.data.currentPrice
+              };
+            } catch (error) {
+              return holding;
+            }
+          })
+        );
+        setOverseasHoldings(updatedOverseasHoldings);
+      } else {
+        setOverseasHoldings([]);
+      }
+    } else {
+      setOverseasHoldings([]);
     }
     
     // 환율 및 총 자산 업데이트
@@ -573,19 +586,41 @@ const handleRefresh = useCallback(async () => {
     (async()=>{
       try {
         console.log('🔍 [DEBUG] 보유 주식 API 호출 시작');
-        const koreanRes = await getKoreanOwnedStockList();
-        const overseasRes = await getOverseasOwnedStockList();
+        
+        // 보유 주식 API 호출을 안전하게 처리
+        const [koreanRes, overseasRes] = await Promise.allSettled([
+          getKoreanOwnedStockList(),
+          getOverseasOwnedStockList()
+        ]);
         
         console.log('🔍 [DEBUG] 보유 주식 API 응답:', {
-          koreanRes: koreanRes.data,
-          overseasRes: overseasRes.data
+          koreanRes: koreanRes.status === 'fulfilled' ? koreanRes.value.data : null,
+          overseasRes: overseasRes.status === 'fulfilled' ? overseasRes.value.data : null
         });
         
-        let koreanHoldingsData = koreanRes.data.ownedStockDetails ?? [];
-        let overseasHoldingsData = overseasRes.data.ownedStockDetails ?? [];
+        // 국내 보유 주식 처리
+        let koreanHoldingsData: any[] = [];
+        if (koreanRes.status === 'fulfilled' && koreanRes.value.data) {
+          koreanHoldingsData = koreanRes.value.data.ownedStockDetails ?? [];
+        } else {
+          console.log('🔍 [DEBUG] 국내 보유 주식 없음 또는 API 에러');
+        }
+        
+        // 해외 보유 주식 처리
+        let overseasHoldingsData: any[] = [];
+        if (overseasRes.status === 'fulfilled' && overseasRes.value.data) {
+          overseasHoldingsData = overseasRes.value.data.ownedStockDetails ?? [];
+        } else {
+          console.log('🔍 [DEBUG] 해외 보유 주식 없음 또는 API 에러');
+        }
         
         // 보유 주식의 currentPrice를 live-price API로 업데이트
         const updateHoldingsWithLivePrice = async (holdings: any[], isKorean: boolean) => {
+          if (holdings.length === 0) {
+            console.log(`🔍 [DEBUG] ${isKorean ? '국내' : '해외'} 보유 주식이 없어 live-price API 호출 생략`);
+            return [];
+          }
+          
           console.log(`🔍 [DEBUG] ${isKorean ? '국내' : '해외'} 보유 주식 live-price API 호출 시작:`, holdings.length, '개');
           const updatedHoldings = await Promise.all(
             holdings.map(async (holding) => {
@@ -621,8 +656,16 @@ const handleRefresh = useCallback(async () => {
         
         setKoreanHoldings(koreanHoldingsData);
         setOverseasHoldings(overseasHoldingsData);
+        
+        console.log('🔍 [DEBUG] 보유 주식 처리 완료:', {
+          koreanHoldings: koreanHoldingsData.length,
+          overseasHoldings: overseasHoldingsData.length
+        });
       } catch (error) {
-        // console.error('Error fetching holdings:', error);
+        console.log('🔍 [DEBUG] 보유 주식 API 호출 중 예상치 못한 오류:', error);
+        // 에러가 발생해도 빈 배열로 초기화
+        setKoreanHoldings([]);
+        setOverseasHoldings([]);
       }
     })();
   },[]);

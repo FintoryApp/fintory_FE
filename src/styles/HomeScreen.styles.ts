@@ -51,18 +51,59 @@ export const styles = StyleSheet.create({
       flexDirection: 'row',
       gap: hScale(8),
       alignItems: 'center',
+      zIndex: 300,
+      
+    },
+    smallCircle:{
+      width: hScale(138),
+      height: vScale(138),
+      borderRadius: hScale(69),
+      backgroundColor: '#E3ECDE',
+      position: 'absolute',
+      left: hScale(18),
+      top: vScale(25),
+    },
+    bigCircle:{
+      width: hScale(280),
+      height: vScale(280),
+      borderRadius: hScale(140),
+      backgroundColor: '#E3ECDE',
+      position: 'absolute',
+      left: hScale(90),
+      top: vScale(70),
+      overflow: 'hidden',
+    },
+    adviceTextContainer:{
+      width: hScale(220),
+      height: vScale(100),
+      position: 'absolute',
+      top: vScale(170),
+      left: hScale(8),
+      textAlign: 'left',
     },
 
+    todayAdviceText:{
+      fontSize: hScale(12),
+      color: Colors.black,
+    },
+    adviceText:{
+      fontSize: hScale(16),
+      fontWeight: 'bold',
+      color: Colors.black,
+    },
     userInfoImage:{
       width: hScale(52),
       height: vScale(52),
       borderRadius: 999999,
-      borderWidth: 2,
-      borderColor: Colors.outline,
+      borderWidth: 4,
+      borderColor: Colors.primaryDim,
+      zIndex: 300,
+      backgroundColor: Colors.white,
     },
     userInfoTextContainer:{
       flexDirection: 'column',
       //gap: hScale(8),
+      zIndex: 300,
     },
     userInfoText:{
       fontSize: hScale(16),
@@ -77,7 +118,7 @@ export const styles = StyleSheet.create({
     userCharacterImage:{
       width: hScale(220),
       height: vScale(220),
-      top:vScale(150),
+      top:vScale(120),
       right:hScale(16),
     },
     content:{
@@ -88,9 +129,10 @@ export const styles = StyleSheet.create({
       top:vScale(375),
       position: 'absolute',
       paddingHorizontal: hScale(16),
-      paddingTop:vScale(40),
+      paddingTop:vScale(30),
       flexDirection: 'row',
       justifyContent: 'space-between',
+      zIndex: 300,
       
     },
     investStartButton:{
@@ -154,6 +196,6 @@ export const styles = StyleSheet.create({
       width: hScale(100),
       height: vScale(100),
       left: hScale(20),
-      top: vScale(50),
+      top: vScale(40),
     },
 });

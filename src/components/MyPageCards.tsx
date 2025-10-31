@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     height: vScale(56),
     backgroundColor: Colors.white,
     borderRadius: hScale(16),
-    paddingVertical: vScale(16),
+    paddingVertical: vScale(12),
     paddingHorizontal: hScale(16),
     marginBottom: vScale(16),
     alignItems: 'center',

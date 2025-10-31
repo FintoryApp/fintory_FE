@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import LinearGradient from 'react-native-linear-gradient';
 import { styles } from '../../styles/HomeScreen.styles';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,17 +14,31 @@ const characterStyle = [
   {
     title: '공격형',
     description: '공격형',
-    image: require('../../../assets/characters/fire_character.png'),
+    image: require('../../../assets/characters/공격형.gif'),
   },
   {
     title: '중립형',
     description: '중립형',
-    image: require('../../../assets/characters/stone_character.png'),
+    image: require('../../../assets/characters/중립형.gif'),
   },
   {
     title: '안정형',
     description: '안정형',
-    image: require('../../../assets/characters/water_character.png'),
+    image: require('../../../assets/characters/안정형.gif'),
+  },
+  {
+    title: '레포트 없음',
+    description: '레포트 없음',
+    image: require('../../../assets/characters/fire_character.png'),
+  },
+];
+
+const todayAdvice = [
+  {
+    advice : '이번에는 조금 더\n다양한 산업군에\n투자해보세요!'
+  },
+  {
+    advice : '이번에는\n자신 있는 종목에\n과감히 투자해보세요!'
   },
 ];
 
@@ -40,7 +55,7 @@ const HomeScreen = () => {
   const [report, setReport] = useState(null);
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
-  const [investmentStyle, setInvestmentStyle] = useState('중립형');
+  const [investmentStyle, setInvestmentStyle] = useState('레포트 없음');
   useEffect(() => {
     const fetchTotalPoint = async () => {
       const res = await getTotalPoint();
@@ -58,11 +73,11 @@ useEffect(() => {
       if (res.data && res.data.investmentStyle && res.data.investmentStyle.investmentStyle) {
         setInvestmentStyle(res.data.investmentStyle.investmentStyle);
       } else {
-        setInvestmentStyle('중립형'); // 데이터가 없을 때 기본값
+        setInvestmentStyle('레포트 없음'); // 데이터가 없을 때 기본값
       }
     } catch (error) {
       console.error('Error fetching report:', error);
-      setInvestmentStyle('중립형'); // 에러 시 기본값
+      setInvestmentStyle('레포트 없음'); // 에러 시 기본값
     }
   };
   fetchReport();
@@ -87,12 +102,24 @@ useEffect(() => {
         </View>
       </View>
       <View style={styles.userInfoContainer}>
-        <Image source={require('../../../assets/icons/red_circle.png')} style={styles.userInfoImage} />
+        <Image source={require('../../../assets/icons/account_circle.png')} style={styles.userInfoImage} />
         <View style={styles.userInfoTextContainer}>
         <Text style={styles.userInfoText}>{nickname} 님</Text>
         <Text style={styles.userPointText}>{totalPoint} P</Text>
         </View>
-        <Image source={getCharacterImage(investmentStyle)} style={styles.userCharacterImage} />
+        <View style={styles.smallCircle}></View>
+        <View style={styles.bigCircle}></View>
+        <FastImage
+          source={getCharacterImage(investmentStyle)}
+          style={styles.userCharacterImage}
+          resizeMode={FastImage.resizeMode.contain}
+        />
+
+        <View style={styles.adviceTextContainer}>
+        <Text style={styles.todayAdviceText}>오늘의 투자 조언</Text>
+      
+        <Text style={styles.adviceText}>{todayAdvice[1].advice}</Text>
+        </View>
       </View>
 
     <View style={styles.content}> 

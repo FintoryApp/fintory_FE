@@ -33,6 +33,16 @@ const characterStyle = [
   },
 ];
 
+const changeCharacter=[
+  {image:require('../../../assets/icons/1.png')
+  },
+  {image:require('../../../assets/icons/2.png')
+  },
+  {image:require('../../../assets/icons/3.png')
+  },
+]
+
+
 const todayAdvice = [
   {
     advice : '이번에는 조금 더\n다양한 산업군에\n투자해보세요!'

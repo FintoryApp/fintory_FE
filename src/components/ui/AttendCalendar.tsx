@@ -2,14 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  Modal,
-  TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
-  PixelRatio,
-  Dimensions,
   Image,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import { hScale, vScale } from '../../styles/Scale.styles';
 import { Colors } from '../../styles/Color.styles';
@@ -31,9 +25,7 @@ export default function AttendCalendar({
   refreshTrigger = 0,
 }: AttendCalendarProps) 
 {
-  const [isModalVisible, setModalVisible] = useState(false);
   const [attendanceData, setAttendanceData] = useState<{ [key: number]: boolean }>({});
-  const daysInMonth = new Date(year, month, 0).getDate();
 
   // 출석 데이터 가져오기 (연속 출석일수는 로그인 시에만 처리)
   useEffect(() => { 
@@ -98,12 +90,8 @@ export default function AttendCalendar({
   const calendarDays = generateCalendarDays();
   const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
 
-  const openModal = () => setModalVisible(true);
-  const closeModal = () => setModalVisible(false);
-
   return (
-    <>
-      <TouchableOpacity onPress={openModal} style={styles.container}>
+    <View style={styles.container}>
         
         {/* 출석현황 Container */}
         
@@ -136,16 +124,19 @@ export default function AttendCalendar({
                   styles.dayButton,
                   item.isAttended ? styles.attendedDay : styles.normalDay
                 ]}>
-                  <Text style={[
-                    styles.dayText,
-                    item.isAttended ? styles.attendedDayText : styles.normalDayText
-                  ]}>
-                    {item.day}
-                  </Text>
+                  {!item.isAttended && (
+                    <Text style={[
+                      styles.dayText,
+                      styles.normalDayText
+                    ]}>
+                      {item.day}
+                    </Text>
+                  )}
                   {item.isAttended && (
                     <Image 
                       source={require('../../../assets/icons/attendCheck.png')} 
-                      style={styles.checkMarkImage} 
+                      style={styles.checkMarkImage}
+                      resizeMode="contain"
                     />
                   )}
                 </View>
@@ -154,67 +145,14 @@ export default function AttendCalendar({
           ))}
         </View>
         </View>
-      </TouchableOpacity>
-
-      {/* 모달 */}
-      <Modal
-        visible={isModalVisible}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={closeModal}
-      >
-        <TouchableWithoutFeedback onPress={closeModal}>
-          <View style={styles.modalOverlay}>
-            <TouchableWithoutFeedback>
-              <View style={styles.modalContent}>
-                <View style={styles.modalHeader}>
-                  <Text style={styles.modalTitle}>{month}월 출석 현황</Text>
-                  <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
-                    <Text style={styles.closeButtonText}>✕</Text>
-                  </TouchableOpacity>
-                </View>
-                
-                <View style={styles.modalCalendarGrid}>
-                  {weekDays.map((day, index) => (
-                    <Text key={index} style={styles.modalWeekDay}>{day}</Text>
-                  ))}
-                  {calendarDays.map((item, index) => (
-                    <View key={index} style={styles.modalDayContainer}>
-                      {item.day && (
-                        <View style={[
-                          styles.modalDayButton,
-                          item.isAttended ? styles.modalAttendedDay : styles.modalNormalDay
-                        ]}>
-                          <Text style={[
-                            styles.modalDayText,
-                            item.isAttended ? styles.modalAttendedDayText : styles.modalNormalDayText
-                          ]}>
-                            {item.day}
-                          </Text>
-                          {item.isAttended && (
-                            <Image 
-                              source={require('../../../assets/icons/attendCheck.png')} 
-                              style={styles.modalCheckMarkImage} 
-                            />
-                          )}
-                        </View>
-                      )}
-                    </View>
-                  ))}
-                </View>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     width: hScale(328),
-    height: vScale(422),
+    height: 'auto',
     backgroundColor: Colors.white,
     borderRadius: hScale(16),
     paddingHorizontal: hScale(16),
@@ -250,7 +188,7 @@ const styles = StyleSheet.create({
   },
   calendarContainer: {
     width: hScale(296),
-    height: vScale(330),
+    height: 'auto',
     paddingHorizontal: hScale(10),
     paddingVertical: vScale(10),
     alignSelf: 'center',
@@ -291,8 +229,6 @@ const styles = StyleSheet.create({
   },
   attendedDay: {
     backgroundColor: Colors.white,
-    borderWidth: 2,
-    borderColor: Colors.primary,
   },
   dayText: {
     fontSize: hScale(12),
@@ -305,95 +241,6 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
   checkMarkImage: {
-    position: 'absolute',
-    top: -2,
-    right: -2,
-    width: hScale(12),
-    height: hScale(12),
-  },
-  
-  // 모달 스타일
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    width: hScale(320),
-    backgroundColor: Colors.white,
-    borderRadius: hScale(16),
-    padding: hScale(20),
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: vScale(20),
-  },
-  modalTitle: {
-    fontSize: hScale(18),
-    fontWeight: 'bold',
-    color: Colors.black,
-  },
-  closeButton: {
-    width: hScale(24),
-    height: hScale(24),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    fontSize: hScale(16),
-    color: Colors.outline,
-  },
-  modalCalendarGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  modalWeekDay: {
-    width: hScale(320) / 7,
-    textAlign: 'center',
-    fontSize: hScale(14),
-    color: Colors.outline,
-    fontWeight: '500',
-    marginBottom: vScale(8),
-  },
-  modalDayContainer: {
-    width: hScale(320) / 7,
-    height: vScale(40),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalDayButton: {
-    width: hScale(32),
-    height: hScale(32),
-    borderRadius: hScale(16),
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  modalNormalDay: {
-    backgroundColor: Colors.surface,
-  },
-  modalAttendedDay: {
-    backgroundColor: Colors.white,
-    borderWidth: 2,
-    borderColor: Colors.primary,
-  },
-  modalDayText: {
-    fontSize: hScale(14),
-    fontWeight: '500',
-  },
-  modalNormalDayText: {
-    color: Colors.outline,
-  },
-  modalAttendedDayText: {
-    color: Colors.primary,
-  },
-  modalCheckMarkImage: {
-    // position: 'absolute',
-    // top: -2,
-    // right: -2,
     width: hScale(32),
     height: hScale(32),
   },

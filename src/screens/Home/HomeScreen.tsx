@@ -63,9 +63,22 @@ const HomeScreen = () => {
   const { nickname } = useUserData();
   const [totalPoint, setTotalPoint] = useState(0);
   const [report, setReport] = useState(null);
-  const [year, setYear] = useState(new Date().getFullYear());
-  const [month, setMonth] = useState(new Date().getMonth() + 1);
+  
+  // 전월 날짜 계산
+  const getPreviousMonth = () => {
+    const now = new Date();
+    const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    return {
+      year: prevMonth.getFullYear(),
+      month: prevMonth.getMonth() + 1,
+    };
+  };
+  
+  const prevMonth = getPreviousMonth();
+  const [year, setYear] = useState(prevMonth.year);
+  const [month, setMonth] = useState(prevMonth.month);
   const [investmentStyle, setInvestmentStyle] = useState('레포트 없음');
+  const [changeCharacterIndex, setChangeCharacterIndex] = useState(0);
   useEffect(() => {
     const fetchTotalPoint = async () => {
       const res = await getTotalPoint();
@@ -92,6 +105,17 @@ useEffect(() => {
   };
   fetchReport();
 }, [year, month]);
+
+// 레포트가 없을 때 changeCharacter 이미지를 2초마다 순환
+useEffect(() => {
+  if (!report || investmentStyle === '레포트 없음') {
+    const interval = setInterval(() => {
+      setChangeCharacterIndex((prevIndex) => (prevIndex + 1) % changeCharacter.length);
+    }, 2000);
+    
+    return () => clearInterval(interval);
+  }
+}, [report, investmentStyle]);
     return (
       <LinearGradient colors={['#E9F9E5', '#94D585']} style={{...styles.container,marginTop:top}}>
       <View style={styles.header}>
@@ -120,7 +144,11 @@ useEffect(() => {
         <View style={styles.smallCircle}></View>
         <View style={styles.bigCircle}></View>
         <FastImage
-          source={getCharacterImage(investmentStyle)}
+          source={
+            !report || investmentStyle === '레포트 없음'
+              ? changeCharacter[changeCharacterIndex].image
+              : getCharacterImage(investmentStyle)
+          }
           style={styles.userCharacterImage}
           resizeMode={FastImage.resizeMode.contain}
         />
